@@ -2,10 +2,35 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-app.use(express.static('public/startbootstrap-personal-gh-pages'));
+// הגדרת מנוע התבניות EJS
+app.set('view engine', 'ejs');
 
+// Middleware to serve static files from the "public" folder
+app.use(express.static('public'));
+
+// ניתוב לדף הבית - index.ejs
+app.get('/index', (req, res) => {
+  res.render('index');
+});
+
+// ניתוב לדף ה-contact - contact.ejs
+app.get('/contact', (req, res) => {
+  res.render('contact');
+});
+
+// ניתוב לדף ה-projects - projects.ejs
+app.get('/projects', (req, res) => {
+  res.render('projects');
+});
+
+// ניתוב לדף ה-resume - resume.ejs
+app.get('/resume', (req, res) => {
+  res.render('resume');
+});
+
+// הפעלת השרת
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`App is running on http://localhost:${port}`);
 });
 
 const sql = require('mssql');
