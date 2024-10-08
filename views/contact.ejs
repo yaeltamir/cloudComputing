@@ -41,8 +41,8 @@
                     <div class="bg-light rounded-4 py-5 px-4 px-md-5">
                         <div class="text-center mb-5">
                             <div class="feature bg-primary bg-gradient-primary-to-secondary text-white rounded-3 mb-3"><i class="bi bi-envelope"></i></div>
-                            <h1 class="fw-bolder">Get in touch</h1>
-                            <p class="lead fw-normal text-muted mb-0">Let's work together!</p>
+                            <h1 class="fw-bolder">Sign Up</h1>
+                            <p class="lead fw-normal text-muted mb-0">Welcom to SugarSnap!!!</p>
                         </div>
                         <div class="row gx-5 justify-content-center">
                             <div class="col-lg-8 col-xl-6">
@@ -54,6 +54,12 @@
                                 <!-- https://startbootstrap.com/solution/contact-forms-->
                                 <!-- to get an API token!-->
                                 <form id="contactForm" data-sb-form-api-token="API_TOKEN">
+                                      <!-- ID input-->
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="id" type="text" placeholder="Enter your ID..." data-sb-validations="required" />
+                                        <label for="id">ID</label>
+                                        <div class="invalid-feedback" data-sb-feedback="id:required">A ID is required.</div>
+                                    </div>
                                     <!-- Name input-->
                                     <div class="form-floating mb-3">
                                         <input class="form-control" id="name" type="text" placeholder="Enter your name..." data-sb-validations="required" />
@@ -73,31 +79,73 @@
                                         <label for="phone">Phone number</label>
                                         <div class="invalid-feedback" data-sb-feedback="phone:required">A phone number is required.</div>
                                     </div>
-                                    <!-- Message input-->
+                                    <!-- Password input -->
                                     <div class="form-floating mb-3">
-                                        <textarea class="form-control" id="message" type="text" placeholder="Enter your message here..." style="height: 10rem" data-sb-validations="required"></textarea>
-                                        <label for="message">Message</label>
-                                        <div class="invalid-feedback" data-sb-feedback="message:required">A message is required.</div>
+                                        <input class="form-control" id="password" type="password" placeholder="Password" data-sb-validations="required" />
+                                        <label for="password">Password</label>
+                                        <div class="invalid-feedback" data-sb-feedback="password:required">A password is required.</div>
                                     </div>
-                                    <!-- Submit success message-->
-                                    <!---->
-                                    <!-- This is what your users will see when the form-->
-                                    <!-- has successfully submitted-->
-                                    <div class="d-none" id="submitSuccessMessage">
-                                        <div class="text-center mb-3">
-                                            <div class="fw-bolder">Form submission successful!</div>
-                                            To activate this form, sign up at
-                                            <br />
-                                            <a href="https://startbootstrap.com/solution/contact-forms">https://startbootstrap.com/solution/contact-forms</a>
+
+                                    <!-- Show/Hide password toggle -->
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="showPassword" onclick="togglePassword()" />
+                                        <label class="form-check-label" for="showPassword">Show Password</label>
+                                    </div>
+                                    <script>
+                                        function togglePassword() {
+                                            const passwordInput = document.getElementById("password");
+                                            const showPasswordCheckbox = document.getElementById("showPassword");
+                                            
+                                            // Change the input type based on checkbox state
+                                            passwordInput.type = showPasswordCheckbox.checked ? "text" : "password";
+                                        }
+                                    </script>
+
+                                    <!-- Date of Birth input -->
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="dob" type="date" placeholder="Date of Birth" data-sb-validations="required" />
+                                        <label for="dob">Date of Birth</label>
+                                        <div class="invalid-feedback" data-sb-feedback="dob:required">A date of birth is required.</div>
+                                    </div>
+
+                                    <!-- Gender input -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Gender</label>
+                                        <div>
+                                            <input type="radio" id="male" name="gender" value="male" required />
+                                            <label for="male">Male</label>
                                         </div>
+                                        <div>
+                                            <input type="radio" id="female" name="gender" value="female" required />
+                                            <label for="female">Female</label>
+                                        </div>
+                                        <div class="invalid-feedback" data-sb-feedback="gender:required">Please select a gender.</div>
                                     </div>
-                                    <!-- Submit error message-->
-                                    <!---->
-                                    <!-- This is what your users will see when there is-->
-                                    <!-- an error submitting the form-->
-                                    <div class="d-none" id="submitErrorMessage"><div class="text-center text-danger mb-3">Error sending message!</div></div>
+
+                                    <!-- Age input -->
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="age" type="number" placeholder="Age" min="0" data-sb-validations="required" />
+                                        <label for="age">Age</label>
+                                        <div class="invalid-feedback" data-sb-feedback="age:required">An age is required.</div>
+                                    </div>
+
+                                    <!-- Height input -->
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="height" type="number" placeholder="Height (m)" min="0" step="0.01" data-sb-validations="required" />
+                                        <label for="height">Height (m)</label>
+                                        <div class="invalid-feedback" data-sb-feedback="height:required">A height is required.</div>
+                                    </div>
+
+                                    <!-- Weight input -->
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="weight" type="number" placeholder="Weight (kg)" min="0" data-sb-validations="required" />
+                                        <label for="weight">Weight (kg)</label>
+                                        <div class="invalid-feedback" data-sb-feedback="weight:required">A weight is required.</div>
+                                    </div>
+                                  
                                     <!-- Submit Button-->
                                     <div class="d-grid"><button class="btn btn-primary btn-lg disabled" id="submitButton" type="submit">Submit</button></div>
+
                                 </form>
                             </div>
                         </div>
@@ -109,14 +157,6 @@
         <footer class="bg-white py-4 mt-auto">
             <div class="container px-5">
                 <div class="row align-items-center justify-content-between flex-column flex-sm-row">
-                    <div class="col-auto"><div class="small m-0">Copyright &copy; Your Website 2023</div></div>
-                    <div class="col-auto">
-                        <a class="small" href="#!">Privacy</a>
-                        <span class="mx-1">&middot;</span>
-                        <a class="small" href="#!">Terms</a>
-                        <span class="mx-1">&middot;</span>
-                        <a class="small" href="#!">Contact</a>
-                    </div>
                 </div>
             </div>
         </footer>
@@ -129,5 +169,22 @@
         <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
         <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
         <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+
+            
+          <!-- Footer-->
+             <footer class="bg-white py-4 mt-auto">
+                <div class="container px-5">
+                    <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+                            <div class="col-auto"><div class="small m-0"> &copy; SugarSnap 2024</div></div>
+                             <div class="col-auto">
+                                <a class="small" href="#!">Privacy</a>
+                                <span class="mx-1">&middot;</span>
+                                <a class="small" href="#!">Terms</a>
+                                <span class="mx-1">&middot;</span>
+                                <a class="small" href="#!">Contact</a>
+                            </div>
+                        </div>
+                    </div>
+            </footer>
     </body>
 </html>
