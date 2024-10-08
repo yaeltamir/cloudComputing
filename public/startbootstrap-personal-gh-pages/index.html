@@ -22,7 +22,7 @@
             <!-- Navigation-->
             <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
                 <div class="container px-5">
-                    <a class="navbar-brand" href="index.html"><span class="fw-bolder text-primary">Start</span></a>
+                    <a class="navbar-brand" href="index.html"><span class="fw-bolder text-primary">Home</span></a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
@@ -45,9 +45,41 @@
                                 <div class="fs-3 fw-light text-muted">I can help your business to</div>
                                 <h1 class="display-3 fw-bolder mb-5"><span class="text-gradient d-inline">Get online and grow fast</span></h1>
                                 <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xxl-start mb-3">
-                                    <a class="btn btn-primary btn-lg px-5 py-3 me-sm-3 fs-6 fw-bolder" href="index.html">Sign In</a>
+                                    <a class="btn btn-primary btn-lg px-5 py-3 me-sm-3 fs-6 fw-bolder" href="#" id="signInBtn">Sign In</a>
                                     <a class="btn btn-outline-dark btn-lg px-5 py-3 fs-6 fw-bolder" href="contact.html">Sign Up</a>
                                 </div>
+                                <!--קוד שהוספתי:-->
+                                <!-- טופס ההתחברות (מוסתר בהתחלה) -->
+                                <div id="loginForm" style="display: none; margin-top: 20px;">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="username" class="form-label">Username</label>
+                                            <input type="text" class="form-control" id="username" placeholder="Enter your username">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="password" class="form-label">Password</label>
+                                            <input type="password" class="form-control" id="password" placeholder="Enter your password">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-lg px-5 py-3 me-sm-3 fs-6 fw-bolder">Login</button>
+                                    </form>
+                                </div>
+                            <!-- סקריפט להצגת והסתרת הטופס -->
+                            <script>
+                            document.getElementById("signInBtn").addEventListener("click", function(event) 
+                            {
+                               event.preventDefault(); // מונע רענון דף
+                               var form = document.getElementById("loginForm");
+                               if (form.style.display === "none") 
+                               {
+                                   form.style.display = "block"; // הופך את הטופס לנראה
+                               } 
+                               else 
+                               {
+                                   form.style.display = "none"; // מסתיר את הטופס
+                                }
+                            });
+                            </script>
+                            <!--עד כאן קוד שהוספתי-->
                             </div>
                         </div>
                         <div class="col-xxl-7">
