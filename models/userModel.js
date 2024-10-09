@@ -39,7 +39,6 @@ async function saveUser(userData) {
     }
 }
 
-module.exports = { saveUser };
 
 // פונקציה שמבצעת אימות של משתמש מול מסד הנתונים
 const authenticateUser = async (username, password) => {
@@ -71,5 +70,5 @@ const authenticateUser = async (username, password) => {
     }
 };
 
-module.exports = { authenticateUser };
+module.exports = { saveUser,authenticateUser };
 
