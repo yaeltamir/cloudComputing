@@ -4,6 +4,7 @@ const port = 3000;
 
 
 const userRoutes = require('./routes/user'); // הנתיב של ה-router שלך
+
 // Middleware כדי לנתח בקשות POST מ-URL-encoded טפסים
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); // לפרש בקשות JSON מהטפסים
@@ -37,7 +38,7 @@ app.get('/resume', (req, res) => {
 
 // הפעלת השרת
 app.listen(port, () => {
-  console.log(`App is running on http://localhost:${port}`);
+  console.log(`App is running on http://localhost:${port}/index`);
 });
 
 /*const sql = require('mssql');
@@ -88,5 +89,14 @@ async function connectToDatabase() {
 
 connectToDatabase();
 */
+
+
+
+
+// שימוש בנתיבים
+//app.use('/index', userRoutes); // ודא שהשורה הזו קיימת
+
+
+
 
 

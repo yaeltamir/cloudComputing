@@ -34,4 +34,25 @@ const registerUser = (req, res) => {
         });
 };
 
-module.exports = { registerUser };
+const { authenticateUser } = require('../models/userModel');
+
+// פונקציה שמטפלת בבקשה כאשר המשתמש לוחץ על כפתור ה-LOGIN
+const loginUser = async (req, res) => {
+    const { username, password } = req.body;//לבדוק שזה השמות הנכונים 
+
+    // ביצוע אימות דרך המודל
+    const result = await authenticateUser(username, password);
+        // כאשר משתמש נכשל בהתחברות, נוודא שנחזיר errorMessage
+        const errorMessage = result.success ? null : result.message;
+
+    if (result.success) {
+        // אם האימות הצליח, נציג את דף הבית המותאם למשתמש
+        res.render('home', { user: result.userData });
+    } else {
+        // אם האימות נכשל, נציג את דף הכניסה עם הודעת שגיאה
+        res.render('index', { errorMessage: errorMessage || '' }); // ודא שהמשתנה קיים
+    }
+};
+
+module.exports = { registerUser, loginUser };
+

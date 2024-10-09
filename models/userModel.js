@@ -40,3 +40,36 @@ async function saveUser(userData) {
 }
 
 module.exports = { saveUser };
+
+// פונקציה שמבצעת אימות של משתמש מול מסד הנתונים
+const authenticateUser = async (username, password) => {
+    try {
+        // חיבור למסד הנתונים
+        let pool = await sql.connect(config);
+        
+        // שאילתת SQL לבדוק אם שם המשתמש קיים
+        let userCheck = await pool.request()
+            .input('username', sql.NVarChar, username)
+            .query('SELECT * FROM USERS WHERE id = @username');
+
+        // אם לא נמצא משתמש עם שם המשתמש
+        if (userCheck.recordset.length === 0) {
+            return { success: false, message: 'User not found' }; // שגיאה - לא נמצא משתמש
+        }
+
+        // אם נמצא, נבדוק אם הסיסמה נכונה
+        const user = userCheck.recordset[0]; // קבלת הרשומה של המשתמש
+        if (user.password !== password) {
+            return { success: false, message: 'Incorrect password' }; // שגיאה - סיסמה שגויה
+        }
+
+        // אם הכל תקין, מחזירים הצלחה
+        return { success: true, userData: user }; // הצלחה
+    } catch (error) {
+        console.error('Error authenticating user:', error);
+        return { success: false, message: 'Server error' }; // שגיאה כללית
+    }
+};
+
+module.exports = { authenticateUser };
+

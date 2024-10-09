@@ -85,6 +85,10 @@
 *::after {
   box-sizing: border-box;
 }
+/* 
+.error {
+  color: red;
+  margin-top: 10px; */
 
 @media (prefers-reduced-motion: no-preference) {
   :root {
@@ -11738,4 +11742,6 @@ html {
     width: 1.5vw;
     left: -2vw;
   }
+
+
 }
