@@ -36,6 +36,19 @@ app.get('/resume', (req, res) => {
   res.render('resume');
 });
 
+ app.get('/home', (req, res) => {
+   res.render('home');
+ });
+
+app.get('/historyGraph', (req, res) => {
+  res.render('historyGraph');
+});
+
+app.get('/updateDetails', (req, res) => {
+  res.render('updateDetails');
+});
+
+
 // הפעלת השרת
 app.listen(port, () => {
   console.log(`App is running on http://localhost:${port}/index`);
