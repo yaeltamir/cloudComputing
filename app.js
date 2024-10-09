@@ -2,6 +2,13 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
+
+const userRoutes = require('./routes/user'); // הנתיב של ה-router שלך
+// Middleware כדי לנתח בקשות POST מ-URL-encoded טפסים
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); // לפרש בקשות JSON מהטפסים
+app.use('/', userRoutes); // השתמש ב-router שיצרת
+
 // הגדרת מנוע התבניות EJS
 app.set('view engine', 'ejs');
 
@@ -33,7 +40,7 @@ app.listen(port, () => {
   console.log(`App is running on http://localhost:${port}`);
 });
 
-const sql = require('mssql');
+/*const sql = require('mssql');
 
 const config = {
     user: 'yael_SQLLogin_1', // שם המשתמש שלך
@@ -80,5 +87,6 @@ async function connectToDatabase() {
 }
 
 connectToDatabase();
+*/
 
 
