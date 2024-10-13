@@ -70,5 +70,39 @@ const authenticateUser = async (username, password) => {
     }
 };
 
-module.exports = { saveUser,authenticateUser };
+
+//Update user details
+async function updateUser(userData) {
+
+    try {
+        const pool = await sql.connect(config);
+        console.log('Connected to the database!');
+
+        const query = 'UPDATE users SET name = @name, email = @email, password = @password, birthday = @birthday, gender = @gender, age = @age, height = @height, weight = @weight WHERE id = @id';
+
+
+        
+        const request = pool.request();
+        request.input('id', sql.Int, userData.id);
+        request.input('name', sql.VarChar, userData.name);
+        request.input('email', sql.VarChar, userData.email);
+        request.input('password', sql.VarChar, userData.password);
+        request.input('birthday', sql.Date, userData.birthday);
+        request.input('gender', sql.VarChar, userData.gender);
+        request.input('age', sql.Int, userData.age);
+        request.input('height', sql.Decimal(5, 2), userData.height);
+        request.input('weight', sql.Decimal(5, 2), userData.weight);
+
+        
+
+        const result = await request.query(query);
+        console.log('Updated user:', result.rowsAffected);
+    } catch (err) {
+        console.error('Database Updated failed:', err);
+    } finally {
+        sql.close();
+    }
+}
+
+module.exports = { saveUser, updateUser, authenticateUser };
 

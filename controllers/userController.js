@@ -1,6 +1,7 @@
 const sql = require('mssql');
 const userModel = require('../models/userModel'); // חיבור ל-Model שמטפל בבסיס הנתונים
 
+
 // פונקציה שמטפלת בהרשמה ושולחת את הנתונים ל-Model
 const registerUser = (req, res) => {
     // קבלת הנתונים מהטופס שנשלחו דרך ה-POST
@@ -54,5 +55,37 @@ const loginUser = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser };
+//module.exports = { registerUser, loginUser };
 
+//Update user detail
+
+const updateUser = (req, res) => {
+    const { id, name, email, password, dob, gender, age, height, weight } = req.body;
+
+    // יצירת אובייקט שמכיל את הנתונים החדשים
+    const updatedUserData = {
+        id: parseInt(id),
+        name: name,
+        email: email,
+        password: password,
+        birthday: dob,
+        gender: gender,
+        age: parseInt(age),
+        height: parseFloat(height),
+        weight: parseFloat(weight)
+    };
+
+    console.log('Update Data:', updatedUserData);
+
+    // עדכון הנתונים במסד הנתונים באמצעות המודל
+    userModel.updateUser(updatedUserData)
+        .then(() => {
+            res.send('User updated successfully!');
+        })
+        .catch((err) => {
+            console.error('Error updating user:', err.message);
+            res.status(500).send('Error updating user.');
+        });
+};
+
+module.exports = { registerUser, loginUser, updateUser };

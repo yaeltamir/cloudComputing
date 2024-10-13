@@ -8,6 +8,9 @@ router.post('/register', userController.registerUser);
 // נתיב POST לכניסה
 router.post('/login', userController.loginUser); // ודא שהפונקציה לא undefined
 
+// נתיב לעדכון משתמש
+router.post('/update', userController.updateUser); // כאן הוספנו את הנתיב שיטפל בעדכון
+
 module.exports = router;
 
 

@@ -1,48 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>SugarSnap</title>
-    <!-- Favicon-->
+    <title>Update Details - SugarSnap</title>
+    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="assets/logo3.png" />
-    <!-- Custom Google font-->
+    <!-- Custom Google font -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
-        rel="stylesheet" />
-    <!-- Bootstrap icons-->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
+    <!-- Bootstrap icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet" />
-    <!-- Core theme CSS (includes Bootstrap)-->
+    <!-- Core theme CSS -->
     <link href="css/styles.css" rel="stylesheet" />
 </head>
-
 <body class="d-flex flex-column h-100">
     <main class="flex-shrink-0">
-        <!-- Navigation-->
+        <!-- Navigation -->
         <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
             <div class="container px-5">
-                <a class="navbar-brand" href="index"><span class="fw-bolder text-primary">Home</span></a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation"><span
-                        class="navbar-toggler-icon"></span></button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
-                        <li class="nav-item"><a class="nav-link" href="home">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="resume">Meals</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="home" id="userLink">
+                                <img id="genderIcon" src="" alt="Gender Icon" style="width: 25px; height: 25px; margin-right: 5px;">
+                                <span id="userName"></span>
+                            </a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="meals">Meals</a></li>
                         <li class="nav-item"><a class="nav-link" href="historyGraph">History</a></li>
-                        <li class="nav-item"><a class="nav-link" href="updateDetails">Update</a></li>
-                        <li class="nav-item"><a class="nav-link" href="projects">Messages</a></li>                       
+                        <li class="nav-item"><a class="nav-link active" href="updateDetails">Update</a></li>
+                        <li class="nav-item"><a class="nav-link" href="projects">Messages</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
+
+        <!-- Update form -->
+        <section class="py-5">
+            <div class="container px-5">
+                <form id="updateForm" action="/update" method="post">
+                    <div class="bg-light rounded-4 py-5 px-4 px-md-5">
+                        <div class="text-center mb-5">
+                            <h1 class="fw-bolder">Update Your Details</h1>
+                        </div>
+                        <div class="row gx-5 justify-content-center">
+                            <div class="col-lg-8 col-xl-6">
+                                <!-- ID input -->
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="id" name="id" type="text" placeholder="Enter your ID..." required />
+                                    <label for="id">ID</label>
+                                </div>
+                                <!-- Name input -->
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="name" name="name" type="text" placeholder="Enter your name..." required />
+                                    <label for="name">Full Name</label>
+                                </div>
+                                <!-- Email input -->
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="email" name="email" type="email" placeholder="name@example.com" required />
+                                    <label for="email">Email Address</label>
+                                </div>
+
+                                <!-- Birthday input -->
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="birthday" name="dob" type="date" placeholder="Enter your birthday..." required />
+                                    <label for="birthday">Date of Birth</label>
+                                </div>
+
+                                <!-- Gender input (radio buttons for Male and Female) -->
+                                <div class="mb-3">
+                                    <label for="gender">Gender</label><br />
+                                    <input type="radio" id="male" name="gender" value="male" required />
+                                    <label for="male">Male</label><br />
+                                    <input type="radio" id="female" name="gender" value="female" required />
+                                    <label for="female">Female</label>
+                                </div>
+
+                                 <!-- Password input -->
+                                 <div class="form-floating mb-3">
+                                    <input class="form-control" id="password" name="password" type="password" placeholder="Password" 
+                                        pattern=".{6,8}" 
+                                        title="Password must be 6-8 characters."
+                                        oninput="checkPasswordLength()" 
+                                        required />
+                                    <label for="password">Password</label>
+                                    <div class="invalid-feedback" data-sb-feedback="password:required">A password is required.</div>
+                                    <!-- כוכבית אדומה והערה עם גודל פונט קטן -->
+                                    <span id="password-error" style="color: red; display: none; font-size: 12px;">
+                                        * Password must be 6-8 characters.
+                                    </span>
+                                </div>
+
+                                <script>
+                                function checkPasswordLength() {
+                                    const passwordInput = document.getElementById('password');
+                                    const errorSpan = document.getElementById('password-error');
+                                    
+                                    // בדיקת תנאים - אורך הסיסמה בין 6 ל-8 תווים
+                                    if (passwordInput.value.length < 6 || passwordInput.value.length > 8) {
+                                        errorSpan.style.display = 'inline';  // הצגת הכוכבית האדומה עם ההערה
+                                    } else {
+                                        errorSpan.style.display = 'none';    // הסתרת הכוכבית וההערה אם התנאים תקינים
+                                    }
+                                }
+                                </script>
+
+                                <!-- Height input -->
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="height" name="height" type="number" step="0.01" placeholder="Enter your height..." required />
+                                    <label for="height">Height (in meters)</label>
+                                </div>
+
+                                <!-- Weight input -->
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="weight" name="weight" type="number" step="0.01" placeholder="Enter your weight..." required />
+                                    <label for="weight">Weight (in kilograms)</label>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="d-grid">
+                                    <button class="btn btn-primary btn-lg" id="submitButton" type="submit">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
     </main>
+    <!-- Footer -->
+    <footer class="bg-white py-4 mt-auto">
+        <div class="container px-5">
+            <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+                <div class="col-auto"><div class="small m-0"> &copy; SugarSnap 2024</div></div>
+                <div class="col-auto">
+                    <a class="small" href="#!">Privacy</a>
+                    <span class="mx-1">&middot;</span>
+                    <a class="small" href="#!">Terms</a>
+                    <span class="mx-1">&middot;</span>
+                    <a class="small" href="#!">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Bootstrap core JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Fetch user data and update UI
+        async function fetchUserData() {
+            try {
+                const response = await fetch('/getUserData'); // Endpoint to get user data
+                const data = await response.json();
+
+                // Populate the form fields with user data
+                document.getElementById('id').value = data.id;
+                document.getElementById('name').value = data.name;
+                document.getElementById('email').value = data.email;
+
+                // Set user name
+                document.getElementById('userName').innerText = data.name;
+
+                // Set gender icon
+                const genderIcon = document.getElementById('genderIcon');
+                if (data.gender === 'male') {
+                    genderIcon.src = 'https://cdn-icons-png.flaticon.com/512/522/522297.png';
+                } else if (data.gender === 'female') {
+                    genderIcon.src = 'https://cdn-icons-png.flaticon.com/512/2342/2342011.png';
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        }
+
+        // Call the function to fetch user data on page load
+        fetchUserData();
+    </script>
 </body>
 </html>
-  

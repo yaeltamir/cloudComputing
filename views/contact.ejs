@@ -22,7 +22,6 @@
             <!-- Navigation-->
             <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
                 <div class="container px-5">
-                    <a class="navbar-brand" href="index"><span class="fw-bolder text-primary">Home</span></a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
@@ -72,18 +71,35 @@
                                         <div class="invalid-feedback" data-sb-feedback="email:required">An email is required.</div>
                                         <div class="invalid-feedback" data-sb-feedback="email:email">Email is not valid.</div>
                                     </div>
-                                    <!-- Phone number input-->
+            
+                                     <!-- Password input -->
                                     <div class="form-floating mb-3">
-                                        <input class="form-control" id="phone" name="phone" type="tel" placeholder="(123) 456-7890" data-sb-validations="required" />
-                                        <label for="phone">Phone number</label>
-                                        <div class="invalid-feedback" data-sb-feedback="phone:required">A phone number is required.</div>
-                                    </div>
-                                    <!-- Password input -->
-                                    <div class="form-floating mb-3">
-                                        <input class="form-control" id="password" name="password" type="password" placeholder="Password" data-sb-validations="required" />
+                                        <input class="form-control" id="password" name="password" type="password" placeholder="Password" 
+                                            pattern=".{6,8}" 
+                                            title="Password must be 6-8 characters."
+                                            oninput="checkPasswordLength()" 
+                                            required />
                                         <label for="password">Password</label>
                                         <div class="invalid-feedback" data-sb-feedback="password:required">A password is required.</div>
+                                        <!-- כוכבית אדומה והערה עם גודל פונט קטן -->
+                                        <span id="password-error" style="color: red; display: none; font-size: 12px;">
+                                            * Password must be 6-8 characters.
+                                        </span>
                                     </div>
+
+                                    <script>
+                                    function checkPasswordLength() {
+                                        const passwordInput = document.getElementById('password');
+                                        const errorSpan = document.getElementById('password-error');
+                                        
+                                        // בדיקת תנאים - אורך הסיסמה בין 6 ל-8 תווים
+                                        if (passwordInput.value.length < 6 || passwordInput.value.length > 8) {
+                                            errorSpan.style.display = 'inline';  // הצגת הכוכבית האדומה עם ההערה
+                                        } else {
+                                            errorSpan.style.display = 'none';    // הסתרת הכוכבית וההערה אם התנאים תקינים
+                                        }
+                                    }
+                                    </script>
 
                                     <!-- Show/Hide password toggle -->
                                     <div class="form-check mb-3">
@@ -107,26 +123,44 @@
                                         <div class="invalid-feedback" data-sb-feedback="dob:required">A date of birth is required.</div>
                                     </div>
 
-                                    <!-- Gender input -->
+                                  
+                                    <!-- Gender input with icons -->
                                     <div class="mb-3">
-                                        <label class="form-label">Gender</label>
-                                        <div>
-                                            <input type="radio" id="male" name="gender" value="male" required />
-                                            <label for="male">Male</label>
+                                        <label class="form-label">Gender:</label>
+                                        <div style="display: flex; gap: 20px;">
+                                            <!-- Male option -->
+                                            <div>
+                                                <input type="radio" id="male" name="gender" value="male" required style="display: none;" />
+                                                <label for="male" style="cursor: pointer;">
+                                                    <img src="https://cdn-icons-png.flaticon.com/512/522/522297.png" alt="Male" id="male-icon" style="width: 50px; height: 50px;">
+                                                </label>
+                                            </div>
+
+                                            <!-- Female option -->
+                                            <div>
+                                                <input type="radio" id="female" name="gender" value="female" required style="display: none;" />
+                                                <label for="female" style="cursor: pointer;">
+                                                    <img src="https://cdn-icons-png.flaticon.com/512/2342/2342011.png" alt="Female" id="female-icon" style="width: 50px; height: 50px;">
+                                                </label>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <input type="radio" id="female" name="gender" value="female" required />
-                                            <label for="female">Female</label>
-                                        </div>
+
                                         <div class="invalid-feedback" data-sb-feedback="gender:required">Please select a gender.</div>
                                     </div>
 
-                                    <!-- Age input -->
-                                    <div class="form-floating mb-3">
-                                        <input class="form-control" id="age" name="age" type="number" placeholder="Age" min="0" data-sb-validations="required" />
-                                        <label for="age">Age</label>
-                                        <div class="invalid-feedback" data-sb-feedback="age:required">An age is required.</div>
-                                    </div>
+                                    <script>
+                                        // Icons' border
+                                        document.querySelectorAll('input[name="gender"]').forEach((input) => {
+                                            input.addEventListener('change', function() {
+                                                if (this.checked) {
+                                                    document.getElementById('male-icon').style.border = this.value === 'male' ? '2px solid lightblue' : 'none';
+                                                    document.getElementById('female-icon').style.border = this.value === 'female' ? '2px solid pink' : 'none';
+                                                }
+                                            });
+                                        });
+                                    </script>
+
+
 
                                     <!-- Height input -->
                                     <div class="form-floating mb-3">
