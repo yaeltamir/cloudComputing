@@ -17,9 +17,13 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
 // ניתוב לדף הבית - index.ejs
-app.get('/index', (req, res) => {
-  res.render('index');
-});
+
+const render_index= (req, res) => {res.render('index')};
+
+app.get('/index',render_index);
+
+// ניתוב לדף הבית - index.ejs
+app.get('/', render_index)
 
 // ניתוב לדף ה-contact - contact.ejs
 app.get('/contact', (req, res) => {
@@ -51,7 +55,7 @@ app.get('/updateDetails', (req, res) => {
 
 // הפעלת השרת
 app.listen(port, () => {
-  console.log(`App is running on http://localhost:${port}/index`);
+  console.log(`App is running on http://localhost:${port}`);
 });
 
 /*const sql = require('mssql');

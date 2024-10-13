@@ -5,7 +5,7 @@ const userModel = require('../models/userModel'); // חיבור ל-Model שמט�
 // פונקציה שמטפלת בהרשמה ושולחת את הנתונים ל-Model
 const registerUser = (req, res) => {
     // קבלת הנתונים מהטופס שנשלחו דרך ה-POST
-    const { id, name, email, password, dob, gender, age, height, weight } = req.body;
+    const { id, name, email, password, dob, gender,height, weight } = req.body;
 
     console.log('ID:', id); // הדפס את ה-ID כדי לבדוק אם הוא מגיע כראוי
 
@@ -17,7 +17,7 @@ const registerUser = (req, res) => {
         password: password,
         birthday: dob,
         gender: gender,
-        age: parseInt(age),
+        age: calculateAge(dob),
         height: parseFloat(height),
         weight: parseFloat(weight)
     };
@@ -34,6 +34,23 @@ const registerUser = (req, res) => {
             res.status(500).send('Error registering user.'); // שגיאה כללית
         });
 };
+
+function calculateAge(birthDate) {
+    const today = new Date();
+    const birth = new Date(birthDate);
+
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    const dayDiff = today.getDate() - birth.getDate();
+
+    // אם יום הולדת עדיין לא עבר השנה, יש להפחית שנה אחת
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
+    }
+
+    return age;
+}
+
 
 const { authenticateUser } = require('../models/userModel');
 
