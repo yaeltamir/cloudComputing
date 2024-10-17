@@ -10,7 +10,7 @@ const userRoutes = require('./routes/user'); // הנתיב של ה-router שלך
 //ניסיוני
 app.use(session({
   secret: 'your-secret-key', // השתמש במפתח סודי ליצירת סשן
-  resave: false,
+  resave: true,
   saveUninitialized: true,
   cookie: { secure: false } // אם אתה עובד על HTTPS, שים את secure ל-true
 })); //עד פה
@@ -60,7 +60,11 @@ app.get('/historyGraph', (req, res) => {
 });
 
 app.get('/updateDetails', (req, res) => {
-  res.render('updateDetails');
+  const user = req.session.user; // מקבל את האובייקט של המשתמש מה-Session
+  //console.log('Session after login:', req.session);
+
+  
+  res.render('updateDetails', { userDetails: user });
 });
 
 

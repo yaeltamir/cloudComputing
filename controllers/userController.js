@@ -64,17 +64,18 @@ const loginUser = async (req, res) => {
 
     if (result.success) 
         {
-             // שמירת פרטי המשתמש בסשן
-        req.session.user = {
-            id: result.userData.id,
-            password: result.userData.password,
-            // כל שדה נוסף שתרצי לשמור
-             };
-             // הצגת session בלוגים כדי לבדוק
-            console.log('Session after login:', req.session);
-
+        //      // שמירת פרטי המשתמש בסשן
+        // req.session.user = {
+        //     id: result.userData.id,
+        //     password: result.userData.password,
+        //     // כל שדה נוסף שתרצי לשמור
+        //      };
+        //      // הצגת session בלוגים כדי לבדוק
+        //     console.log('Session after login:', req.session);
+        req.session.user = result.userData;
         // אם האימות הצליח, נציג את דף הבית המותאם למשתמש
         res.render('home', { user: result.userData });
+        
       } 
     else 
     {
