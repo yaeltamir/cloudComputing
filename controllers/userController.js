@@ -119,36 +119,36 @@ const updateUser = (req, res) => {
 };
 
 
-const getUserDetails = async (req, res) => {
-    console.log('getUserDetails called');
-    console.log('Session data:', req.session);
-    const { id, password } = req.session.user;
-    console.log(req.session.user);
+// const getUserDetails = async (req, res) => {
+//     console.log('getUserDetails called');
+//     console.log('Session data:', req.session);
+//     const { id, password } = req.session.user;
+//     console.log(req.session.user);
 
-    try {
-        const result = await userModel.getUserByUsernameAndPassword(id, password);
-        console.log(result); // בדקי אם יש תוצאה ממסד הנתונים
+//     try {
+//         const result = await userModel.getUserByUsernameAndPassword(id, password);
+//         console.log(result); // בדקי אם יש תוצאה ממסד הנתונים
 
-        if (!result) {
-            console.error('User not found or authentication failed');
-        }
+//         if (!result) {
+//             console.error('User not found or authentication failed');
+//         }
 
-        if (result) {
-            // רנדר את התבנית עם פרטי המשתמש
-            res.render('updateDetails', { user: result });
-        } 
-        else {
-            res.status(401).json({ message: 'Authentication failed' });
-        }
-    } catch (err) {
-        console.error('Error fetching user details:', err.message);
-        res.status(500).send('Error fetching user details.');
-    }
-};
-
-
-
-module.exports = { registerUser, loginUser, updateUser, getUserDetails };
+//         if (result) {
+//             // רנדר את התבנית עם פרטי המשתמש
+//             res.render('updateDetails', { user: result });
+//         } 
+//         else {
+//             res.status(401).json({ message: 'Authentication failed' });
+//         }
+//     } catch (err) {
+//         console.error('Error fetching user details:', err.message);
+//         res.status(500).send('Error fetching user details.');
+//     }
+// };
 
 
-//module.exports = { registerUser, loginUser, updateUser };
+
+//module.exports = { registerUser, loginUser, updateUser, getUserDetails };
+
+
+module.exports = { registerUser, loginUser, updateUser };

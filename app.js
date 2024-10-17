@@ -7,10 +7,10 @@ const port = 3000;
 const userRoutes = require('./routes/user'); // הנתיב של ה-router שלך
 
 
-//ניסיוני
+//חייב את זה כדי שהקטע עם הסשן יעבוד
 app.use(session({
   secret: 'your-secret-key', // השתמש במפתח סודי ליצירת סשן
-  resave: true,
+  resave: false,
   saveUninitialized: true,
   cookie: { secure: false } // אם אתה עובד על HTTPS, שים את secure ל-true
 })); //עד פה

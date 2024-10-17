@@ -12,13 +12,13 @@ router.post('/login', userController.loginUser); // ודא שהפונקציה ל
 router.post('/update', userController.updateUser); // כאן הוספנו את הנתיב שיטפל בעדכון
 
 // נתיב לקבלת פרטי משתמש לפי שם משתמש וסיסמא
-router.post('/userDetails', userController.getUserDetails);
+//router.post('/userDetails', userController.getUserDetails);
 
 
-router.post('/userDetails', (req, res) => {
-    console.log('Route /userDetails triggered');
-    res.send('Route works');
-});
+// router.post('/userDetails', (req, res) => {
+//     console.log('Route /userDetails triggered');
+//     res.send('Route works');
+// });
 
 
 
