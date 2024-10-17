@@ -1,9 +1,20 @@
 const express = require('express');
+const session = require('express-session');  //נסיוני
 const app = express();
 const port = 3000;
 
 
 const userRoutes = require('./routes/user'); // הנתיב של ה-router שלך
+
+
+//ניסיוני
+app.use(session({
+  secret: 'your-secret-key', // השתמש במפתח סודי ליצירת סשן
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // אם אתה עובד על HTTPS, שים את secure ל-true
+})); //עד פה
+
 
 // Middleware כדי לנתח בקשות POST מ-URL-encoded טפסים
 app.use(express.urlencoded({ extended: true }));
@@ -57,6 +68,7 @@ app.get('/updateDetails', (req, res) => {
 app.listen(port, () => {
   console.log(`App is running on http://localhost:${port}`);
 });
+
 
 /*const sql = require('mssql');
 

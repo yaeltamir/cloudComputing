@@ -51,7 +51,6 @@ function calculateAge(birthDate) {
     return age;
 }
 
-
 const { authenticateUser } = require('../models/userModel');
 
 // פונקציה שמטפלת בבקשה כאשר המשתמש לוחץ על כפתור ה-LOGIN
@@ -63,10 +62,22 @@ const loginUser = async (req, res) => {
         // כאשר משתמש נכשל בהתחברות, נוודא שנחזיר errorMessage
         const errorMessage = result.success ? null : result.message;
 
-    if (result.success) {
+    if (result.success) 
+        {
+             // שמירת פרטי המשתמש בסשן
+        req.session.user = {
+            id: result.userData.id,
+            password: result.userData.password,
+            // כל שדה נוסף שתרצי לשמור
+             };
+             // הצגת session בלוגים כדי לבדוק
+            console.log('Session after login:', req.session);
+
         // אם האימות הצליח, נציג את דף הבית המותאם למשתמש
         res.render('home', { user: result.userData });
-    } else {
+      } 
+    else 
+    {
         // אם האימות נכשל, נציג את דף הכניסה עם הודעת שגיאה
         res.render('index', { errorMessage: errorMessage || '' }); // ודא שהמשתנה קיים
     }
@@ -77,6 +88,7 @@ const loginUser = async (req, res) => {
 //Update user detail
 
 const updateUser = (req, res) => {
+    console.log('getUserDetails called2');
     const { id, name, email, password, dob, gender, age, height, weight } = req.body;
 
     // יצירת אובייקט שמכיל את הנתונים החדשים
@@ -105,4 +117,37 @@ const updateUser = (req, res) => {
         });
 };
 
-module.exports = { registerUser, loginUser, updateUser };
+
+const getUserDetails = async (req, res) => {
+    console.log('getUserDetails called');
+    console.log('Session data:', req.session);
+    const { id, password } = req.session.user;
+    console.log(req.session.user);
+
+    try {
+        const result = await userModel.getUserByUsernameAndPassword(id, password);
+        console.log(result); // בדקי אם יש תוצאה ממסד הנתונים
+
+        if (!result) {
+            console.error('User not found or authentication failed');
+        }
+
+        if (result) {
+            // רנדר את התבנית עם פרטי המשתמש
+            res.render('updateDetails', { user: result });
+        } 
+        else {
+            res.status(401).json({ message: 'Authentication failed' });
+        }
+    } catch (err) {
+        console.error('Error fetching user details:', err.message);
+        res.status(500).send('Error fetching user details.');
+    }
+};
+
+
+
+module.exports = { registerUser, loginUser, updateUser, getUserDetails };
+
+
+//module.exports = { registerUser, loginUser, updateUser };

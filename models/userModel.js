@@ -80,8 +80,6 @@ async function updateUser(userData) {
 
         const query = 'UPDATE users SET name = @name, email = @email, password = @password, birthday = @birthday, gender = @gender, age = @age, height = @height, weight = @weight WHERE id = @id';
 
-
-        
         const request = pool.request();
         request.input('id', sql.Int, userData.id);
         request.input('name', sql.VarChar, userData.name);
@@ -93,8 +91,6 @@ async function updateUser(userData) {
         request.input('height', sql.Decimal(5, 2), userData.height);
         request.input('weight', sql.Decimal(5, 2), userData.weight);
 
-        
-
         const result = await request.query(query);
         console.log('Updated user:', result.rowsAffected);
     } catch (err) {
@@ -104,5 +100,39 @@ async function updateUser(userData) {
     }
 }
 
-module.exports = { saveUser, updateUser, authenticateUser };
+
+
+// פונקציה שמביאה פרטי משתמש לפי שם משתמש וסיסמא
+async function getUserByUsernameAndPassword(id, password) {
+    try {
+        const pool = await sql.connect(config); // יצירת חיבור למסד הנתונים
+        console.log('Connected to the database!');
+
+        // שליפת פרטי המשתמש לפי שם משתמש וסיסמא
+        const query = 'SELECT * FROM users WHERE id = @id AND password = @password';
+        const request = pool.request();
+        request.input('id', sql.NVarChar, id);
+        request.input('password', sql.NVarChar, password);
+
+        const result = await request.query(query);
+        
+        // בדיקה אם נמצא משתמש
+        if (result.recordset.length > 0) {
+            console.log(result.recordset[0]);
+            return result.recordset[0]; // החזרת פרטי המשתמש
+        } else {
+            return null; // אם לא נמצא משתמש
+        }
+    } catch (err) {
+        console.error('Error fetching user:', err);
+        throw err; // משליך את השגיאה כדי שה-Controller יוכל לטפל בה
+    } finally {
+        sql.close(); // סגירת חיבור למסד הנתונים
+    }
+}
+
+module.exports = { saveUser, updateUser, authenticateUser, getUserByUsernameAndPassword };
+
+
+//module.exports = { saveUser, updateUser, authenticateUser };
 

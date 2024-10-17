@@ -19,58 +19,59 @@
 </head>
 <body class="d-flex flex-column h-100">
     <main class="flex-shrink-0">
-        <!-- Navigation -->
+        <!-- Navigation
         <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
             <div class="container px-5">
+                <a class="navbar-brand" href="home"><span class="fw-bolder text-primary">Home</span></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
-                        <li class="nav-item">
-                            <a class="nav-link" href="home" id="userLink">
-                                <img id="genderIcon" src="" alt="Gender Icon" style="width: 25px; height: 25px; margin-right: 5px;">
-                                <span id="userName"></span>
-                            </a>
-                        </li>
-                        <li class="nav-item"><a class="nav-link" href="meals">Meals</a></li>
-                        <li class="nav-item"><a class="nav-link" href="historyGraph">History</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="updateDetails">Update</a></li>
-                        <li class="nav-item"><a class="nav-link" href="projects">Messages</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+                </button>-->
+                <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
+                    <div class="container px-5">
+                        <a class="navbar-brand" href="home"><span class="fw-bolder text-primary">Home</span></a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
+                                <li class="nav-item"><a class="nav-link" href="home">Home</a></li>
+                                <li class="nav-item"><a class="nav-link" href="resume">Meals</a></li>
+                                <li class="nav-item"><a class="nav-link" href="historyGraph">History</a></li>
+                                <li class="nav-item"><a class="nav-link" href="updateDetails">Update</a></li>
+                                <li class="nav-item"><a class="nav-link" href="projects">Messages</a></li> 
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
 
         <!-- Update form -->
         <section class="py-5">
             <div class="container px-5">
-                <form id="updateForm" action="/update" method="post">
+                <form id="updateForm" action="/userDetails"   method="post">  <!--action="/update"-->
                     <div class="bg-light rounded-4 py-5 px-4 px-md-5">
                         <div class="text-center mb-5">
                             <h1 class="fw-bolder">Update Your Details</h1>
                         </div>
+                        <% if (typeof user !== 'undefined') { %>
                         <div class="row gx-5 justify-content-center">
                             <div class="col-lg-8 col-xl-6">
                                 <!-- ID input -->
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" id="id" name="id" type="text" placeholder="Enter your ID..." required />
+                                    <input class="form-control" id="id" name="id" type="text" value="<%= user ? user.id : '' %>" required />
                                     <label for="id">ID</label>
                                 </div>
                                 <!-- Name input -->
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" id="name" name="name" type="text" placeholder="Enter your name..." required />
+                                    <input class="form-control" id="name" name="name" type="text" value="<%= user.name %>" required />
                                     <label for="name">Full Name</label>
                                 </div>
                                 <!-- Email input -->
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" id="email" name="email" type="email" placeholder="name@example.com" required />
+                                    <input class="form-control" id="email" name="email" type="email" value="<%= user.email %>" required />
                                     <label for="email">Email Address</label>
                                 </div>
 
                                 <!-- Birthday input -->
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" id="birthday" name="dob" type="date" placeholder="Enter your birthday..." required />
+                                    <input class="form-control" id="birthday" name="dob" type="date" value="<%= user.dob %>" required />
                                     <label for="birthday">Date of Birth</label>
                                 </div>
 
@@ -97,6 +98,7 @@
                                         * Password must be 6-8 characters.
                                     </span>
                                 </div>
+                               
 
                                 <script>
                                 function checkPasswordLength() {
@@ -114,13 +116,13 @@
 
                                 <!-- Height input -->
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" id="height" name="height" type="number" step="0.01" placeholder="Enter your height..." required />
+                                    <input class="form-control" id="height" name="height" type="number" step="0.01"  />
                                     <label for="height">Height (in meters)</label>
                                 </div>
 
                                 <!-- Weight input -->
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" id="weight" name="weight" type="number" step="0.01" placeholder="Enter your weight..." required />
+                                    <input class="form-control" id="weight" name="weight" type="number" step="0.01" required />
                                     <label for="weight">Weight (in kilograms)</label>
                                 </div>
 
@@ -129,6 +131,9 @@
                                     <button class="btn btn-primary btn-lg" id="submitButton" type="submit">Update</button>
                                 </div>
                             </div>
+                            <% } else { %>
+                                <p>No user data found</p>
+                            <% } %>
                         </div>
                     </div>
                 </form>
@@ -152,13 +157,18 @@
     </footer>
     <!-- Bootstrap core JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    
+
+    <!--    
     <script>
         // Fetch user data and update UI
         async function fetchUserData() {
             try {
-                const response = await fetch('/getUserData'); // Endpoint to get user data
+                const response = await fetch('/getUserDetails'); // Endpoint to get user data
+                if (!response.ok) throw new Error('Network response was not ok');
+                
                 const data = await response.json();
+
+                
 
                 // Populate the form fields with user data
                 document.getElementById('id').value = data.id;
@@ -170,7 +180,9 @@
 
                 // Set gender icon
                 const genderIcon = document.getElementById('genderIcon');
-                if (data.gender === 'male') {
+               
+                if (data.gender === 'male') 
+                {
                     genderIcon.src = 'https://cdn-icons-png.flaticon.com/512/522/522297.png';
                 } else if (data.gender === 'female') {
                     genderIcon.src = 'https://cdn-icons-png.flaticon.com/512/2342/2342011.png';
@@ -183,5 +195,6 @@
         // Call the function to fetch user data on page load
         fetchUserData();
     </script>
+    -->
 </body>
 </html>
