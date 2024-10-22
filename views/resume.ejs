@@ -48,25 +48,26 @@
     <div class="row gx-5 justify-content-center">
         <div class="col-lg-8 col-xl-6">
             <!-- Insert New Meal Form -->
-            <form>
+            <form action="/meals/add" method="POST">
+
                 <!-- Date Input -->
                 <div class="mb-4">
                     <label for="dateInput" class="form-label">Enter Date</label>
-                    <input type="date" class="form-control" id="dateInput" required>
+                    <input type="date" class="form-control" id="dateInput" name="date" required>
                 </div>
 
                 <!-- Time Input -->
                 <div class="mb-4">
                     <label for="timeInput" class="form-label">Enter Time</label>
-                    <input type="time" class="form-control" id="timeInput" required>
+                    <input type="time" class="form-control" id="timeInput" name="time" required>
                 </div>
 
                 <!-- Meal Type Input -->
                 <div class="mb-4">
                     <label for="mealType" class="form-label">Select Meal Type</label>
-                    <select class="form-select" id="mealType" required>
+                    <select class="form-select" id="mealType" name="kindOfMeal" required>
                         <option value="" selected disabled>Select Meal</option>
-                        <option value="breakfast">Breakfast</option>
+                        <option  value="breakfast">Breakfast</option>
                         <option value="lunch">Lunch</option>
                         <option value="dinner">Dinner</option>
                         <option value="snack">Other (Snack)</option>
@@ -77,7 +78,7 @@
 
  <div class="mb-4">
     <label for="imageUrlInput" class="form-label">Enter Image URL</label>
-    <input type="url" class="form-control" id="imageUrlInput" placeholder="Enter image URL" required>
+    <input type="url" class="form-control" id="imageUrlInput" name="imageUrl" placeholder="Enter image URL" required>
 </div>
 
 <!-- Display Image from URL -->
@@ -105,17 +106,25 @@
 <!-- Glucose Level Manual Input (Hidden initially) -->
 <div class="mb-4" id="manualGlucoseInput" style="display: none;">
     <label for="glucoseLevel" class="form-label">Enter Current Glucose Level (after 2 hours)</label>
-    <input type="number" class="form-control" id="glucoseLevel" placeholder="Enter your glucose level" required>
+    <input type="number" class="form-control" id="glucoseLevel" name="sugarLevel" placeholder="Enter your glucose level" required>
 </div>
 
 <!-- Action Button -->
 <div class="mb-4">
-    <button type="button" class="btn btn-primary" onclick="submitForm()">Submit Data</button>
+    <button type="submit" class="btn btn-primary" >Submit Data</button>
 </div>  
             </form>
+
+            
+            <% if (successMessage) { %>
+                <div class="alert alert-success">
+                    <p><%= successMessage %></p>
+                </div>
+            <% } %> 
         </div>
     </div>
 </div>
+
 
 <script>
     // Set the current date and time when the page loads

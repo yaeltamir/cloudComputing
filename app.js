@@ -5,7 +5,7 @@ const port = 3000;
 
 
 const userRoutes = require('./routes/user'); // הנתיב של ה-router שלך
-
+const mealsRoutes = require('./routes/meals');
 
 //חייב את זה כדי שהקטע עם הסשן יעבוד
 app.use(session({
@@ -20,6 +20,7 @@ app.use(session({
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); // לפרש בקשות JSON מהטפסים
 app.use('/', userRoutes); // השתמש ב-router שיצרת
+app.use('/meals', mealsRoutes);
 
 // הגדרת מנוע התבניות EJS
 app.set('view engine', 'ejs');
@@ -48,8 +49,15 @@ app.get('/projects', (req, res) => {
 
 // ניתוב לדף ה-resume - resume.ejs
 app.get('/resume', (req, res) => {
-  res.render('resume');
+  res.render('resume',{ successMessage: null });
 });
+
+// // Route for the resume page
+// app.get('/resume/:success', (req, res) => {
+//   const successMessage = req.params.success === 'true' ?  'the meal was added successfully!' : null;
+//   res.render('resume', { successMessage: successMessage });
+// });
+
 
  app.get('/home', (req, res) => {
    res.render('home');
