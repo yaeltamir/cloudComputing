@@ -37,9 +37,9 @@ app.get('/index',render_index);
 // ניתוב לדף הבית - index.ejs
 app.get('/', render_index)
 
-// ניתוב לדף ה-contact - contact.ejs
-app.get('/contact', (req, res) => {
-  res.render('contact');
+// ניתוב לדף ה-signUp - signUp.ejs
+app.get('/signUp', (req, res) => {
+  res.render('signUp');
 });
 
 // ניתוב לדף ה-projects - projects.ejs
@@ -47,15 +47,15 @@ app.get('/projects', (req, res) => {
   res.render('projects');
 });
 
-// ניתוב לדף ה-resume - resume.ejs
-app.get('/resume', (req, res) => {
-  res.render('resume',{ successMessage: null });
+// ניתוב לדף ה-meals - meals.ejs
+app.get('/meals', (req, res) => {
+  res.render('meals',{ successMessage: null });
 });
 
-// // Route for the resume page
-// app.get('/resume/:success', (req, res) => {
+// // Route for the meals page
+// app.get('/meals/:success', (req, res) => {
 //   const successMessage = req.params.success === 'true' ?  'the meal was added successfully!' : null;
-//   res.render('resume', { successMessage: successMessage });
+//   res.render('meals', { successMessage: successMessage });
 // });
 
 
