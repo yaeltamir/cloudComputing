@@ -140,7 +140,7 @@ async function addMeal(meal) {
             .input('Date', sql.Date, meal.date)
             .input('Time', sql.NVarChar, meal.time)
             .input('isHoliday', sql.NVarChar, holiday)
-            .input('Components', sql.NVarChar, meal.Components)
+            .input('Components', sql.NVarChar, JSON.stringify(meal.Components))
             .input('imageUrl', sql.NVarChar, meal.imageUrl)
             .input('sugarLevel', sql.Int, meal.sugarLevel)
             .query(`INSERT INTO meals (idUser, kindOfMeal, Date, Time, isHoliday, Components, imageUrl, sugarLevel) 
