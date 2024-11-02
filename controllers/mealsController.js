@@ -20,6 +20,8 @@ async function addMeal(req, res) {
         // הגדרת ערך רכיבי הארוחה לפי תוצאת הפונקציה
         const Components = await tagImage(imageUrl);
 
+         // חישוב כמות הסוכר הכוללת של כל הרכיבים
+         const totalSugar = await mealsModel.calculateTotalSugar(Components);
         // הצגת רכיבי הארוחה בקונסול כ-JSON מובנה
         //console.log(JSON.stringify(Components));
 
@@ -31,6 +33,7 @@ async function addMeal(req, res) {
             time,
             imageUrl,
             sugarLevel,
+            mealSugar: totalSugar,
             Components
         };
 
@@ -76,10 +79,6 @@ async function tagImage(url) {
         throw error;
     }
 }
-
-
-
-// module.exports = { tagImage };
 
 module.exports = { addMeal };
 
