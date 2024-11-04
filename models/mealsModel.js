@@ -159,6 +159,37 @@ async function addMeal(meal) {
     }
 }
 
+//חיזוי רמת סוכר
+const { DecisionTreeClassifier } = require('ml-cart');
+
+// דוגמה של נתוני אימון
+//לשנות את זה כך שזה יהיה על סמך הנתונים מ2 הטבלאות 
+const trainingData = [
+    { age: 30, weight: 70, exercise: 'yes', sugarLevel: 'normal' },
+    { age: 45, weight: 85, exercise: 'no', sugarLevel: 'high' },
+    { age: 50, weight: 90, exercise: 'no', sugarLevel: 'high' },
+    { age: 25, weight: 65, exercise: 'yes', sugarLevel: 'normal' },
+    // ... הוסף עוד נתוני אימון
+];
+
+//לשים לב שאם הנתון לא מספרי אז לעשות שזה יהיה 0 1 2  וכו
+// הכנת הנתונים לפורמט המתאים למודל
+const features = trainingData.map(item => [item.age, item.weight, item.exercise === 'yes' ? 1 : 0]);// הנתונים שעוזרים לחזות
+const labels = trainingData.map(item => item.sugarLevel); //מה שרוצים לחזות לפי הקיים
+
+// יצירת עץ החלטה ואימון המודל
+const classifier = new DecisionTreeClassifier();
+classifier.train(features, labels);
+
+// נתונים חדשים לחיזוי
+const newPatient = [40, 80, 0]; // 0 אומר שאין פעילות גופנית
+
+// חיזוי רמת הסוכר על סמך נתונים חדשים
+const prediction = classifier.predict([newPatient]);
+
+console.log(`Predicted sugar level: ${prediction[0]}`);
+
+
 module.exports = { checkHebcalDate, addMeal, calculateTotalSugar};
 
 
