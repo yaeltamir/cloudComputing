@@ -1,7 +1,34 @@
+//המודל אחראי על כל מה שקשור על תקשורת עם מסד הנתונים בפועל כמו עדכון והכנסה לטבלה או חישוב נתון כדי להכניס אותו לטבלה
 const sql = require('mssql');
-
 const axios = require('axios');
 
+// פונקציה לשליחת בקשה ל-Imagga עבור זיהוי פריטים בתמונה
+async function tagImage(url) {
+  try {
+      // הגדרת פרטי האימות
+      const auth = {
+          username: 'acc_3d6329443943c3f',
+          password: '331a767287a9f56dbeb1220036943268'
+      };
+      
+      // שליחת בקשת GET ל-Imagga
+      const response = await axios.get(`https://api.imagga.com/v2/tags`, {
+          params: {
+              image_url: url
+          },
+          auth: auth
+      });
+
+      // סינון התוצאות לרמת ביטחון של לפחות 97%
+      const tags = response.data.result.tags.filter(tag => tag.confidence >= 70);
+      
+      return tags.map(tag => ({ tag: tag.tag.en, confidence: tag.confidence }));
+
+  } catch (error) {
+      console.error('Error tagging image:', error.message);
+      throw error;
+  }
+}
 
 // פונקציה לשליפת כמות הסוכר של רכיב יחיד
 async function getSugarContent(ingredient) 
@@ -104,6 +131,13 @@ async function addMeal(meal) {
         console.log(holiday);
         // חיבור למסד הנתונים
         let pool = await sql.connect(config);
+
+                //להעביר שהמודל יחשב את זה
+        // הגדרת ערך רכיבי הארוחה לפי תוצאת הפונקציה
+        const components = await tagImage(imageUrl);
+
+         // חישוב כמות הסוכר הכוללת של כל הרכיבים
+         const totalSugar = await calculateTotalSugar(components);
         // הוספת רשומה לטבלה
         await pool.request()
             .input('idUser', sql.Int, meal.idUser)
@@ -111,10 +145,10 @@ async function addMeal(meal) {
             .input('Date', sql.Date, meal.date)
             .input('Time', sql.NVarChar, meal.time)
             .input('isHoliday', sql.NVarChar, holiday)
-            .input('Components', sql.NVarChar, JSON.stringify(meal.Components))
+            .input('Components', sql.NVarChar, JSON.stringify(components))
             .input('imageUrl', sql.NVarChar, meal.imageUrl)
             .input('sugarLevel', sql.Int, meal.sugarLevel)
-            .input('mealSugar', sql.Decimal(10, 2), meal.mealSugar)
+            .input('mealSugar', sql.Decimal(10, 2), totalSugar)
             .query(`INSERT INTO meals (idUser, kindOfMeal, Date, Time, isHoliday, Components, imageUrl, sugarLevel, mealSugar) 
                     VALUES (@idUser, @kindOfMeal, @Date, @Time, @isHoliday, @Components, @imageUrl, @sugarLevel, @mealSugar)`);
 
