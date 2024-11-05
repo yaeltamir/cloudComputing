@@ -1,4 +1,5 @@
 const sql = require('mssql');
+const { Sequelize } = require('sequelize');
 
 const config = {
     user: 'yael_SQLLogin_1',
@@ -10,7 +11,7 @@ const config = {
         trustServerCertificate: true
     }
 };
-
+const sequelize = new Sequelize(config.database, config.user, config.password, config.options);
 // פונקציה לשמירת משתמש חדש בבסיס הנתונים
 async function saveUser(userData) {
     try {
@@ -100,6 +101,15 @@ async function updateUser(userData) {
     }
 }
 
+// שליפת נתונים מהטבלה users עבור idUser מסוים - כל השורות המתאימות
+async function fetchUserDataById(idUser) {
+    const query = `SELECT gender, age, weight FROM users WHERE idUser = :idUser`;
+    const result = await sequelize.query(query, {
+        replacements: { idUser: idUser },
+        type: sequelize.QueryTypes.SELECT
+    });
+    return result;  // מחזיר את כל התוצאות התואמות
+}
 
 
 // // פונקציה שמביאה פרטי משתמש לפי שם משתמש וסיסמא
@@ -134,5 +144,5 @@ async function updateUser(userData) {
 //module.exports = { saveUser, updateUser, authenticateUser, getUserByUsernameAndPassword };
 
 
-module.exports = { saveUser, updateUser, authenticateUser };
+module.exports = { saveUser, updateUser, authenticateUser,fetchUserDataById };
 

@@ -1,6 +1,9 @@
 //המודל אחראי על כל מה שקשור על תקשורת עם מסד הנתונים בפועל כמו עדכון והכנסה לטבלה או חישוב נתון כדי להכניס אותו לטבלה
 const sql = require('mssql');
 const axios = require('axios');
+const { Sequelize } = require('sequelize');
+
+const sequelize = new Sequelize(config.database, config.user, config.password, config.options);
 
 // פונקציה לשליחת בקשה ל-Imagga עבור זיהוי פריטים בתמונה
 async function tagImage(url) {
@@ -159,37 +162,48 @@ async function addMeal(meal) {
     }
 }
 
-//חיזוי רמת סוכר
-const { DecisionTreeClassifier } = require('ml-cart');
+// //חיזוי רמת סוכר
+// const { DecisionTreeClassifier } = require('ml-cart');
 
-// דוגמה של נתוני אימון
-//לשנות את זה כך שזה יהיה על סמך הנתונים מ2 הטבלאות 
-const trainingData = [
-    { age: 30, weight: 70, exercise: 'yes', sugarLevel: 'normal' },
-    { age: 45, weight: 85, exercise: 'no', sugarLevel: 'high' },
-    { age: 50, weight: 90, exercise: 'no', sugarLevel: 'high' },
-    { age: 25, weight: 65, exercise: 'yes', sugarLevel: 'normal' },
-    // ... הוסף עוד נתוני אימון
-];
+// // דוגמה של נתוני אימון
+// //לשנות את זה כך שזה יהיה על סמך הנתונים מ2 הטבלאות 
+// const trainingData = [
+//     { age: 30, weight: 70, exercise: 'yes', sugarLevel: 'normal' },
+//     { age: 45, weight: 85, exercise: 'no', sugarLevel: 'high' },
+//     { age: 50, weight: 90, exercise: 'no', sugarLevel: 'high' },
+//     { age: 25, weight: 65, exercise: 'yes', sugarLevel: 'normal' },
+//     // ... הוסף עוד נתוני אימון
+// ];
 
-//לשים לב שאם הנתון לא מספרי אז לעשות שזה יהיה 0 1 2  וכו
-// הכנת הנתונים לפורמט המתאים למודל
-const features = trainingData.map(item => [item.age, item.weight, item.exercise === 'yes' ? 1 : 0]);// הנתונים שעוזרים לחזות
-const labels = trainingData.map(item => item.sugarLevel); //מה שרוצים לחזות לפי הקיים
+// //לשים לב שאם הנתון לא מספרי אז לעשות שזה יהיה 0 1 2  וכו
+// // הכנת הנתונים לפורמט המתאים למודל
+// const features = trainingData.map(item => [item.age, item.weight, item.exercise === 'yes' ? 1 : 0]);// הנתונים שעוזרים לחזות
+// const labels = trainingData.map(item => item.sugarLevel); //מה שרוצים לחזות לפי הקיים
 
-// יצירת עץ החלטה ואימון המודל
-const classifier = new DecisionTreeClassifier();
-classifier.train(features, labels);
+// // יצירת עץ החלטה ואימון המודל
+// const classifier = new DecisionTreeClassifier();
+// classifier.train(features, labels);
 
-// נתונים חדשים לחיזוי
-const newPatient = [40, 80, 0]; // 0 אומר שאין פעילות גופנית
+// // נתונים חדשים לחיזוי
+// const newPatient = [40, 80, 0]; // 0 אומר שאין פעילות גופנית
 
-// חיזוי רמת הסוכר על סמך נתונים חדשים
-const prediction = classifier.predict([newPatient]);
+// // חיזוי רמת הסוכר על סמך נתונים חדשים
+// const prediction = classifier.predict([newPatient]);
 
-console.log(`Predicted sugar level: ${prediction[0]}`);
+// console.log(`Predicted sugar level: ${prediction[0]}`);
+
+// שליפת נתונים מהטבלה meals עבור id מסוים - כל השורות המתאימות
+async function fetchMealDataById(id) {
+  const query = `SELECT isHoliday, kindOfMeal, mealSugar,sugarLevel FROM meals WHERE idUser = :id`;
+  const result = await sequelize.query(query, {
+      replacements: { id: id },
+      type: sequelize.QueryTypes.SELECT
+  });
+  return result;  // מחזיר את כל התוצאות התואמות
+}
 
 
-module.exports = { checkHebcalDate, addMeal, calculateTotalSugar};
+
+module.exports = { checkHebcalDate, addMeal, calculateTotalSugar, fetchMealDataById};
 
 
