@@ -1,5 +1,5 @@
 const sql = require('mssql');
-const { Sequelize } = require('sequelize');
+//const { Sequelize } = require('sequelize');
 
 const config = {
     user: 'yael_SQLLogin_1',
@@ -11,7 +11,25 @@ const config = {
         trustServerCertificate: true
     }
 };
-const sequelize = new Sequelize(config.database, config.user, config.password, config.options);
+
+function age(birthDate) {
+    const today = new Date();
+    const birth = new Date(birthDate);
+
+    let age = today.getFullYear() - birth.getFullYear();
+
+    // בדיקה אם יום ההולדת השנה כבר חלף
+    const monthDifference = today.getMonth() - birth.getMonth();
+    const dayDifference = today.getDate() - birth.getDate();
+
+    if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
+        age--;
+    }
+
+    return age;
+}
+
+//const sequelize = new Sequelize(config.database, config.user, config.password, config.options);
 // פונקציה לשמירת משתמש חדש בבסיס הנתונים
 async function saveUser(userData) {
     try {
@@ -27,7 +45,7 @@ async function saveUser(userData) {
         request.input('password', sql.VarChar, userData.password);
         request.input('birthday', sql.Date, userData.birthday);
         request.input('gender', sql.VarChar, userData.gender);
-        request.input('age', sql.Int, userData.age);
+        request.input('age', sql.Int, age(userData.birthday));
         request.input('height', sql.Decimal(5, 2), userData.height);
         request.input('weight', sql.Decimal(5, 2), userData.weight);
 
@@ -88,7 +106,7 @@ async function updateUser(userData) {
         request.input('password', sql.VarChar, userData.password);
         request.input('birthday', sql.Date, userData.birthday);
         request.input('gender', sql.VarChar, userData.gender);
-        request.input('age', sql.Int, userData.age);
+        request.input('age', sql.Int, age(userData.birthday));
         request.input('height', sql.Decimal(5, 2), userData.height);
         request.input('weight', sql.Decimal(5, 2), userData.weight);
 
@@ -102,13 +120,25 @@ async function updateUser(userData) {
 }
 
 // שליפת נתונים מהטבלה users עבור idUser מסוים - כל השורות המתאימות
-async function fetchUserDataById(idUser) {
-    const query = `SELECT gender, age, weight FROM users WHERE idUser = :idUser`;
-    const result = await sequelize.query(query, {
-        replacements: { idUser: idUser },
-        type: sequelize.QueryTypes.SELECT
-    });
-    return result;  // מחזיר את כל התוצאות התואמות
+async function fetchUserDataById(id) {
+    try {
+        console.log(id)
+        // התחברות למסד הנתונים
+        await sql.connect(config);
+
+        // שאילתת SELECT לשליפת הנתונים
+        const result = await sql.query`
+           SELECT gender, age, weight FROM users WHERE id=${id}`;
+        // החזרת התוצאות
+        return result.recordset;
+    } catch (err) {
+        console.error('Database query error:', err);
+        throw err;
+    } finally {
+        // ניתוק החיבור למסד הנתונים
+        await sql.close();
+    }
+
 }
 
 

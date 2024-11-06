@@ -9,6 +9,9 @@ const mealsController = require('../controllers/mealsController');
 // });
 
 // טיפול בהוספת ארוחה
-router.post('/add', mealsController.addMeal);
+router.post('/add', 
+    mealsController.addMeal
+);
+router.post('/predict', mealsController.predictSugarLevel);
 
 module.exports = router;

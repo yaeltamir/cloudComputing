@@ -1,17 +1,17 @@
 //המודל אחראי על כל מה שקשור על תקשורת עם מסד הנתונים בפועל כמו עדכון והכנסה לטבלה או חישוב נתון כדי להכניס אותו לטבלה
 const sql = require('mssql');
 const axios = require('axios');
-const { Sequelize } = require('sequelize');
+//const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize(config.database, config.user, config.password, config.options);
+//const sequelize = new Sequelize(config.database, config.user, config.password, config.options);
 
 // פונקציה לשליחת בקשה ל-Imagga עבור זיהוי פריטים בתמונה
 async function tagImage(url) {
   try {
       // הגדרת פרטי האימות
       const auth = {
-          username: 'acc_3d6329443943c3f',
-          password: '331a767287a9f56dbeb1220036943268'
+          username: 'acc_2acdfac1e655463',
+          password: '6dacf47f83acc688da4e4cda75c4e74d'
       };
       
       // שליחת בקשת GET ל-Imagga
@@ -137,7 +137,7 @@ async function addMeal(meal) {
 
                 //להעביר שהמודל יחשב את זה
         // הגדרת ערך רכיבי הארוחה לפי תוצאת הפונקציה
-        const components = await tagImage(imageUrl);
+        const components = await tagImage(meal.imageUrl);
 
          // חישוב כמות הסוכר הכוללת של כל הרכיבים
          const totalSugar = await calculateTotalSugar(components);
@@ -161,6 +161,8 @@ async function addMeal(meal) {
         return { success: false, error: err.message };
     }
 }
+
+
 
 // //חיזוי רמת סוכר
 // const { DecisionTreeClassifier } = require('ml-cart');
@@ -194,16 +196,31 @@ async function addMeal(meal) {
 
 // שליפת נתונים מהטבלה meals עבור id מסוים - כל השורות המתאימות
 async function fetchMealDataById(id) {
-  const query = `SELECT isHoliday, kindOfMeal, mealSugar,sugarLevel FROM meals WHERE idUser = :id`;
-  const result = await sequelize.query(query, {
-      replacements: { id: id },
-      type: sequelize.QueryTypes.SELECT
-  });
-  return result;  // מחזיר את כל התוצאות התואמות
+  try {
+    // התחברות למסד הנתונים
+    await sql.connect(config);
+
+    // שאילתת SELECT לשליפת הנתונים
+    const result = await sql.query`
+        SELECT isHoliday, kindOfMeal, mealSugar, sugarLevel
+        FROM meals
+        WHERE idUser = ${id}`;
+
+  
+    // החזרת התוצאות
+    return result.recordset;
+} catch (err) {
+    console.error('Database query error:', err);
+    throw err;
+} finally {
+    // ניתוק החיבור למסד הנתונים
+    await sql.close();
+}
+
 }
 
 
 
-module.exports = { checkHebcalDate, addMeal, calculateTotalSugar, fetchMealDataById};
+module.exports = { checkHebcalDate, addMeal, calculateTotalSugar, fetchMealDataById,tagImage};
 
 

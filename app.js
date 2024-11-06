@@ -49,8 +49,10 @@ app.get('/projects', (req, res) => {
 
 // ניתוב לדף ה-meals - meals.ejs
 app.get('/meals', (req, res) => {
-  res.render('meals',{ successMessage: null });
-});
+  res.render('meals',{ successMessage: null,sugarPrediction:null,message:null})
+
+  });
+  
 
 // // Route for the meals page
 // app.get('/meals/:success', (req, res) => {
