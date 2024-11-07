@@ -43,6 +43,50 @@
             </div>
         </nav>
     </main>
+    
+        <h1>גרף רמת סוכר</h1>
+        <canvas id="bloodSugarChart" width="400" height="200"></canvas>
+        
+        <script>
+            // קבלת הנתונים שנשלחו מהשרת והמרה ל-JS
+            const chartData = <%- JSON.stringify(chartData) %>;
+        
+            const ctx = document.getElementById('bloodSugarChart').getContext('2d');
+            const bloodSugarChart = new Chart(ctx, {
+                type: 'line',  // סוג הגרף (קו)
+                data: {
+                    datasets: [{
+                        label: 'רמת סוכר',
+                        data: chartData,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'time',  // ציר ה-X יהיה זמן
+                            time: {
+                                unit: 'minute', // הצגת זמן בדקות
+                                tooltipFormat: 'll HH:mm'
+                            },
+                            title: {
+                                display: true,
+                                text: 'תאריך ושעה'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'רמת סוכר'
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
+        
 </body>
 </html>
   

@@ -6,6 +6,7 @@ const port = 3000;
 
 const userRoutes = require('./routes/user'); // הנתיב של ה-router שלך
 const mealsRoutes = require('./routes/meals');
+const historyRoutes = require('./routes/history');
 
 //חייב את זה כדי שהקטע עם הסשן יעבוד
 app.use(session({
@@ -21,6 +22,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); // לפרש בקשות JSON מהטפסים
 app.use('/', userRoutes); // השתמש ב-router שיצרת
 app.use('/meals', mealsRoutes);
+app.use('/historyGraph', historyRoutes);
+
 
 // הגדרת מנוע התבניות EJS
 app.set('view engine', 'ejs');
@@ -65,9 +68,9 @@ app.get('/meals', (req, res) => {
    res.render('home');
  });
 
-app.get('/historyGraph', (req, res) => {
-  res.render('historyGraph');
-});
+// app.get('/historyGraph', (req, res) => {
+//   res.render('historyGraph');
+// });
 
 app.get('/updateDetails', (req, res) => {
   const user = req.session.user; // מקבל את האובייקט של המשתמש מה-Session

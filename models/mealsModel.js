@@ -202,7 +202,7 @@ async function fetchMealDataById(id) {
 
     // שאילתת SELECT לשליפת הנתונים
     const result = await sql.query`
-        SELECT isHoliday, kindOfMeal, mealSugar, sugarLevel
+        SELECT *
         FROM meals
         WHERE idUser = ${id}`;
 
