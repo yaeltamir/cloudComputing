@@ -59,6 +59,7 @@ function isHolidayToNumbers(kindOfMeal){
 }
 ``
 async function predictSugarLevel(req,res) {
+    console.log(123)
     
     // const idUser=req.session.user.id
     const idUser = 123456789; // נועד בשביל שלא נצטרך להתחבר כל פעם מחדש

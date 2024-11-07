@@ -10,8 +10,8 @@ async function tagImage(url) {
   try {
       // הגדרת פרטי האימות
       const auth = {
-          username: 'acc_2acdfac1e655463',
-          password: '6dacf47f83acc688da4e4cda75c4e74d'
+          username: 'acc_c06b1482838e00b',
+          password: 'af30770f981a0eda4a2a299fe081142a'
       };
       
       // שליחת בקשת GET ל-Imagga
