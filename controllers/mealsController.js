@@ -135,74 +135,59 @@ async function predictSugarLevel(req,res) {
 
 
 
-// פונקציה להצגת הגרף
+// // פונקציה להצגת הגרף
+// async function showHistoryGraph(req, res) {
+//     // const userId=req.session.user.id // לדוגמה, ניקח את ה-id מה-URL
+//     const userId=123456789
+
+//     try {
+//         // שליפת הנתונים מהמודל
+//         const meals = await mealsModel.fetchMealDataById(userId);
+//         // console.log(`${meals[0].Date}T${meals[0].Time}:00`)
+//         // console.log(meals[0])
+
+//         //     // x: new Date(`${meal.Date.split("T")[0]}T${meal.Time.split("T")[1]}`),  // נניח שהעמודה 'date' מכילה תאריך ושעה
+//         //     // y: meal.sugarLevel   // נניח שהעמודה 'bloodSugarLevel' מכילה את רמת הסוכר
+//         // }));
+
+//         const chartData = meals.map(meal => {
+//             const datePart = new Date(meal.Date).toISOString().split("T")[0];  // "YYYY-MM-DD"
+//             const timePart = new Date(meal.Time).toISOString().split("T")[1].slice(0, 5);  // "HH:MM"
+        
+//             const dateTimeString = `${datePart}T${timePart}:00`;
+//             const combinedDateTime = new Date(dateTimeString).toISOString(); // הפיכת התאריך לפורמט ISO
+        
+//             return {
+//                 x: combinedDateTime,  // התאריך והשעה בפורמט ISO
+//                 y: meal.sugarLevel     // רמת הסוכר
+//             };
+//         });
+        
+
+//         // שליחה ל-view עם הנתונים
+//         res.render('historyGraph', { chartData });
+
+//     } catch (error) {
+//         console.error('Error fetching meal data:', error);
+//         res.status(500).send('Internal server error');
+//     }
+// }
+
+// פונקציה להצגת היסטוריית רמות סוכר
 async function showHistoryGraph(req, res) {
-    // const userId=req.session.user.id // לדוגמה, ניקח את ה-id מה-URL
-    const userId=123456789
+    /////////////////////////////////////////////////////////////////////לא ךשכוח לשנות את זה בסוף
+    const userId = 123456789; // לדוגמה, נניח שה-ID נשלח דרך ה-URL
+    const meals = await mealsModel.fetchMealDataById(userId);
 
-    try {
-        // שליפת הנתונים מהמודל
-        const meals = await mealsModel.fetchMealDataById(userId);
-        console.log(`${meals[0].Date}T${meals[0].Time}:00`)
-        console.log(meals[0])
-        // בניית הנתונים לגרף
-        // const chartData = meals.map(meal => ({
-        //     // יצירת מיתר שמחבר את התאריך והשעה
-        //     // const dateTimeString = `${date}T${time}:00`;  // "2024-11-08T14:30:00"
+    // יצירת מערכים לתאריכים ושעות, ורמות סוכר
+    const datesAndTimes = meals.map(meal => `${meal.Date} ${meal.Time}`);
+    console.log(datesAndTimes)
+    const sugarLevels = meals.map(meal => meal.sugarLevel);
 
-        //     // // יצירת אובייקט Date
-        //     // const dateTime = new Date(dateTimeString);
-        //     //--------------------------------------------------------------------------------------------
-
-        //     //const datePart = "2024-11-03T00:00:00.000Z";
-        //     // const timePart = "1970-01-01T07:40:00.000Z";
-
-        //     // חילוץ חלק התאריך
-        //     // const dateOnly = datePart.split("T")[0];  // "2024-11-03"
-
-        //     // // חילוץ חלק השעה
-        //     // const timeOnly = timePart.split("T")[1];  // "07:40:00.000Z"
-
-        //     //// יצירת מחרוזת משולבת של תאריך ושעה
-        //     // const dateTimeString = `${dateOnly}T${timeOnly}`;
-
-        //     // // יצירת אובייקט Date חדש
-        //     // const combinedDateTime = new Date(dateTimeString);
-
-        //     // console.log(combinedDateTime);  // מציג את התאריך והשעה המשולבים כאובייקט Date
-
-
-
-
-        //     // x: new Date(`${meal.Date.split("T")[0]}T${meal.Time.split("T")[1]}`),  // נניח שהעמודה 'date' מכילה תאריך ושעה
-        //     // y: meal.sugarLevel   // נניח שהעמודה 'bloodSugarLevel' מכילה את רמת הסוכר
-        // }));
-
-              // בניית הנתונים לגרף
-              const chartData = meals.map(meal => {
-                // וידוא שהתאריך והשעה הם מחרוזות
-                const datePart = new Date(meal.Date).toISOString().split("T")[0];  // "YYYY-MM-DD"
-                const timePart = new Date(meal.Time).toISOString().split("T")[1];  // "HH:MM:SS.000Z"
-    
-                // יצירת מחרוזת משולבת של תאריך ושעה
-                const dateTimeString = `${datePart}T${timePart}`;
-                
-                // יצירת אובייקט Date חדש
-                const combinedDateTime = new Date(dateTimeString);
-                console.log(combinedDateTime)
-                return {
-                    x: combinedDateTime,  // התאריך והשעה המשולבים
-                    y: meal.sugarLevel     // רמת הסוכר
-                };
-            });
-
-        // שליחה ל-view עם הנתונים
-        res.render('historyGraph', { chartData: JSON.stringify(chartData) });
-    } catch (error) {
-        console.error('Error fetching meal data:', error);
-        res.status(500).send('Internal server error');
-    }
+    // שליחת הנתונים ל-EJS
+    res.render('historyGraph', { datesAndTimes, sugarLevels });
 }
+
 
 module.exports = { addMeal,predictSugarLevel, showHistoryGraph };
 

@@ -276,15 +276,15 @@ function predictGlucose() {
 
         // בדיקת ערך התחזית ושינוי הצבע השולט בהתאם
         const predictionSection = document.getElementById('predictionSection');
-        if (data.prediction > 70) {
+        if (data.prediction > 100) {
             //<p id="sugarPrediction" class="text-dark text-center fs-5"></p>
     //    <p id="predictionMessage" class="text-muted text-center"></p>
   predictionSection.style.backgroundColor = '#f8d7da'; // רקע אדום בהיר
   predictionSection.style.color = '#721c24'; // טקסט אדום כהה
   //sugarPrediction.style.backgroundColor = '#f8d7da'; // רקע אדום בהיר
-  sugarPrediction.style.color = '#721c24'; // טקסט אדום כהה
+ // sugarPrediction.style.color = '#721c24'; // טקסט אדום כהה
   //predictionMessage.style.backgroundColor = '#f8d7da'; // רקע אדום בהיר
-  predictionMessage.style.color = '#721c24'; // טקסט אדום כהה
+ // predictionMessage.style.color = '#721c24'; // טקסט אדום כהה
 } else {
   predictionSection.style.backgroundColor = '#d4edda'; // רקע ירוק בהיר
   predictionSection.style.color = '#155724'; // טקסט ירוק כהה
