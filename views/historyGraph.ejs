@@ -42,20 +42,20 @@
             <div class="text-center mb-5">
                 <h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Sugar Level Graph</span></h1>
             </div>
-
+            
             <canvas id="sugarLevelChart"></canvas> <!-- הגרף יוצג כאן -->
         </div>
 
         <script>
             // הנתונים שמגיעים מהשרת
-            const datesAndTimes = <%- JSON.stringify(datesAndTimes) %>;
+            const dates = <%- JSON.stringify(dates) %>;
             const sugarLevels = <%- JSON.stringify(sugarLevels) %>;
     
             const ctx = document.getElementById('sugarLevelChart').getContext('2d');
             new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: datesAndTimes, // תאריכים ושעות בציר ה-X
+                    labels: dates, // תאריכים ושעות בציר ה-X
                     datasets: [{
                         label: 'רמות סוכר לאורך זמן',
                         data: sugarLevels, // רמות סוכר בציר ה-Y

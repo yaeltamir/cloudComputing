@@ -180,12 +180,33 @@ async function showHistoryGraph(req, res) {
     const meals = await mealsModel.fetchMealDataById(userId);
 
     // יצירת מערכים לתאריכים ושעות, ורמות סוכר
-    const datesAndTimes = meals.map(meal => `${meal.Date} ${meal.Time}`);
-    console.log(datesAndTimes)
+    // const datesAndTimes = meals.map(meal => `${meal.Date} ${meal.Time}`);
+    // console.log(datesAndTimes)
+
+    // מיון הארוחות לפי תאריך ושעה
+    meals.sort((a, b) => new Date(a.Date) - new Date(b.Date));
+
+        // יצירת מערכים לתאריכים ורמות סוכר
+        const dates = meals.map(meal => {
+            const date = new Date(meal.Date);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // חודשים מתחילים מ-0
+            const year = date.getFullYear();
+
+            // הפקת השעה בפורמט "HH:MM"
+            const time = meal.Time;
+            const hours = String(time.getHours()).padStart(2, '0');
+            const minutes = String(time.getMinutes()).padStart(2, '0');
+            const formattedTime = `${hours}:${minutes}`;
+
+            return `${day}/${month}/${year} ${formattedTime}`;
+        });
+    console.log(dates)
     const sugarLevels = meals.map(meal => meal.sugarLevel);
 
     // שליחת הנתונים ל-EJS
-    res.render('historyGraph', { datesAndTimes, sugarLevels });
+    //res.render('historyGraph', { datesAndTimes, sugarLevels });
+    res.render('historyGraph', { dates, sugarLevels });
 }
 
 
