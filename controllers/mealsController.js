@@ -203,10 +203,15 @@ async function showHistoryGraph(req, res) {
         });
     console.log(dates)
     const sugarLevels = meals.map(meal => meal.sugarLevel);
+       // הוספת התמונה לכל רשומה
+    const mealImages = meals.map(meal => meal.imageUrl);
+    console.log(mealImages);
+
+
 
     // שליחת הנתונים ל-EJS
     //res.render('historyGraph', { datesAndTimes, sugarLevels });
-    res.render('historyGraph', { dates, sugarLevels });
+    res.render('historyGraph', { dates, sugarLevels,mealImages });
 }
 
 
