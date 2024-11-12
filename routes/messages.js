@@ -6,9 +6,8 @@ const usersController = require('../controllers/userController'); // ייבוא 
 
 // נתיב לגרף
 router.get('/',async (req, res) => {
-  const id=req.session.user.id
+  //const id=req.session.user.id
   //const isRegistered=await usersController.checkIfUserIsRegistered(id)
-  
     res.render('messages',{isRegistered:req.session.user.isRegistered,messages: [1,2,3]});
   });
 

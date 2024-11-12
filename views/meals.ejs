@@ -276,7 +276,7 @@ function predictGlucose() {
 
         // בדיקת ערך התחזית ושינוי הצבע השולט בהתאם
         const predictionSection = document.getElementById('predictionSection');
-        if (data.prediction > 100) {
+        if (data.prediction==="ERROR" || data.prediction > 100 ) {
             //<p id="sugarPrediction" class="text-dark text-center fs-5"></p>
     //    <p id="predictionMessage" class="text-muted text-center"></p>
   predictionSection.style.backgroundColor = '#f8d7da'; // רקע אדום בהיר

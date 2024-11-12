@@ -187,4 +187,4 @@ const reverseSubscribtion=(req, res) => {
 //module.exports = { registerUser, loginUser, updateUser, getUserDetails };
 
 
-module.exports = { registerUser, loginUser, updateUser,checkIfUserIsRegistered,reverseSubscribtion };
+module.exports = { registerUser, loginUser, updateUser,reverseSubscribtion };
