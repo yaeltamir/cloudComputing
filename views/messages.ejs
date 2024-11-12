@@ -57,21 +57,36 @@
             <% } %>
         </div>
 
-        <!-- Display Messages if Registered -->
-        <% if (isRegistered) { %>
-            <div class="row gx-5 justify-content-center">
-                <div class="col-lg-11 col-xl-9 col-xxl-8">
-                    <% messages.forEach(message => { %>
-                        <div class="card overflow-hidden shadow rounded-4 border-0 mb-3">
-                            <div class="card-body p-4">
-                                <h5 class="fw-bolder">From Doctor:</h5>
-                                <p><%= message %></p>
-                            </div>
-                        </div>
-                    <% }) %>
+<!-- Display Messages if Registered -->
+<% if (isRegistered) { %>
+    <div class="row gx-5 justify-content-center">
+        <div class="col-lg-11 col-xl-9 col-xxl-8">
+            <% if (messages.length === 0) { %>
+                <div class="card overflow-hidden shadow rounded-4 border-0 mb-3">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bolder">You don't have any messages yet</h5>
+                    </div>
                 </div>
-            </div>
-        <% } %>
+            <% } else { %>
+                <% messages.forEach(message => { %>
+                    <div class="card overflow-hidden shadow rounded-4 border-0 mb-3">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bolder">Date:</h5>
+                            <p><%= new Date(message.date).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' }) %></p>
+                            
+                            <h5 class="fw-bolder">Doctor Name:</h5>
+                            <p><%= message.doctorName %></p>
+                            
+                            <h5 class="fw-bolder">Message:</h5>
+                            <p><%= message.messageText %></p>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
+    </div>
+<% } %>
+
 
     </div>
 </section>

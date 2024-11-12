@@ -46,7 +46,7 @@
 //   }
 // });
 
-
+//מה שטוב עעד עכשיו
 const os = require("os");
 const { Kafka, CompressionTypes } = require("kafkajs");
 
@@ -68,7 +68,7 @@ const sendMessage = (msg) => {
     topic: "testsResults",
     compression: CompressionTypes.GZIP,
     messages: [{
-      key: os.hostname(),
+      // key: os.hostname(),
       value: JSON.stringify(msg)
     }]
   }).catch((e) => {
@@ -107,4 +107,6 @@ process.once("SIGINT", async () => {
     process.kill(process.pid, "SIGINT");
   }
 });
+
+//עד כאן
 
