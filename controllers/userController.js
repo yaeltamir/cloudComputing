@@ -118,6 +118,42 @@ const updateUser = (req, res) => {
         });
 };
 
+// async function checkIfUserIsRegistered(idUser) {
+//     const users = await userModel.fetchUserDataById(idUser);
+//     return users[0].isRegistered
+
+// }
+
+const reverseSubscribtion=(req, res) => {
+    const answer=req.params.answer
+
+    const idUser=req.session.user.id
+    console.log(answer);
+ // const { id, name, email, password, dob, gender, age, height, weight } = req.body;
+
+    // יצירת אובייקט שמכיל את הנתונים החדשים
+    const updatedUserData = {
+        id: parseInt(idUser),
+        registeration:answer.toLowerCase() === "true"
+    };
+
+    //console.log('Update Data:', updatedUserData);
+
+    // עדכון הנתונים במסד הנתונים באמצעות המודל
+    userModel.subscribeToMessages(updatedUserData)
+        .then(() => {
+           console.log('User updated successfully!');
+          // const isRegistered=checkIfUserIsRegistered(idUser)
+  
+           req.session.user.isRegistered=updatedUserData.registeration
+            res.redirect('/messages');
+        })
+        .catch((err) => {
+            console.error('Error updating user:', err.message);
+            res.status(500).send('Error updating user.');
+        });
+};
+
 
 // const getUserDetails = async (req, res) => {
 //     console.log('getUserDetails called');
@@ -151,4 +187,4 @@ const updateUser = (req, res) => {
 //module.exports = { registerUser, loginUser, updateUser, getUserDetails };
 
 
-module.exports = { registerUser, loginUser, updateUser };
+module.exports = { registerUser, loginUser, updateUser,checkIfUserIsRegistered,reverseSubscribtion };

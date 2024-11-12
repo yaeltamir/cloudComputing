@@ -36,7 +36,7 @@ async function saveUser(userData) {
         const pool = await sql.connect(config);
         console.log('Connected to the database!');
 
-        const query = 'INSERT INTO users (id, name, email, password, birthday, gender, age, height, weight) VALUES (@id, @name, @email, @password, @birthday, @gender, @age, @height, @weight)';
+        const query = 'INSERT INTO users (id, name, email, password, birthday, gender, age, height, weight, isRegistered) VALUES (@id, @name, @email, @password, @birthday, @gender, @age, @height, @weight, @isRegistered)';
         
         const request = pool.request();
         request.input('id', sql.Int, userData.id);
@@ -48,6 +48,7 @@ async function saveUser(userData) {
         request.input('age', sql.Int, age(userData.birthday));
         request.input('height', sql.Decimal(5, 2), userData.height);
         request.input('weight', sql.Decimal(5, 2), userData.weight);
+        request.input('isRegistered', sql.Bit, false);
 
         const result = await request.query(query);
         console.log('Inserted user:', result.rowsAffected);
@@ -89,6 +90,21 @@ const authenticateUser = async (username, password) => {
     }
 };
 
+async function subscribeToMessages(userData) {
+    try{
+        const pool = await sql.connect(config);
+        const query = 'UPDATE users SET isRegistered = @isRegistered WHERE id = @id';
+        const request = pool.request();
+        request.input('id', sql.Int, userData.id);
+        request.input('isRegistered', sql.Bit, userData.registeration);
+        const result = await request.query(query);
+    } catch (err) {
+        console.error('Database Updated failed:', err);
+    } finally {
+        sql.close();
+    }
+    
+}
 
 //Update user details
 async function updateUser(userData) {
@@ -142,6 +158,8 @@ async function fetchUserDataById(id) {
 }
 
 
+
+
 // // פונקציה שמביאה פרטי משתמש לפי שם משתמש וסיסמא
 // async function getUserByUsernameAndPassword(id, password) {
 //     try {
@@ -174,5 +192,5 @@ async function fetchUserDataById(id) {
 //module.exports = { saveUser, updateUser, authenticateUser, getUserByUsernameAndPassword };
 
 
-module.exports = { saveUser, updateUser, authenticateUser,fetchUserDataById };
+module.exports = { saveUser, updateUser, authenticateUser,fetchUserDataById,subscribeToMessages };
 
