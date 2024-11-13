@@ -180,14 +180,9 @@ async function predictSugarLevel(req,res) {
 // פונקציה להצגת היסטוריית רמות סוכר
 async function showHistoryGraph(req, res) {
     /////////////////////////////////////////////////////////////////////לא ךשכוח לשנות את זה בסוף
-<<<<<<< HEAD
     const userId = 123456789; // לדוגמה, נניח שה-ID נשלח דרך ה-URL
     const { startDate, endDate } = req.query; // שליפת תאריכים מהבקשה
 
-=======
-   // const userId = 123456789; // לדוגמה, נניח שה-ID נשלח דרך ה-URL
-   const userId =req.session.user.id
->>>>>>> 4a70bd8a6ee5a33d65a36498b0d50d018137f173
     const meals = await mealsModel.fetchMealDataById(userId);
 
     // יצירת מערכים לתאריכים ושעות, ורמות סוכר
