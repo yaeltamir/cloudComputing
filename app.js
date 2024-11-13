@@ -8,6 +8,7 @@ const userRoutes = require('./routes/user'); // הנתיב של ה-router שלך
 const mealsRoutes = require('./routes/meals');
 const historyRoutes = require('./routes/history');
 const messagesRoutes = require('./routes/messages');
+const homeRoutes = require('./routes/home');
 
 //חייב את זה כדי שהקטע עם הסשן יעבוד
 app.use(session({
@@ -26,6 +27,7 @@ app.use('/', userRoutes); // השתמש ב-router שיצרת
 app.use('/meals', mealsRoutes);
 app.use('/historyGraph', historyRoutes);
 app.use('/messages',messagesRoutes);
+app.use('/home',homeRoutes);
 
 
 // הגדרת מנוע התבניות EJS
@@ -65,9 +67,9 @@ app.get('/meals', (req, res) => {
 // });
 
 
- app.get('/home', (req, res) => {
-   res.render('home');
- });
+//  app.get('/home', (req, res) => {
+//    res.render('home');
+//  });
 
 // app.get('/historyGraph', (req, res) => {
 //   res.render('historyGraph');
