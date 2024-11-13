@@ -6,4 +6,7 @@ const controller = require('../controllers/mealsController'); // ייבוא הב
 // נתיב לגרף
 router.get('/', controller.showHistoryGraph);
 
+// הגדרת ה-Route לעמוד היסטוריית הגרפים עם אפשרות לסינון תאריכים
+router.get('/historyGraph', controller.showHistoryGraph);
+
 module.exports = router;

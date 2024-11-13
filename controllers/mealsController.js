@@ -177,17 +177,41 @@ async function predictSugarLevel(req,res) {
 async function showHistoryGraph(req, res) {
     /////////////////////////////////////////////////////////////////////לא ךשכוח לשנות את זה בסוף
     const userId = 123456789; // לדוגמה, נניח שה-ID נשלח דרך ה-URL
+    const { startDate, endDate } = req.query; // שליפת תאריכים מהבקשה
+
     const meals = await mealsModel.fetchMealDataById(userId);
 
     // יצירת מערכים לתאריכים ושעות, ורמות סוכר
     // const datesAndTimes = meals.map(meal => `${meal.Date} ${meal.Time}`);
     // console.log(datesAndTimes)
 
+     // סינון הארוחות לפי טווח התאריכים אם ישנם תאריכים בבקשה
+     const filteredMeals = meals.filter(meal => {
+        const mealDate = new Date(meal.Date);
+        const start = startDate ? new Date(startDate) : null;
+        const end = endDate ? new Date(endDate) : null;
+
+         // בדיקה אם התאריך של הארוחה נמצא בטווח המבוקש
+         if (start && end) {
+            return mealDate >= start && mealDate <= end;
+        } else if (start) {
+            return mealDate >= start;
+        } else if (end) {
+            return mealDate <= end;
+        }
+        return true; // אם אין תאריכים, מחזיר את כל הארוחות
+    });
+
+      // הדפסת התאריכים שנמצאים בטווח הבחירה
+    //   const filteredDates = filteredMeals.map(meal => meal.Date);
+    //   console.log("תאריכים בטווח שנבחר:", filteredDates);
+  
+
     // מיון הארוחות לפי תאריך ושעה
-    meals.sort((a, b) => new Date(a.Date) - new Date(b.Date));
+    filteredMeals.sort((a, b) => new Date(a.Date) - new Date(b.Date));
 
         // יצירת מערכים לתאריכים ורמות סוכר
-        const dates = meals.map(meal => {
+        const dates = filteredMeals.map(meal => {
             const date = new Date(meal.Date);
             const day = String(date.getDate()).padStart(2, '0');
             const month = String(date.getMonth() + 1).padStart(2, '0'); // חודשים מתחילים מ-0
@@ -202,9 +226,9 @@ async function showHistoryGraph(req, res) {
             return `${day}/${month}/${year} ${formattedTime}`;
         });
     console.log(dates)
-    const sugarLevels = meals.map(meal => meal.sugarLevel);
+    const sugarLevels = filteredMeals.map(meal => meal.sugarLevel);
        // הוספת התמונה לכל רשומה
-    const mealImages = meals.map(meal => meal.imageUrl);
+    const mealImages = filteredMeals.map(meal => meal.imageUrl);
     console.log(mealImages);
 
 

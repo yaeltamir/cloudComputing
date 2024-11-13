@@ -43,6 +43,36 @@
                 <h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Sugar Level Graph</span></h1>
             </div>
             
+            <!-- <form id="filterForm" action="/historyGraph" method="GET">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" name="startDate">
+                
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" name="endDate">
+                
+                <button type="submit">Filter</button>
+            </form> -->
+
+            <form id="filterForm" action="/historyGraph" method="GET" class="container px-5 my-5">
+                <div class="mb-4 text-start">
+                    <h2 class="display-9 fw-bolder mb-0"><span class="text-gradient d-inline">Filter Dates</span></h2>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="startDate" class="form-label fw-bolder text-primary">Start Date:</label>
+                        <input type="date" id="startDate" name="startDate" class="form-control">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="endDate" class="form-label fw-bolder text-primary">End Date:</label>
+                        <input type="date" id="endDate" name="endDate" class="form-control">
+                    </div>
+                    <div class="row"> 
+                        <div class="col-md-2 d-flex justify-content-start"> <button type="submit" class="btn btn-primary">Filter</button>
+                </div>
+            </form>
+            
+            
+
             <canvas id="sugarLevelChart"></canvas> <!-- הגרף יוצג כאן -->
         </div>
 
@@ -95,49 +125,51 @@
                             }
                         }
                     },
+                    //--------------------------------
                     plugins: {
                         tooltip: {
-                            enabled: false, // ביטול ה־tooltip הרגיל
+                            enabled: false, // מבטלים את ה-tooltip המובנה
                             external: function(context) {
-                                let tooltipEl = document.getElementById('chartjs-tooltip');
-        
-                                // יצירת אלמנט tooltip אם הוא לא קיים
+                                // מתייחסים ל-tooltip החיצוני שלנו
+                                const tooltipEl = document.getElementById('chartjs-tooltip');
+            
+                                // אם ה-tooltip לא קיים, ניצור אותו
                                 if (!tooltipEl) {
-                                    tooltipEl = document.createElement('div');
-                                    tooltipEl.id = 'chartjs-tooltip';
-                                    tooltipEl.style.position = 'absolute';
-                                    tooltipEl.style.pointerEvents = 'none';
-                                    tooltipEl.style.opacity = 0;
-                                    document.body.appendChild(tooltipEl);
+                                    const tooltip = document.createElement('div');
+                                    tooltip.id = 'chartjs-tooltip';
+                                    tooltip.style.position = 'absolute';
+                                    tooltip.style.pointerEvents = 'none';
+                                    tooltip.style.opacity = 0;
+                                    document.body.appendChild(tooltip);
                                 }
-        
-                                const tooltipModel = context.tooltip;
-        
-                                // החבאת tooltip אם אין נתונים להצגה
-                                if (tooltipModel.opacity === 0) {
+            
+                                // נקודת המידע על הגרף
+                                const { tooltip } = context;
+                                if (tooltip.opacity === 0) {
                                     tooltipEl.style.opacity = 0;
                                     return;
                                 }
-        
-                                // מקבל את התמונה מהמערך לפי האינדקס של הנקודה
-                                const dataIndex = tooltipModel.dataPoints[0].dataIndex;
-                                const mealImage = mealImages[dataIndex];
-                                const sugarLevel = sugarLevels[dataIndex];
-                                const date = dates[dataIndex];
-        
-                                // עדכון התוכן של ה-tooltip עם התמונה והנתונים
+            
+                                // נתוני ה-tooltip
+                                const index = tooltip.dataPoints[0].dataIndex;
+                                const sugarLevel = sugarLevels[index];
+                                const date = dates[index];
+                                const mealImage = mealImages[index]; // תמונת הארוחה
+            
+                                // עדכון התוכן של ה-tooltip
                                 tooltipEl.innerHTML = `
-                                    <div style="text-align: center; padding: 8px; background: rgba(0, 0, 0,0); color: rgba(75, 192, 192, 1); border-radius: 4px;">
-                                        <div >Sugar level: ${sugarLevel}</div>
+                                    <div style="text-align: center; padding: 8px; background: rgba(0, 0, 0, 0); color: rgba(75, 192, 192, 1); border-radius: 4px;">
+                                        <div>Sugar level: ${sugarLevel}</div>
                                         <div>Date & Time: ${date}</div>
                                         ${mealImage ? `<img src="${mealImage}" alt="Meal Image" style="width: 70px; height: 60px; margin-top: 5px;">` : ''}
                                     </div>
                                 `;
-        
-                                // הצגת ה-tooltip במקום המתאים
+            
+                                // הגדרת המיקום של ה-tooltip ליד הנקודה
+                                const position = context.chart.canvas.getBoundingClientRect();
+                                tooltipEl.style.left = position.left + window.pageXOffset + tooltip.caretX + 'px';
+                                tooltipEl.style.top = position.top + window.pageYOffset + tooltip.caretY + 'px';
                                 tooltipEl.style.opacity = 1;
-                                tooltipEl.style.left = tooltipModel.caretX + 'px';
-                                tooltipEl.style.top = tooltipModel.caretY + 'px';
                             }
                         }
                     }
