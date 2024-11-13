@@ -61,8 +61,8 @@ function isHolidayToNumbers(kindOfMeal){
 async function predictSugarLevel(req,res) {
     console.log(123)
     
-    // const idUser=req.session.user.id
-    const idUser = 123456789; // נועד בשביל שלא נצטרך להתחבר כל פעם מחדש
+    const idUser=req.session.user.id
+   // const idUser = 123456789; // נועד בשביל שלא נצטרך להתחבר כל פעם מחדש
     const { kindOfMeal, date, imageUrl } = req.body;
     try {
         // שליפת הנתונים מהטבלאות השונות לפי ה-id
@@ -70,8 +70,12 @@ async function predictSugarLevel(req,res) {
         const usersData = await userModel.fetchUserDataById(idUser);
 
         // בדיקה אם יש נתונים
-        if (mealsData.length === 0 || usersData.length === 0) {
-            throw new Error("לא נמצאו נתונים עבור ה-id המבוקש");
+        if (mealsData.length <20 || usersData.length === 0) {
+            res.json({
+                prediction: "ERROR",
+                message: "There is not enough data for you so that we can predict the sugar level at the moment,\n we recommend that you enter more data before clicking this button"
+            });
+            return;
         }
 
         const user = usersData[0]  // יתכן שתצטרכי להתאים לפי אופי הנתונים
@@ -176,9 +180,14 @@ async function predictSugarLevel(req,res) {
 // פונקציה להצגת היסטוריית רמות סוכר
 async function showHistoryGraph(req, res) {
     /////////////////////////////////////////////////////////////////////לא ךשכוח לשנות את זה בסוף
+<<<<<<< HEAD
     const userId = 123456789; // לדוגמה, נניח שה-ID נשלח דרך ה-URL
     const { startDate, endDate } = req.query; // שליפת תאריכים מהבקשה
 
+=======
+   // const userId = 123456789; // לדוגמה, נניח שה-ID נשלח דרך ה-URL
+   const userId =req.session.user.id
+>>>>>>> 4a70bd8a6ee5a33d65a36498b0d50d018137f173
     const meals = await mealsModel.fetchMealDataById(userId);
 
     // יצירת מערכים לתאריכים ושעות, ורמות סוכר

@@ -7,6 +7,7 @@ const port = 3000;
 const userRoutes = require('./routes/user'); // הנתיב של ה-router שלך
 const mealsRoutes = require('./routes/meals');
 const historyRoutes = require('./routes/history');
+const messagesRoutes = require('./routes/messages');
 
 //חייב את זה כדי שהקטע עם הסשן יעבוד
 app.use(session({
@@ -20,9 +21,11 @@ app.use(session({
 // Middleware כדי לנתח בקשות POST מ-URL-encoded טפסים
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); // לפרש בקשות JSON מהטפסים
+
 app.use('/', userRoutes); // השתמש ב-router שיצרת
 app.use('/meals', mealsRoutes);
 app.use('/historyGraph', historyRoutes);
+app.use('/messages',messagesRoutes);
 
 
 // הגדרת מנוע התבניות EJS
@@ -45,10 +48,8 @@ app.get('/signUp', (req, res) => {
   res.render('signUp');
 });
 
-// ניתוב לדף ה-projects - projects.ejs
-app.get('/projects', (req, res) => {
-  res.render('projects');
-});
+// // ניתוב לדף ה-projects - projects.ejs
+// app.get('/messages', );
 
 // ניתוב לדף ה-meals - meals.ejs
 app.get('/meals', (req, res) => {
