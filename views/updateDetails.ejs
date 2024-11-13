@@ -69,14 +69,68 @@
                                 </div>
 
                                 <!-- Gender input (radio buttons for Male and Female) -->
-                                <div class="mb-3">
+                                <!-- <div class="mb-3">
                                     <label for="gender">Gender</label><br />
                                     <input type="radio" id="male" name="gender" value="male" required <%= userDetails.gender === 'male' ? 'checked' : '' %> />
                                     <label for="male">Male</label><br />
                                     <input type="radio" id="female" name="gender" value="female" required <%= userDetails.gender === 'female' ? 'checked' : '' %> />
                                     <label for="female">Female</label>
-                                </div>
+                                </div> -->
                                 
+                                
+                                <!-- Gender input with icons -->
+                                <div class="mb-3">
+                                    <label class="form-label">Gender:</label>
+                                    <div style="display: flex; gap: 20px;">
+                                        <!-- Male option -->
+                                        <div>
+                                            <input type="radio" id="male" name="gender" value="male" required <%= userDetails.gender === 'male' ? 'checked' : '' %> style="display: none;" />
+                                            <label for="male" style="cursor: pointer;">
+                                                <img src="https://cdn-icons-png.flaticon.com/512/522/522297.png" alt="Male" id="male-icon" style="width: 50px; height: 50px;">
+                                            </label>
+                                        </div>
+
+                                        <!-- Female option -->
+                                        <div>
+                                            <input type="radio" id="female" name="gender" value="female" required <%= userDetails.gender === 'female' ? 'checked' : '' %> style="display: none;" />
+                                            <label for="female" style="cursor: pointer;">
+                                                <img src="https://cdn-icons-png.flaticon.com/512/2342/2342011.png" alt="Female" id="female-icon" style="width: 50px; height: 50px;">
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="invalid-feedback" data-sb-feedback="gender:required">Please select a gender.</div>
+                                </div>
+
+                                <script>
+                                    // Add a border to the selected gender icon based on user selection or loaded data
+                                    function updateGenderIconBorder() {
+                                        const maleIcon = document.getElementById('male-icon');
+                                        const femaleIcon = document.getElementById('female-icon');
+                                        const selectedGender = '<%= userDetails.gender %>'; // Load user gender from database
+                                        
+                                        if (selectedGender === 'male') {
+                                            maleIcon.style.border = '2px solid lightblue';
+                                            femaleIcon.style.border = 'none';
+                                        } else if (selectedGender === 'female') {
+                                            femaleIcon.style.border = '2px solid pink';
+                                            maleIcon.style.border = 'none';
+                                        }
+                                    }
+
+                                    document.querySelectorAll('input[name="gender"]').forEach((input) => {
+                                        input.addEventListener('change', function() {
+                                            if (this.checked) {
+                                                document.getElementById('male-icon').style.border = this.value === 'male' ? '2px solid lightblue' : 'none';
+                                                document.getElementById('female-icon').style.border = this.value === 'female' ? '2px solid pink' : 'none';
+                                            }
+                                        });
+                                    });
+
+                                    // Initialize icon borders based on loaded user gender
+                                    updateGenderIconBorder();
+                                </script>
+
 
                                  <!-- Password input -->
                                  <div class="form-floating mb-3">
@@ -105,6 +159,21 @@
                                         errorSpan.style.display = 'none';    // הסתרת הכוכבית וההערה אם התנאים תקינים
                                     }
                                 }
+                                </script>
+
+                                  <!-- Show/Hide password toggle -->
+                                  <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="showPassword" onclick="togglePassword()" />
+                                    <label class="form-check-label" for="showPassword">Show Password</label>
+                                </div>
+                                <script>
+                                    function togglePassword() {
+                                        const passwordInput = document.getElementById("password");
+                                        const showPasswordCheckbox = document.getElementById("showPassword");
+                                        
+                                        // Change the input type based on checkbox state
+                                        passwordInput.type = showPasswordCheckbox.checked ? "text" : "password";
+                                    }
                                 </script>
 
                                 <!-- Height input -->
