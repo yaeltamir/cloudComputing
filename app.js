@@ -55,7 +55,7 @@ app.get('/signUp', (req, res) => {
 
 // ניתוב לדף ה-meals - meals.ejs
 app.get('/meals', (req, res) => {
-  res.render('meals',{ successMessage: null,sugarPrediction:null,message:null})
+  res.render('meals',{ successMessage: null,sugarPrediction:null,message:null,userId:req.session.user.id})
 
   });
   

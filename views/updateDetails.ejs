@@ -36,6 +36,9 @@
             </div>
         </nav>
 
+        <%- include('partials/messageNotification', { userId:  userDetails.id }) %>
+
+
         <!-- Update form -->
         <section class="py-5">
             <div class="container px-5">
@@ -199,6 +202,9 @@
             </div>
         </section>
     </main>
+
+
+
     <!-- Footer -->
     <footer class="bg-white py-4 mt-auto">
         <div class="container px-5">

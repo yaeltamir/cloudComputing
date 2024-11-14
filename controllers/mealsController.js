@@ -239,7 +239,7 @@ async function showHistoryGraph(req, res) {
 
     // שליחת הנתונים ל-EJS
     //res.render('historyGraph', { datesAndTimes, sugarLevels });
-    res.render('historyGraph', { dates, sugarLevels,mealImages });
+    res.render('historyGraph', { dates, sugarLevels,mealImages ,userId});
 }
 
 
