@@ -20,7 +20,7 @@ const runProducer = async (userId) => {
   // Sending a test message to the "user-messages" topic
   await producer.send({
     topic:  "testsResults",
-    messages: [{key:JSON.stringify(userId), value:  JSON.stringify(
+    messages: [{key:JSON.stringify(parseInt(userId)), value:  JSON.stringify(
         {
             date: new Date().toISOString(),
             doctorName: "Dr. Moshe",

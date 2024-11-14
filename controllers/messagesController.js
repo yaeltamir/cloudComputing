@@ -1,3 +1,70 @@
+const { Kafka } = require('kafkajs');
+const WebSocket = require('ws');
+
+const kafka = new Kafka({
+  brokers: ["csovvkq0p8t14kkkbsag.any.eu-central-1.mpx.prd.cloud.redpanda.com:9092"],
+  ssl: {},
+  sasl: {
+    mechanism: "scram-sha-256",
+    username: "moshe",
+    password: "HyCUNWFmeV0jyA5PUygv9cXt6CbLbG"
+  }
+});
+
+// Function to create a consumer with resettable offset settings
+const createConsumer = async (userId) => {
+  const consumer = kafka.consumer({
+    groupId: `user-group-${userId}-static`,
+    sessionTimeout: 6000,
+    heartbeatInterval: 3000
+  });
+  await consumer.connect();
+  await consumer.subscribe({ topic: 'testsResults', fromBeginning: true });
+  return consumer;
+};
+
+// WebSocket connection handling
+const handleWebSocketConnection = async (req, res) => {
+//   const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
+//   const userId = parsedUrl.searchParams.get('userId');
+
+//const userId=req.session.user.id
+const userId="123456789"
+//   if (userId) {
+//     ws.send('Error: userId not provided');
+//     ws.close();
+//     return;
+//   }
+
+  console.log(`Client with userId ${userId} connected`);
+
+  const consumer = await createConsumer(userId);
+
+  await consumer.run({
+    eachMessage: async ({ message }) => {
+        // console.log(2)
+        // console.log(message.key.toString())
+        
+        // console.log(userId.toString())
+        // console.log(message.key.toString() === userId.toString())
+      if (message.key.toString() === userId.toString()) {
+        // console.log(1)
+         console.log(message.value.toString())
+       // ws.send(`New message for ${userId}: ${message.value.toString()}`);
+      }
+    }
+  });
+
+//   ws.on('close', async () => {
+//     await consumer.disconnect();
+//     console.log(`Client with userId ${userId} disconnected`);
+//   });
+};
+
+module.exports = {
+  createConsumer,
+  handleWebSocketConnection
+};
 
 
 

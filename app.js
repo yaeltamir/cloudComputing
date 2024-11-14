@@ -84,10 +84,10 @@ app.get('/updateDetails', (req, res) => {
 });
 
 
-// הפעלת השרת
-app.listen(port, () => {
-  console.log(`App is running on http://localhost:${port}`);
-});
+// // הפעלת השרת
+// app.listen(port, () => {
+//   console.log(`App is running on http://localhost:${port}`);
+// });
 
 
 /*const sql = require('mssql');
@@ -145,6 +145,24 @@ connectToDatabase();
 // שימוש בנתיבים
 //app.use('/index', userRoutes); // ודא שהשורה הזו קיימת
 
+//const express = require('express');
+const WebSocket = require('ws');
+//const app = express();
+const PORT = 3001;
+const { handleWebSocketConnection } = require('./controllers/messagesController');
+
+
+
+
+// WebSocket server setup
+const server = app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
+
+const wss = new WebSocket.Server({ server });
+wss.on('connection', handleWebSocketConnection);
+
+module.exports = app;
 
 
 

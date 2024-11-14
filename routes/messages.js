@@ -88,8 +88,16 @@ const router = express.Router();
 const messagesController = require("../controllers/messagesController");
 const usersController = require("../controllers/userController");
 
-router.get("/",(req,res)=>{res.render('messages',{isRegistered: req.session.user.isRegistered,messages:[]})});
+router.get("/",messagesController.handleWebSocketConnection
+    // (req, res) => {
+    // const userId = req.session.user.id; 
+    // const isRegistered = req.session.user.isRegistered;
+    // res.render('messages', {isRegistered, userId });}
+  );
 //router.get("/", messagesController.renderMessages);
 router.get("/subscribe/:answer", usersController.reverseSubscribtion);
 
 module.exports = router;
+
+
+
