@@ -19,7 +19,8 @@
     "ml-cart": "^2.1.1",
     "mssql": "^11.0.1",
     "mysql2": "^3.11.3",
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.7",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/node": "^22.9.0",

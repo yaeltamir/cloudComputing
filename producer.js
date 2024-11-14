@@ -1,4 +1,43 @@
+//temporary code
+// producer.js
+const { Kafka } = require('kafkajs');
 
+const kafka = new Kafka({
+    brokers: ["csovvkq0p8t14kkkbsag.any.eu-central-1.mpx.prd.cloud.redpanda.com:9092"],
+    ssl: {},
+    sasl: {
+      mechanism: "scram-sha-256",
+      username: "moshe",
+      password: "HyCUNWFmeV0jyA5PUygv9cXt6CbLbG"
+    }
+  });
+const producer = kafka.producer();
+
+const runProducer = async (userId) => {
+  await producer.connect();
+  console.log('Producer connected to Kafka');
+
+  // Sending a test message to the "user-messages" topic
+  await producer.send({
+    topic:  "testsResults",
+    messages: [{key:JSON.stringify(userId), value:  JSON.stringify(
+        {
+            date: new Date().toISOString(),
+            doctorName: "Dr. Moshe",
+             message: `Your sugar level is stable. ${userId}`
+
+
+        }
+    )
+     }],
+  });
+
+  console.log('Message sent to Kafka');
+  await producer.disconnect();
+};
+
+runProducer("123456789").catch(console.error);
+runProducer("325984318").catch(console.error);
 
 
 
