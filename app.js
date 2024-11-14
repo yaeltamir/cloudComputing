@@ -235,6 +235,80 @@ connectToDatabase();
 //   console.log(`Server running on http://localhost:${port}`);
 // });
 
+//-----------------------------------------------------------------------------------------
+// const http = require('http');
+// const WebSocket = require('ws');
+// const { Kafka } = require('kafkajs');
+
+
+// const server = http.createServer(app);
+// const wss = new WebSocket.Server({ server });
+
+// // Initialize global dictionary for storing messages by user ID
+// const messagesDictionary = {};
+
+// // WebSocket connections by user ID
+// const wsConnections = {};
+
+// // Set up WebSocket server to listen for incoming connections
+// wss.on('connection', (ws, req) => {
+//   ws.on('message', (userId) => {
+//     // Associate WebSocket connection with the user ID
+//     wsConnections[userId] = ws;
+
+//     // Send any existing messages for this user
+//     if (messagesDictionary[userId]) {
+//       ws.send(JSON.stringify(messagesDictionary[userId]));
+//     }
+//   });
+// });
+
+// // Initialize Kafka consumer
+// const kafka = new Kafka({
+//   brokers: ["csovvkq0p8t14kkkbsag.any.eu-central-1.mpx.prd.cloud.redpanda.com:9092"],
+//   ssl: {},
+//   sasl: { mechanism: "scram-sha-256", username: "moshe", password: "HyCUNWFmeV0jyA5PUygv9cXt6CbLbG" }
+// });
+
+// const consumer = kafka.consumer({ groupId: 'global-consumer-group' });
+
+// const run = async () => {
+//   await consumer.connect();
+//   await consumer.subscribe({ topic: 'testsResults', fromBeginning: true });
+
+//   // Process each message from Kafka
+//   await consumer.run({
+//     eachMessage: async ({ message }) => {
+//       const userId = message.key?.toString();
+//       const value = message.value?.toString();
+
+//       if (userId && value) {
+//         // Add message to global dictionary
+//         if (!messagesDictionary[userId]) {
+//           messagesDictionary[userId] = [];
+//         }
+//         messagesDictionary[userId].push(value);
+
+//         // Broadcast new message to the WebSocket client if connected
+//         const ws = wsConnections[userId];
+//         if (ws) {
+//           ws.send(JSON.stringify([value])); // Send new message as an array
+//         }
+//       }
+//     },
+//   });
+// };
+
+// run().catch(console.error);
+
+// server.listen(3000, () => {
+//   console.log('Server is running on http://localhost:3000');
+// });
+//----------------------------------------------------------------------------------------
+
+// app.js
+
+
 
 const http = require('http');
 const WebSocket = require('ws');
@@ -243,27 +317,44 @@ const { Kafka } = require('kafkajs');
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
+const PORT = 3000;
 
-// Initialize global dictionary for storing messages by user ID
+// Global dictionary for storing messages by user ID and message status
 const messagesDictionary = {};
 
 // WebSocket connections by user ID
 const wsConnections = {};
 
-// Set up WebSocket server to listen for incoming connections
+// WebSocket server setup
 wss.on('connection', (ws, req) => {
   ws.on('message', (userId) => {
     // Associate WebSocket connection with the user ID
     wsConnections[userId] = ws;
 
-    // Send any existing messages for this user
-    if (messagesDictionary[userId]) {
-      ws.send(JSON.stringify(messagesDictionary[userId]));
+    // Initialize dictionary entry for this user if not present
+    if (!messagesDictionary[userId]) {
+      messagesDictionary[userId] = { messages: [], hasNewMessage: false };
     }
+
+    // Send existing messages and "new message" status for this user
+    ws.send(JSON.stringify({ 
+      messages: messagesDictionary[userId].messages,
+      hasNewMessage: messagesDictionary[userId].hasNewMessage
+    }));
   });
 });
 
-// Initialize Kafka consumer
+
+app.post('/resetNotification/:userId', (req, res) => {
+  const { userId } = req.params;
+  if (messagesDictionary[userId]) {
+    messagesDictionary[userId].hasNewMessage = false;
+  }
+  res.sendStatus(200);
+});
+
+
+// Kafka consumer setup
 const kafka = new Kafka({
   brokers: ["csovvkq0p8t14kkkbsag.any.eu-central-1.mpx.prd.cloud.redpanda.com:9092"],
   ssl: {},
@@ -283,16 +374,20 @@ const run = async () => {
       const value = message.value?.toString();
 
       if (userId && value) {
-        // Add message to global dictionary
+        // Add message and set hasNewMessage to true
         if (!messagesDictionary[userId]) {
-          messagesDictionary[userId] = [];
+          messagesDictionary[userId] = { messages: [], hasNewMessage: false };
         }
-        messagesDictionary[userId].push(value);
+        messagesDictionary[userId].messages.push(value);
+        messagesDictionary[userId].hasNewMessage = true;
 
-        // Broadcast new message to the WebSocket client if connected
+        // Notify connected WebSocket client
         const ws = wsConnections[userId];
         if (ws) {
-          ws.send(JSON.stringify([value])); // Send new message as an array
+          ws.send(JSON.stringify({ 
+            messages: [value], 
+            hasNewMessage: true 
+          }));
         }
       }
     },
@@ -304,6 +399,67 @@ run().catch(console.error);
 server.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
 });
+
+
+// // Global dictionary for storing messages by user ID
+// const messagesDictionary = {};
+
+// // WebSocket connections by user ID
+// const wsConnections = {};
+
+// // Setup WebSocket server to listen for incoming connections
+// wss.on('connection', (ws) => {
+//   ws.on('message', (userId) => {
+//     wsConnections[userId] = ws;
+
+//     if (messagesDictionary[userId]) {
+//       ws.send(JSON.stringify(messagesDictionary[userId]));
+//     }
+//   });
+// });
+
+// // Initialize Kafka consumer
+// const kafka = new Kafka({
+//     brokers: ["csovvkq0p8t14kkkbsag.any.eu-central-1.mpx.prd.cloud.redpanda.com:9092"],
+//     ssl: {},
+//     sasl: { mechanism: "scram-sha-256", username: "moshe", password: "HyCUNWFmeV0jyA5PUygv9cXt6CbLbG" }
+//   });
+
+// const consumer = kafka.consumer({ groupId: 'user-group' });
+
+// const run = async () => {
+//   await consumer.connect();
+//   await consumer.subscribe({ topic: 'testsResults', fromBeginning: false });
+
+//   await consumer.run({
+//     eachMessage: async ({ message }) => {
+//       const userId = message.key?.toString();
+//       const content = message.value?.toString();
+
+//       if (userId && content) {
+//         if (!messagesDictionary[userId]) {
+//           messagesDictionary[userId] = [];
+//         }
+//         messagesDictionary[userId].push(content);
+
+//         const ws = wsConnections[userId];
+//         if (ws) {
+//           ws.send(JSON.stringify([content]));
+//         }
+//       }
+//     },
+//   });
+// };
+
+// run().catch(console.error);
+
+// // Start server
+// server.listen(PORT, () => {
+//   console.log(`Server running on http://localhost:${PORT}`);
+// });
+
+
+
 
 
 //------------------------------------------------------------------------------------------------------------------------------

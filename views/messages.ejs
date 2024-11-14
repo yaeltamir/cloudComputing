@@ -12,28 +12,28 @@
       <li><%= message %></li>
     <% }) %>
   </ul>
-
   <script>
     const userId = '<%= userId %>';
     const ws = new WebSocket('ws://' + window.location.host);
 
-    // Send user ID upon connection to register for real-time updates
     ws.addEventListener('open', () => {
-      ws.send(userId);
+        ws.send(userId);
+
+        // Reset hasNewMessage for the user
+        fetch(`/resetNotification/${userId}`, { method: 'POST' });
     });
 
-    // Listen for incoming messages and update the DOM
     ws.addEventListener('message', (event) => {
-      const newMessages = JSON.parse(event.data);
-      const messagesList = document.getElementById('messages');
-      
-      // Append each new message to the messages list
-      newMessages.forEach((message) => {
-        const li = document.createElement('li');
-        li.textContent = message;
-        messagesList.appendChild(li);
-      });
+        const newMessages = JSON.parse(event.data).messages;
+        const messagesList = document.getElementById('messages');
+        
+        newMessages.forEach((message) => {
+            const li = document.createElement('li');
+            li.textContent = message;
+            messagesList.appendChild(li);
+        });
     });
-  </script>
+</script>
+
 </body>
 </html>

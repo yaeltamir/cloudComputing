@@ -48,28 +48,28 @@
     <script>
         const userId = '<%= userId %>';
         const ws = new WebSocket('ws://' + window.location.host);
-
-        // Send user ID upon connection to register for real-time updates
+    
         ws.addEventListener('open', () => {
             ws.send(userId);
         });
-
-        // Listen for incoming messages and update the DOM
+    
         ws.addEventListener('message', (event) => {
-            const newMessages = JSON.parse(event.data);
+            const data = JSON.parse(event.data);
             const messagesList = document.getElementById('messages');
             
-            // Clear previous notifications
-            messagesList.innerHTML = '';
-            
-            // Display "You have a new message" when a new message arrives
-            if (newMessages && newMessages.length > 0) {
+            messagesList.innerHTML = ''; // Clear previous notification
+    
+            if (data.hasNewMessage) {
                 const p = document.createElement('p');
                 p.textContent = "You have a new message";
-                p.classList.add('alert', 'alert-info'); // Optional styling class
+                p.classList.add('alert', 'alert-info');
                 messagesList.appendChild(p);
             }
         });
     </script>
+    
 </body>
 </html>
+
+
+
