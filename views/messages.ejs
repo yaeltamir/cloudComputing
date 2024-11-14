@@ -62,41 +62,66 @@
             <% } %>
           </div>
 
-          <!-- Messages List -->
-          <ul id="messages">
-            <% messages.forEach(message => { %>
-              <li><%= message %></li>
-            <% }) %>
-          </ul>
-        </div>
-      </section>
-    </main>
+         <!-- Messages List -->
+<div id="messages">
+  <% messages.forEach(message => { %>
+    <div class="card overflow-hidden shadow rounded-4 border-0 mb-3">
+      <div class="card-body p-4">
+        <h5 class="fw-bolder">Date:</h5>
+        <p><%= new Date(message.date).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' }) %></p>
+        <h5 class="fw-bolder">Doctor Name:</h5>
+        <p><%= message.doctorName %></p>
+        <h5 class="fw-bolder">Message:</h5>
+        <p><%= message.messageText %></p>
+      </div>
+    </div>
+  <% }) %>
+</div>
+</section>
+</main>
 
-    <!-- WebSocket Script -->
-    <% if (isRegistered) { %>
-    <script>
-      const userId = '<%= userId %>';
-      const ws = new WebSocket('ws://' + window.location.host);
+<!-- WebSocket Script -->
+<% if (isRegistered) { %>
+<script>
+  const userId = '<%= userId %>';
+  const ws = new WebSocket('ws://' + window.location.host);
 
-      ws.addEventListener('open', () => {
-        ws.send(userId);
+  ws.addEventListener('open', () => {
+    ws.send(userId);
 
-        // Reset hasNewMessage for the user
-        fetch(`/resetNotification/${userId}`, { method: 'POST' });
-      });
+    // Reset hasNewMessage for the user
+    fetch(`/resetNotification/${userId}`, { method: 'POST' });
+  });
 
-      ws.addEventListener('message', (event) => {
-        const newMessages = JSON.parse(event.data).messages;
-        const messagesList = document.getElementById('messages');
+  ws.addEventListener('message', (event) => {
+  const newMessages = JSON.parse(event.data).messages;
+  const messagesContainer = document.getElementById('messages');
 
-        newMessages.forEach((message) => {
-          const li = document.createElement('li');
-          li.textContent = message;
-          messagesList.appendChild(li);
-        });
-      });
-    </script>
-    <% } %>
+  newMessages.forEach((message) => {
+    const messageCard = document.createElement("div");
+    messageCard.classList.add("card", "overflow-hidden", "shadow", "rounded-4", "border-0", "mb-3");
+
+    const cardBody = document.createElement("div");
+    cardBody.classList.add("card-body", "p-4");
+
+    const jsMsg=JSON.parse(message)
+    cardBody.innerHTML = `
+        <h5 class="fw-bolder">Date:</h5>
+        <p>${new Date(jsMsg.date).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })}</p>
+        <h5 class="fw-bolder">Doctor Name:</h5>
+        <p>${jsMsg.doctorName}</p>
+        <h5 class="fw-bolder">Message:</h5>
+        <p>${jsMsg.message}</p>
+    `;
+
+    messageCard.appendChild(cardBody);
+    messagesContainer.appendChild(messageCard);
+  });
+});
+
+</script>
+<% } %>
+
 
     <!-- Footer-->
     <footer class="bg-white py-4 mt-auto">

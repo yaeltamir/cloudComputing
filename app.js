@@ -378,6 +378,7 @@ const run = async () => {
         if (!messagesDictionary[userId]) {
           messagesDictionary[userId] = { messages: [], hasNewMessage: false };
         }
+        console.log(value)
         messagesDictionary[userId].messages.push(value);
         messagesDictionary[userId].hasNewMessage = true;
 

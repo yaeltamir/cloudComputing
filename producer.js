@@ -24,19 +24,30 @@ const runProducer = async (userId) => {
         {
             date: new Date().toISOString(),
             doctorName: "Dr. Moshe",
-             message: `Your sugar level is stable. ${userId}`
+             message: `Your sugar level is stable 2. ${userId}`
 
 
         }
     )
+  
      }],
   });
+  console.log(  JSON.stringify(
+    {
+        date: new Date().toISOString(),
+        doctorName: "Dr. Moshe",
+         message: `Your sugar level is stable. ${userId}`
+
+
+    }
+));
 
   console.log('Message sent to Kafka');
   await producer.disconnect();
 };
 
-runProducer("123456789").catch(console.error);
+//runProducer("123456789").catch(console.error);
+
 runProducer("325984318").catch(console.error);
 
 
