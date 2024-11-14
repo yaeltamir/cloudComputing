@@ -125,11 +125,18 @@ const updateUser = (req, res) => {
 
 // }
 
+const messagesDictionary = require('../controllers/messagesController');
+
 const reverseSubscribtion=(req, res) => {
     const answer=req.params.answer
 
+
     const idUser=req.session.user.id
     console.log(answer);
+
+    if(answer.toLowerCase()==="false"){
+        messagesDictionary[idUser].messages=[]
+    }
  // const { id, name, email, password, dob, gender, age, height, weight } = req.body;
 
     // יצירת אובייקט שמכיל את הנתונים החדשים

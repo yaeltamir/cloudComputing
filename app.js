@@ -149,7 +149,7 @@ connectToDatabase();
 // const WebSocket = require('ws');
 // //const app = express();
 // const PORT = 3000;
-// const { handleWebSocketConnection } = require('./controllers/messagesController');
+
 
 
 
@@ -320,9 +320,11 @@ const wss = new WebSocket.Server({ server });
 const PORT = 3000;
 
 // Global dictionary for storing messages by user ID and message status
-const messagesDictionary = {};
+const messagesDictionary = require('./controllers/messagesController');
+
 
 // WebSocket connections by user ID
+
 const wsConnections = {};
 
 // WebSocket server setup
@@ -365,7 +367,7 @@ const consumer = kafka.consumer({ groupId: 'global-consumer-group' });
 
 const run = async () => {
   await consumer.connect();
-  await consumer.subscribe({ topic: 'testsResults', fromBeginning: true });
+  await consumer.subscribe({ topic: 'testsResults', fromBeginning: false });
 
   // Process each message from Kafka
   await consumer.run({
