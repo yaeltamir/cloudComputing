@@ -92,7 +92,7 @@ const { getMessages } = require("../messageStore");
 router.get("/",(req, res) => {
   const userId  = req.session.user.id;
   const messages = getMessages(userId);
-  res.render("messages", { userId, messages:req.session.user.isRegistered?messages:[] });}
+  res.render("messages", { userId, messages:req.session.user.isRegistered?messages:[] ,isRegistered:req.session.user.isRegistered});}
   );
 //router.get("/", messagesController.renderMessages);
 router.get("/subscribe/:answer", usersController.reverseSubscribtion);

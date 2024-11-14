@@ -12,7 +12,10 @@
       <li><%= message %></li>
     <% }) %>
   </ul>
+
+  <% if (isRegistered) { %>
   <script>
+   
     const userId = '<%= userId %>';
     const ws = new WebSocket('ws://' + window.location.host);
 
@@ -34,6 +37,8 @@
         });
     });
 </script>
+
+<% } %>
 
 </body>
 </html>

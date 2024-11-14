@@ -55,7 +55,7 @@ app.get('/signUp', (req, res) => {
 
 // ניתוב לדף ה-meals - meals.ejs
 app.get('/meals', (req, res) => {
-  res.render('meals',{ successMessage: null,sugarPrediction:null,message:null,userId:req.session.user.id})
+  res.render('meals',{ successMessage: null,sugarPrediction:null,message:null,userId:req.session.user.id,isRegistered:req.session.user.isRegistered})
 
   });
   
@@ -68,7 +68,7 @@ app.get('/meals', (req, res) => {
 
 
  app.get('/home', (req, res) => {
-   res.render('home',{userId:req.session.user.id});
+   res.render('home',{userId:req.session.user.id,isRegistered:req.session.user.isRegistered});
  });
 
 // app.get('/historyGraph', (req, res) => {
