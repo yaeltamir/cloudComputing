@@ -64,18 +64,7 @@
 
          <!-- Messages List -->
 <div id="messages">
-  <% messages.forEach(message => { %>
-    <div class="card overflow-hidden shadow rounded-4 border-0 mb-3">
-      <div class="card-body p-4">
-        <h5 class="fw-bolder">Date:</h5>
-        <p><%= new Date(message.date).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' }) %></p>
-        <h5 class="fw-bolder">Doctor Name:</h5>
-        <p><%= message.doctorName %></p>
-        <h5 class="fw-bolder">Message:</h5>
-        <p><%= message.messageText %></p>
-      </div>
-    </div>
-  <% }) %>
+  
 </div>
 </section>
 </main>
