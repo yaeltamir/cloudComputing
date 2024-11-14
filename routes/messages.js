@@ -88,7 +88,8 @@ const router = express.Router();
 const messagesController = require("../controllers/messagesController");
 const usersController = require("../controllers/userController");
 
-router.get("/", messagesController.renderMessages);
+router.get("/",(req,res)=>{res.render('messages',{isRegistered: req.session.user.isRegistered,messages:[]})});
+//router.get("/", messagesController.renderMessages);
 router.get("/subscribe/:answer", usersController.reverseSubscribtion);
 
 module.exports = router;
