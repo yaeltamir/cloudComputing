@@ -85,19 +85,23 @@
 
 const express = require("express");
 const router = express.Router();
-const messagesController = require("../controllers/messagesController");
+//const messagesController = require("../controllers/messagesController");
 const usersController = require("../controllers/userController");
+const { getMessages } = require("../messageStore");
 
-router.get("/",messagesController.handleWebSocketConnection
-    // (req, res) => {
-    // const userId = req.session.user.id; 
-    // const isRegistered = req.session.user.isRegistered;
-    // res.render('messages', {isRegistered, userId });}
+router.get("/",(req, res) => {
+  const userId  = req.session.user.id;
+  const messages = getMessages(userId);
+  res.render("messages", { userId, messages:req.session.user.isRegistered?messages:[] });}
   );
 //router.get("/", messagesController.renderMessages);
 router.get("/subscribe/:answer", usersController.reverseSubscribtion);
 
 module.exports = router;
+
+
+
+
 
 
 

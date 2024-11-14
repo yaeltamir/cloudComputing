@@ -74,7 +74,7 @@ const loginUser = async (req, res) => {
         //     console.log('Session after login:', req.session);
         req.session.user = result.userData;
         // אם האימות הצליח, נציג את דף הבית המותאם למשתמש
-        res.render('home', { user: result.userData });
+        res.redirect('home');
         
       } 
     else 

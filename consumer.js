@@ -1,3 +1,38 @@
+// consumer.js
+const { Kafka } = require("kafkajs");
+const { addMessage } = require("./messageStore");
+
+const kafka = new Kafka({
+  brokers: ["csovvkq0p8t14kkkbsag.any.eu-central-1.mpx.prd.cloud.redpanda.com:9092"],
+  ssl: {},
+  sasl: {
+    mechanism: "scram-sha-256",
+    username: "moshe",
+    password: "HyCUNWFmeV0jyA5PUygv9cXt6CbLbG",
+  },
+});
+
+const consumer = kafka.consumer({ groupId: "user-group" });
+
+const runConsumer = async () => {
+  await consumer.connect();
+  await consumer.subscribe({ topic: "testsResults", fromBeginning: true });
+
+  await consumer.run({
+    eachMessage: async ({ message }) => {
+    if(message.key){
+      const userId = message.key.toString();
+      const value = message.value.toString();
+
+      // Store the message in the messageStore by userId
+      addMessage(userId, value);
+      console.log(`Received message for user ${userId}: ${value}`);
+    }
+    },
+  });
+};
+
+module.exports = runConsumer;
 
 
 

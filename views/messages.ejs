@@ -1,31 +1,38 @@
+<!-- views/messages.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Messages</title>
+  <title>Messages for User <%= userId %></title>
 </head>
 <body>
-  <h1>Your Messages</h1>
-  <ul id="messageList"></ul>
+  <h1>Messages for User <%= userId %></h1>
+  <ul id="messages">
+    <% messages.forEach(message => { %>
+      <li><%= message %></li>
+    <% }) %>
+  </ul>
 
   <script>
-    // Replace "localhost" and port with your actual server URL if necessary
-    const userId = "<%= userId %>"; // Pass userId from the server to use in connection URL
-    const ws = new WebSocket(`ws://localhost:3000?userId=${userId}`);
+    const userId = '<%= userId %>';
+    const ws = new WebSocket('ws://' + window.location.host);
 
-    // Listen for incoming messages and update the message list
-    ws.addEventListener('message', (event) => {
-      const data = JSON.parse(event.data);
-      
-      // Create a new list item for each received message
-      const messageItem = document.createElement("li");
-      messageItem.textContent = `New message: ${data.message}`;
-      document.getElementById("messageList").appendChild(messageItem);
+    // Send user ID upon connection to register for real-time updates
+    ws.addEventListener('open', () => {
+      ws.send(userId);
     });
 
-    // Handle WebSocket connection close event
-    ws.addEventListener('close', () => {
-      console.log("WebSocket connection closed");
+    // Listen for incoming messages and update the DOM
+    ws.addEventListener('message', (event) => {
+      const newMessages = JSON.parse(event.data);
+      const messagesList = document.getElementById('messages');
+      
+      // Append each new message to the messages list
+      newMessages.forEach((message) => {
+        const li = document.createElement('li');
+        li.textContent = message;
+        messagesList.appendChild(li);
+      });
     });
   </script>
 </body>

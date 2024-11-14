@@ -67,9 +67,9 @@ app.get('/meals', (req, res) => {
 // });
 
 
-//  app.get('/home', (req, res) => {
-//    res.render('home');
-//  });
+ app.get('/home', (req, res) => {
+   res.render('home',{userId:req.session.user.id});
+ });
 
 // app.get('/historyGraph', (req, res) => {
 //   res.render('historyGraph');
@@ -140,30 +140,170 @@ connectToDatabase();
 */
 
 
+//new------------------------------------------------------------------------------------------------------------------------------
+
+// // שימוש בנתיבים
+// //app.use('/index', userRoutes); // ודא שהשורה הזו קיימת
+
+// //const express = require('express');
+// const WebSocket = require('ws');
+// //const app = express();
+// const PORT = 3000;
+// const { handleWebSocketConnection } = require('./controllers/messagesController');
 
 
-// שימוש בנתיבים
-//app.use('/index', userRoutes); // ודא שהשורה הזו קיימת
 
-//const express = require('express');
+
+// // // WebSocket server setup
+// // const server = app.listen(PORT, () => {
+// //   console.log(`Server running on http://localhost:${PORT}`);
+// // });
+
+// // const wss = new WebSocket.Server({ server });
+// // wss.on('connection', handleWebSocketConnection);
+
+// // module.exports = app;
+
+// const http = require("http");
+// const WebSocket = require("ws");
+
+// const { startKafkaConsumer } = require("./consumer");.........
+
+
+// const server = http.createServer(app);
+// const wss = new WebSocket.Server({ server });
+
+// global.wsConnections = {}; // Store WebSocket connections by user ID
+
+
+
+// // // Routes
+// // app.get("/", (req, res) => {
+// //   res.render("index"); // Entry point for WebSocket connection
+// // });
+
+// // app.get("/messages", (req, res) => {
+// //   const { userId } = req.query;
+// //   res.render("messages", { userId });
+// // });
+
+// // WebSocket handling
+// wss.on("connection", (ws, req) => {
+
+//  // const userId = req.session.
+
+//   if (userId) {
+//     wsConnections[userId] = ws;
+//     console.log(`WebSocket connection established for user ID: ${userId}`);
+
+//     ws.on("close", () => {
+//       delete wsConnections[userId];
+//       console.log(`WebSocket connection closed for user ID: ${userId}`);
+//     });
+//   }
+// });
+
+// // Start Kafka consumer and server
+// startKafkaConsumer();
+// server.listen(3000, () => {
+//   console.log("Server is running on http://localhost:3000");
+// });
+
+
+
+//-------------------------------
+
+// //setting websocket server
+// const http = require("http");
+
+
+// const setupWebSocket = require("./wsServer");
+// const runConsumer = require("./consumer");
+// // const indexRoutes = require("./routes/index");
+// // const messageRoutes = require("./routes/messages");
+
+
+// const server = http.createServer(app);
+
+// // WebSocket setup
+// setupWebSocket(server);
+
+// // Kafka consumer setup
+// runConsumer().catch((err) => console.error("Kafka Consumer Error:", err));
+
+// server.listen(port, () => {
+//   console.log(`Server running on http://localhost:${port}`);
+// });
+
+
+const http = require('http');
 const WebSocket = require('ws');
-//const app = express();
-const PORT = 3001;
-const { handleWebSocketConnection } = require('./controllers/messagesController');
+const { Kafka } = require('kafkajs');
 
 
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
 
+// Initialize global dictionary for storing messages by user ID
+const messagesDictionary = {};
 
-// WebSocket server setup
-const server = app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+// WebSocket connections by user ID
+const wsConnections = {};
+
+// Set up WebSocket server to listen for incoming connections
+wss.on('connection', (ws, req) => {
+  ws.on('message', (userId) => {
+    // Associate WebSocket connection with the user ID
+    wsConnections[userId] = ws;
+
+    // Send any existing messages for this user
+    if (messagesDictionary[userId]) {
+      ws.send(JSON.stringify(messagesDictionary[userId]));
+    }
+  });
 });
 
-const wss = new WebSocket.Server({ server });
-wss.on('connection', handleWebSocketConnection);
+// Initialize Kafka consumer
+const kafka = new Kafka({
+  brokers: ["csovvkq0p8t14kkkbsag.any.eu-central-1.mpx.prd.cloud.redpanda.com:9092"],
+  ssl: {},
+  sasl: { mechanism: "scram-sha-256", username: "moshe", password: "HyCUNWFmeV0jyA5PUygv9cXt6CbLbG" }
+});
 
-module.exports = app;
+const consumer = kafka.consumer({ groupId: 'global-consumer-group' });
+
+const run = async () => {
+  await consumer.connect();
+  await consumer.subscribe({ topic: 'testsResults', fromBeginning: true });
+
+  // Process each message from Kafka
+  await consumer.run({
+    eachMessage: async ({ message }) => {
+      const userId = message.key?.toString();
+      const value = message.value?.toString();
+
+      if (userId && value) {
+        // Add message to global dictionary
+        if (!messagesDictionary[userId]) {
+          messagesDictionary[userId] = [];
+        }
+        messagesDictionary[userId].push(value);
+
+        // Broadcast new message to the WebSocket client if connected
+        const ws = wsConnections[userId];
+        if (ws) {
+          ws.send(JSON.stringify([value])); // Send new message as an array
+        }
+      }
+    },
+  });
+};
+
+run().catch(console.error);
+
+server.listen(3000, () => {
+  console.log('Server is running on http://localhost:3000');
+});
 
 
-
-
+//------------------------------------------------------------------------------------------------------------------------------

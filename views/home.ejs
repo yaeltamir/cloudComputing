@@ -15,11 +15,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
         rel="stylesheet" />
-    <!-- Bootstrap icons-->
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet" /> -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core theme CSS (includes Bootstrap)-->
     <link href="css/styles.css" rel="stylesheet" />
 </head>
 
@@ -42,10 +38,38 @@
                         <li class="nav-item"><a class="nav-link" href="messages">Messages</a></li>                       
                     </ul>
                 </div>
-            
             </div>
         </nav>
     </main>
+
+    <!-- Messages Notification Area -->
+    <div id="messages"></div>
+
+    <script>
+        const userId = '<%= userId %>';
+        const ws = new WebSocket('ws://' + window.location.host);
+
+        // Send user ID upon connection to register for real-time updates
+        ws.addEventListener('open', () => {
+            ws.send(userId);
+        });
+
+        // Listen for incoming messages and update the DOM
+        ws.addEventListener('message', (event) => {
+            const newMessages = JSON.parse(event.data);
+            const messagesList = document.getElementById('messages');
+            
+            // Clear previous notifications
+            messagesList.innerHTML = '';
+            
+            // Display "You have a new message" when a new message arrives
+            if (newMessages && newMessages.length > 0) {
+                const p = document.createElement('p');
+                p.textContent = "You have a new message";
+                p.classList.add('alert', 'alert-info'); // Optional styling class
+                messagesList.appendChild(p);
+            }
+        });
+    </script>
 </body>
 </html>
-        
