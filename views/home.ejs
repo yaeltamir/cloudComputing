@@ -114,35 +114,43 @@
 
         <!-- Welcome message section -->
         <div class="text-center mb-5">
-            <h2 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Welcome, <%= userName %>!</span></h2>
-            <h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Here are your last three meals:</span></h1>
+            <h1 class="display-3 fw-bolder mb-5"><span class="text-gradient d-inline">Welcome Home, <%= userName %>!</span></h1>
+
+            <h1 class="display-5 fw-bolder mb-0 mt-4"> <!-- הוספת רווח עם מחלקת mt-3 -->
+                <span class="text-gradient d-inline">Your last three meals:</span>
+            </h1>
         </div>
 
+
         <!-- Meal Images and Details -->
-        <div class="meal-container">
-            <div class="meal-item" onclick="window.location.href='meal1-details.html'">
-                <img src="path-to-image1.jpg" alt="Meal 1" />
-                <div class="meal-description">
-                    <h5>Meal 1</h5>
-                    <p>Delicious salad with fresh ingredients.</p>
-                </div>
-            </div>
-            <div class="meal-item" onclick="window.location.href='meal2-details.html'">
-                <img src="path-to-image2.jpg" alt="Meal 2" />
-                <div class="meal-description">
-                    <h5>Meal 2</h5>
-                    <p>Tasty grilled chicken with vegetables.</p>
-                </div>
-            </div>
-            <div class="meal-item" onclick="window.location.href='meal3-details.html'">
-                <img src="path-to-image3.jpg" alt="Meal 3" />
-                <div class="meal-description">
-                    <h5>Meal 3</h5>
-                    <p>Healthy pasta with olive oil and garlic.</p>
-                </div>
+        <!-- הצגת שלושת הארוחות האחרונות -->
+        <div class="last-meals-container">
+            <div class="meal-container">
+                <% if (lastThreeMeals && lastThreeMeals.length > 0) { %>
+                    <% lastThreeMeals.forEach(function(meal) { %>
+                        <div class="meal-item">
+                            <img src="<%= meal.imageUrl %>" alt="<%= meal.kindOfMeal %>" />
+                            <div class="meal-description">
+                                <h5><%= meal.kindOfMeal.charAt(0).toUpperCase() + meal.kindOfMeal.slice(1) %></h5>
+                                <p><%= meal.Date %> - <%= meal.Time %></p>
+                                 <p>Sugar Level: <%= meal.sugarLevel %></p>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p>No meals found!</p>
+                <% } %>
             </div>
         </div>
+
     </main>
+    <!-- Footer Section -->
+<footer class="mt-auto py-3 bg-light text-center">
+    <div class="container">
+        <p class="mb-0">&copy; 2024 SugarSnap. All rights reserved. | Designed with ♥</p>
+    </div>
+</footer>
+
 
     <%- include('partials/messageNotification') %>
 </body>

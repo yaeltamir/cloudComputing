@@ -9,6 +9,9 @@ const mealsRoutes = require('./routes/meals');
 const historyRoutes = require('./routes/history');
 const messagesRoutes = require('./routes/messages');
 
+const homeRoutes = require('./routes/homeRoute');
+
+
 
 //חייב את זה כדי שהקטע עם הסשן יעבוד
 app.use(session({
@@ -28,6 +31,7 @@ app.use('/meals', mealsRoutes);
 app.use('/historyGraph', historyRoutes);
 app.use('/messages',messagesRoutes);
 
+app.use('/home', homeRoutes);
 
 
 // הגדרת מנוע התבניות EJS

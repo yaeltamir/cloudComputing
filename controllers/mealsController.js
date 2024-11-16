@@ -243,7 +243,39 @@ async function showHistoryGraph(req, res) {
 }
 
 
-module.exports = { addMeal,predictSugarLevel, showHistoryGraph };
+// פונקציה לשליפת שלושת הארוחות האחרונות
+async function getLastMeals(req, res, next) {
+    // בדיקה האם המשתמש קיים ב-session ויש לו מזהה
+    if (!req.session.user || !req.session.user.id) {
+        console.error('User is not logged in or user ID is missing');
+        return res.status(400).send('User is not logged in or user ID is missing');
+    }
+
+    const userId = req.session.user.id;
+    console.log('User ID:', userId);
+
+    try {
+        // שליפת הארוחות האחרונות מהמודל
+        const meals = await mealsModel.fetchMealDataById(userId);
+        console.log('Fetched meals:', meals);
+
+        // סינון ושליפה של 3 הארוחות האחרונות (ממוינות לפי תאריך)
+        const lastThreeMeals = meals
+            .sort((a, b) => new Date(b.Date) - new Date(a.Date))
+            .slice(0, 3);
+
+        console.log('Last 3 meals:', lastThreeMeals);
+
+        // שליחה לתבנית עם הנתונים
+        req.lastThreeMeals = lastThreeMeals;
+        next(); // המשך לעיבוד הבקשה (מעביר ל-next middleware או handler)
+    } catch (error) {
+        console.error('Error fetching last meals:', error);
+        res.status(500).send('Error fetching last meals');
+    }
+}
+
+module.exports = { addMeal,predictSugarLevel, showHistoryGraph, getLastMeals }; 
 
 
 

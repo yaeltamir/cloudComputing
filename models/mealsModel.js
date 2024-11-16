@@ -220,7 +220,6 @@ async function fetchMealDataById(id) {
 }
 
 
-
-module.exports = { checkHebcalDate, addMeal, calculateTotalSugar, fetchMealDataById,tagImage};
+module.exports = { checkHebcalDate, addMeal, calculateTotalSugar, fetchMealDataById,tagImage,};
 
 
