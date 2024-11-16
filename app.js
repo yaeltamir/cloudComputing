@@ -51,8 +51,22 @@ app.get('/signUp', (req, res) => {
 });
 
  app.get('/home', (req, res) => {
-   res.render('home',{userId:req.session.user.id,isRegistered:req.session.user.isRegistered});
+  // res.render('home',{userId:req.session.user.id,isRegistered:req.session.user.isRegistered});
+
+   const user = req.session.user;
+
+   // אם המשתמש קיים ב-session, שלח את שם המשתמש, אחרת שלח 'Guest'
+   const userName = user ? user.name : 'Guest';
+ 
+   // עכשיו תעביר את המשתנה userName יחד עם המשתנים האחרים
+   res.render('home', { 
+     userName: userName, 
+     userId: user ? user.id : null, 
+     isRegistered: user ? user.isRegistered : false 
+   });
  });
+
+ 
 
 app.get('/updateDetails', (req, res) => {
   const user = req.session.user; // מקבל את האובייקט של המשתמש מה-Session

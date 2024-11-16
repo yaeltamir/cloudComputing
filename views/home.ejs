@@ -17,6 +17,77 @@
         rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <link href="css/styles.css" rel="stylesheet" />
+
+    <style>
+        /* Container for the images */
+        .meal-container {
+            display: flex;
+            justify-content: space-around;
+            gap: 15px;
+            padding: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap; /* Allows images to wrap on smaller screens */
+        }
+
+        /* Styling each individual image */
+        .meal-item {
+            position: relative;
+            width: 28%; /* Adjusted to make the images a little smaller */
+            aspect-ratio: 1 / 1; /* Keeps the image square */
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .meal-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .meal-item:hover {
+            transform: scale(1.05);
+        }
+
+        /* The hidden description */
+        .meal-description {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 16px;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            width: 100%;
+            display: none;
+        }
+
+        /* Show the description when hovering */
+        .meal-item:hover .meal-description {
+            display: block;
+        }
+
+        /* Welcome message */
+        .welcome-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .welcome-section h2 {
+            font-size: 30px;
+            color: #333;
+        }
+
+        .welcome-section p {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 40px;
+        }
+    </style>
 </head>
 
 <body class="d-flex flex-column h-100">
@@ -40,13 +111,43 @@
                 </div>
             </div>
         </nav>
+
+        <!-- Welcome message section -->
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Welcome, <%= userName %>!</span></h2>
+            <h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Here are your last three meals:</span></h1>
+        </div>
+
+        <!-- Meal Images and Details -->
+        <div class="meal-container">
+            <div class="meal-item" onclick="window.location.href='meal1-details.html'">
+                <img src="path-to-image1.jpg" alt="Meal 1" />
+                <div class="meal-description">
+                    <h5>Meal 1</h5>
+                    <p>Delicious salad with fresh ingredients.</p>
+                </div>
+            </div>
+            <div class="meal-item" onclick="window.location.href='meal2-details.html'">
+                <img src="path-to-image2.jpg" alt="Meal 2" />
+                <div class="meal-description">
+                    <h5>Meal 2</h5>
+                    <p>Tasty grilled chicken with vegetables.</p>
+                </div>
+            </div>
+            <div class="meal-item" onclick="window.location.href='meal3-details.html'">
+                <img src="path-to-image3.jpg" alt="Meal 3" />
+                <div class="meal-description">
+                    <h5>Meal 3</h5>
+                    <p>Healthy pasta with olive oil and garlic.</p>
+                </div>
+            </div>
+        </div>
     </main>
 
     <%- include('partials/messageNotification') %>
-
-    
 </body>
 </html>
+
 
 
 
