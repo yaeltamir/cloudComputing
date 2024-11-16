@@ -114,13 +114,12 @@
 
         <!-- Welcome message section -->
         <div class="text-center mb-5">
-            <h1 class="display-3 fw-bolder mb-5"><span class="text-gradient d-inline">Welcome Home, <%= userName %>!</span></h1>
+            <h1 class="display-3 fw-bolder mb-5  mt-4"><span class="text-gradient d-inline">Welcome Home, <%= userName %>!</span></h1>
 
             <h1 class="display-5 fw-bolder mb-0 mt-4"> <!-- הוספת רווח עם מחלקת mt-3 -->
                 <span class="text-gradient d-inline">Your last three meals:</span>
             </h1>
         </div>
-
 
         <!-- Meal Images and Details -->
         <!-- הצגת שלושת הארוחות האחרונות -->
@@ -132,7 +131,8 @@
                             <img src="<%= meal.imageUrl %>" alt="<%= meal.kindOfMeal %>" />
                             <div class="meal-description">
                                 <h5><%= meal.kindOfMeal.charAt(0).toUpperCase() + meal.kindOfMeal.slice(1) %></h5>
-                                <p><%= meal.Date %> - <%= meal.Time %></p>
+                                <p><%= new Date(meal.Date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) %>  </p> 
+                                <p> <%= new Date(meal.Time).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) %> </p>
                                  <p>Sugar Level: <%= meal.sugarLevel %></p>
                             </div>
                         </div>
@@ -142,8 +142,9 @@
                 <% } %>
             </div>
         </div>
-
+        
     </main>
+    
     <!-- Footer Section -->
 <footer class="mt-auto py-3 bg-light text-center">
     <div class="container">
