@@ -9,6 +9,7 @@ const mealsRoutes = require('./routes/meals');
 const historyRoutes = require('./routes/history');
 const messagesRoutes = require('./routes/messages');
 
+
 //חייב את זה כדי שהקטע עם הסשן יעבוד
 app.use(session({
   secret: 'your-secret-key', // השתמש במפתח סודי ליצירת סשן
@@ -26,6 +27,7 @@ app.use('/', userRoutes); // השתמש ב-router שיצרת
 app.use('/meals', mealsRoutes);
 app.use('/historyGraph', historyRoutes);
 app.use('/messages',messagesRoutes);
+
 
 
 // הגדרת מנוע התבניות EJS
@@ -48,102 +50,105 @@ app.get('/signUp', (req, res) => {
   res.render('signUp');
 });
 
-// // ניתוב לדף ה-projects - projects.ejs
-// app.get('/messages', );
-
-// ניתוב לדף ה-meals - meals.ejs
-app.get('/meals', (req, res) => {
-  res.render('meals',{ successMessage: null,sugarPrediction:null,message:null})
-
-  });
-  
-
-// // Route for the meals page
-// app.get('/meals/:success', (req, res) => {
-//   const successMessage = req.params.success === 'true' ?  'the meal was added successfully!' : null;
-//   res.render('meals', { successMessage: successMessage });
-// });
-
-
  app.get('/home', (req, res) => {
-   res.render('home');
+   res.render('home',{userId:req.session.user.id,isRegistered:req.session.user.isRegistered});
  });
-
-// app.get('/historyGraph', (req, res) => {
-//   res.render('historyGraph');
-// });
 
 app.get('/updateDetails', (req, res) => {
   const user = req.session.user; // מקבל את האובייקט של המשתמש מה-Session
-  //console.log('Session after login:', req.session);
-
-  
   res.render('updateDetails', { userDetails: user });
 });
 
 
-// הפעלת השרת
-app.listen(port, () => {
-  console.log(`App is running on http://localhost:${port}`);
+const http = require('http');
+const WebSocket = require('ws');
+const { Kafka } = require('kafkajs');
+
+
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+
+
+// Global dictionary for storing messages by user ID and message status
+const messagesDictionary = require('./controllers/messagesController');
+
+// WebSocket connections by user ID
+const wsConnections = {};
+
+// WebSocket server setup
+wss.on('connection', (ws, req) => {
+  ws.on('message', (userId) => {
+
+    // Associate WebSocket connection with the user ID
+    wsConnections[userId] = ws;
+
+    // Initialize dictionary entry for this user if not present
+    if (!messagesDictionary[userId]) {
+      messagesDictionary[userId] = { messages: [], hasNewMessage: false };
+    }
+
+    // Send existing messages and "new message" status for this user
+    ws.send(JSON.stringify({ 
+      messages: messagesDictionary[userId].messages,
+      hasNewMessage: messagesDictionary[userId].hasNewMessage
+    }));
+  });
 });
 
 
-/*const sql = require('mssql');
+app.post('/resetNotification/:userId', (req, res) => {
+  const { userId } = req.params;
+  if (messagesDictionary[userId]) {
+    messagesDictionary[userId].hasNewMessage = false;
+  }
+  res.sendStatus(200);
+});
 
-const config = {
-    user: 'yael_SQLLogin_1', // שם המשתמש שלך
-    password: '65s55lgogc',    // הסיסמה שלך
-    server: 'usersInformation.mssql.somee.com', // השרת
-    database: 'usersInformation', // שם מאגר הנתונים
-    options: {
-        encrypt: true, // אם דרוש SSL
-        trustServerCertificate: true // לאישור תעודת SSL
-    }
+
+// Kafka consumer setup
+const kafka = new Kafka({
+  brokers: ["csovvkq0p8t14kkkbsag.any.eu-central-1.mpx.prd.cloud.redpanda.com:9092"],
+  ssl: {},
+  sasl: { mechanism: "scram-sha-256", username: "moshe", password: "HyCUNWFmeV0jyA5PUygv9cXt6CbLbG" }
+});
+
+const consumer = kafka.consumer({ groupId: 'global-consumer-group' });
+
+const run = async () => {
+  await consumer.connect();
+  await consumer.subscribe({ topic: 'testsResults', fromBeginning: false });
+
+  // Process each message from Kafka
+  await consumer.run({
+    eachMessage: async ({ message }) => {
+      const userId = message.key?.toString();
+      const value = message.value?.toString();
+
+      if (userId && value) {
+        // Add message and set hasNewMessage to true
+        if (!messagesDictionary[userId]) {
+          messagesDictionary[userId] = { messages: [], hasNewMessage: false };
+        }
+        console.log(value)
+        messagesDictionary[userId].messages.push(value);
+        messagesDictionary[userId].hasNewMessage = true;
+
+        // Notify connected WebSocket client
+        const ws = wsConnections[userId];
+        if (ws) {
+          ws.send(JSON.stringify({ 
+            messages: [value], 
+            hasNewMessage: true 
+          }));
+        }
+      }
+    },
+  });
 };
 
-async function connectToDatabase() {
-    try {
-        const pool = await sql.connect(config);
-        console.log('Connected to the database!');
+run().catch(console.error);
 
-        // שאילתא עם פרמטרים
-        const query = 'INSERT INTO users (id, name, email, password, birthday, gender, age, height, weight) VALUES (@id, @name, @email, @password, @birthday, @gender, @age, @height, @weight)';
-        
-        const request = pool.request();
-        request.input('id', sql.Int, 214654121);
-        request.input('name', sql.VarChar, 'yael');
-        request.input('email', sql.VarChar, 'yaeltamir46@gmail.com');
-        request.input('password', sql.VarChar, '1111');
-        request.input('birthday', sql.Date, '2004-10-21'); // בפורמט YYYY-MM-DD
-        request.input('gender', sql.VarChar, 'female');
-        request.input('age', sql.Int, 19);
-        request.input('height', sql.Decimal(5, 2), 1.64);
-        request.input('weight', sql.Decimal(5, 2), 56.0);
-
-        const result = await request.query(query);
-        console.log('Inserted user:', result.rowsAffected);
-
-    } 
-    catch (err) 
-    {
-        console.error('Database connection failed:', err);
-    } 
-    finally
-    {
-        sql.close(); // סגירת החיבור
-    }
-}
-
-connectToDatabase();
-*/
-
-
-
-
-// שימוש בנתיבים
-//app.use('/index', userRoutes); // ודא שהשורה הזו קיימת
-
-
-
-
+server.listen(3000, () => {
+  console.log('Server is running on http://localhost:3000');
+});
 

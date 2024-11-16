@@ -1,0 +1,30 @@
+<% if (isRegistered) { %>
+<!-- views/partials/messageNotification.ejs -->
+<div id="messages"></div>
+
+<script>
+    const userId = '<%= userId %>';
+    const ws = new WebSocket('ws://' + window.location.host);
+
+    ws.addEventListener('open', () => {
+        ws.send(userId);
+    });
+
+    ws.addEventListener('message', (event) => {
+        const data = JSON.parse(event.data);
+        const messagesList = document.getElementById('messages');
+        
+        messagesList.innerHTML = ''; // Clear previous notification
+
+        if (data.hasNewMessage) {
+            const p = document.createElement('p');
+            p.textContent = "You have a new message";
+            p.classList.add('alert', 'alert-info');
+            messagesList.appendChild(p);
+        }
+    });
+</script>
+
+<% } %>
+
+

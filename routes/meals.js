@@ -3,10 +3,17 @@ const express = require('express');
 const router = express.Router();
 const mealsController = require('../controllers/mealsController');
 
-// // תצוגת הוספת ארוחה
-// router.get('/add', (req, res) => {
-//     res.sendFile(__dirname + '/views/addMeal.html');
-// });
+// ניתוב לדף ה-meals - meals.ejs
+router.get('/', (req, res) => {
+    res.render('meals',{ 
+        successMessage: null,
+        sugarPrediction:null,
+        message:null,
+        userId:req.session.user.id,isRegistered:req.session.user.isRegistered
+    })
+  
+    });
+    
 
 // טיפול בהוספת ארוחה
 router.post('/add', 

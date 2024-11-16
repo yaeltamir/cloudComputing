@@ -64,17 +64,10 @@ const loginUser = async (req, res) => {
 
     if (result.success) 
         {
-        //      // שמירת פרטי המשתמש בסשן
-        // req.session.user = {
-        //     id: result.userData.id,
-        //     password: result.userData.password,
-        //     // כל שדה נוסף שתרצי לשמור
-        //      };
-        //      // הצגת session בלוגים כדי לבדוק
-        //     console.log('Session after login:', req.session);
+
         req.session.user = result.userData;
         // אם האימות הצליח, נציג את דף הבית המותאם למשתמש
-        res.render('home', { user: result.userData });
+        res.redirect('home');
         
       } 
     else 
@@ -84,9 +77,7 @@ const loginUser = async (req, res) => {
     }
 };
 
-//module.exports = { registerUser, loginUser };
 
-//Update user detail
 
 const updateUser = (req, res) => {
     console.log('getUserDetails called2');
@@ -118,18 +109,20 @@ const updateUser = (req, res) => {
         });
 };
 
-// async function checkIfUserIsRegistered(idUser) {
-//     const users = await userModel.fetchUserDataById(idUser);
-//     return users[0].isRegistered
 
-// }
+const messagesDictionary = require('../controllers/messagesController');
 
 const reverseSubscribtion=(req, res) => {
     const answer=req.params.answer
 
+
     const idUser=req.session.user.id
     console.log(answer);
- // const { id, name, email, password, dob, gender, age, height, weight } = req.body;
+
+    if(answer.toLowerCase()==="false"){
+        messagesDictionary[idUser].messages=[]
+    }
+
 
     // יצירת אובייקט שמכיל את הנתונים החדשים
     const updatedUserData = {
@@ -153,38 +146,6 @@ const reverseSubscribtion=(req, res) => {
             res.status(500).send('Error updating user.');
         });
 };
-
-
-// const getUserDetails = async (req, res) => {
-//     console.log('getUserDetails called');
-//     console.log('Session data:', req.session);
-//     const { id, password } = req.session.user;
-//     console.log(req.session.user);
-
-//     try {
-//         const result = await userModel.getUserByUsernameAndPassword(id, password);
-//         console.log(result); // בדקי אם יש תוצאה ממסד הנתונים
-
-//         if (!result) {
-//             console.error('User not found or authentication failed');
-//         }
-
-//         if (result) {
-//             // רנדר את התבנית עם פרטי המשתמש
-//             res.render('updateDetails', { user: result });
-//         } 
-//         else {
-//             res.status(401).json({ message: 'Authentication failed' });
-//         }
-//     } catch (err) {
-//         console.error('Error fetching user details:', err.message);
-//         res.status(500).send('Error fetching user details.');
-//     }
-// };
-
-
-
-//module.exports = { registerUser, loginUser, updateUser, getUserDetails };
 
 
 module.exports = { registerUser, loginUser, updateUser,reverseSubscribtion };
