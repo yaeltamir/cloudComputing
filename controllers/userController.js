@@ -1,13 +1,14 @@
 const sql = require('mssql');
-const userModel = require('../models/userModel'); // חיבור ל-Model שמטפל בבסיס הנתונים
+const userModel = require('../models/userModel'); // Import the user model for database interactions
 
-
-// פונקציה שמטפלת בהרשמה ושולחת את הנתונים ל-Model
+/**
+ * Handles user registration and sends data to the model.
+ * If the user already exists, updates their data instead of creating a new record.
+ */
 const registerUser = async (req, res) => {
-    // קבלת הנתונים מהטופס שנשלחו דרך ה-POST
-    const { id, name, email, password, dob, gender,height, weight } = req.body;
+    const { id, name, email, password, dob, gender, height, weight } = req.body;
 
-    // יצירת אובייקט שמכיל את הנתונים שנקבל מהטופס
+    // Prepare user data object
     const userData = {
         id: parseInt(id),
         name: name,
@@ -15,35 +16,36 @@ const registerUser = async (req, res) => {
         password: password,
         birthday: dob,
         gender: gender,
-        age: calculateAge(dob),
+        age: calculateAge(dob), // Calculate user's age from their date of birth
         height: parseFloat(height),
         weight: parseFloat(weight)
     };
 
-    console.log('User Data:', userData);
-    const check=await userModel.fetchUserDataById(id)
-    console.log(check.length)
-    if(check.length > 0)
-    {
-        console.log(1)
+    // Check if the user already exists in the database
+    const check = await userModel.fetchUserDataById(id);
+
+    if (check.length > 0) {
+        // If the user exists, update their data
         userModel.updateUser(userData);
-        res.send("the data updated!!!!!!!!!!!!!!!")
-    }
-    else{
-    // שמירת הנתונים ב-Database באמצעות ה-Model
-    userModel.saveUser(userData)
-        .then(() => {
-            res.send('User registered successfully!');
-        })
-        .catch((err) => {
-            console.error('Error saving user:', err.message);
-            res.status(500).send('Error registering user.'); // שגיאה כללית
-        });
+        res.send("The data was updated successfully!");
+    } 
+    else {
+        // Save new user data to the database
+        userModel.saveUser(userData)
+            .then(() => {
+                res.send('User registered successfully!');
+            })
+            .catch((err) => {
+                console.error('Error saving user:', err.message);
+                res.status(500).send('Error registering user.');
+            });
     }
 };
 
-function calculateAge(birthDate)
- {
+/**
+ * Utility function to calculate age from a given birth date.
+ */
+function calculateAge(birthDate) {
     const today = new Date();
     const birth = new Date(birthDate);
 
@@ -51,44 +53,47 @@ function calculateAge(birthDate)
     const monthDiff = today.getMonth() - birth.getMonth();
     const dayDiff = today.getDate() - birth.getDate();
 
-    // אם יום הולדת עדיין לא עבר השנה, יש להפחית שנה אחת
-    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0))
-    {
+    // Adjust age if the birthday hasn't occurred yet this year
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
         age--;
     }
 
     return age;
 }
 
-const { authenticateUser } = require('../models/userModel');
+const { authenticateUser } = require('../models/userModel'); // Import authentication function from the user model
 
-// פונקציה שמטפלת בבקשה כאשר המשתמש לוחץ על כפתור ה-LOGIN
+/**
+ * Handles user login requests.
+ * If authentication succeeds, redirects to the user's homepage.
+ * Otherwise, renders the login page with an error message.
+ */
 const loginUser = async (req, res) => {
-    const { username, password } = req.body;//לבדוק שזה השמות הנכונים 
+    const { username, password } = req.body;
 
-    // ביצוע אימות דרך המודל
+    // Authenticate the user using the model
     const result = await authenticateUser(username, password);
-        // כאשר משתמש נכשל בהתחברות, נוודא שנחזיר errorMessage
-        const errorMessage = result.success ? null : result.message;
 
-    if (result.success) 
-    {
+    const errorMessage = result.success ? null : result.message; // Provide error message if login fails
+
+    if (result.success) {
+        // Store user data in the session and redirect to the homepage
         req.session.user = result.userData;
-        // אם האימות הצליח, נציג את דף הבית המותאם למשתמש
         res.redirect('home');
-        
     } 
-    else 
-    {
-        // אם האימות נכשל, נציג את דף הכניסה עם הודעת שגיאה
-        res.render('index', { errorMessage: errorMessage || '' }); // ודא שהמשתנה קיים
+    else {
+        // Render the login page with an error message
+        res.render('index', { errorMessage: errorMessage || '' });
     }
 };
 
+/**
+ * Handles user data updates.
+ */
 const updateUser = (req, res) => {
     const { id, name, email, password, dob, gender, age, height, weight } = req.body;
 
-    // יצירת אובייקט שמכיל את הנתונים החדשים
+    // Prepare updated user data object
     const updatedUserData = {
         id: parseInt(id),
         name: name,
@@ -101,7 +106,7 @@ const updateUser = (req, res) => {
         weight: parseFloat(weight)
     };
 
-    // עדכון הנתונים במסד הנתונים באמצעות המודל
+    // Update user data in the database
     userModel.updateUser(updatedUserData)
         .then(() => {
             res.send('User updated successfully!');
@@ -112,28 +117,31 @@ const updateUser = (req, res) => {
         });
 };
 
+const messagesDictionary = require('../controllers/messagesController'); // Import messages dictionary for managing user messages
 
-const messagesDictionary = require('../controllers/messagesController');
+/**
+ * Toggles the user's subscription to message notifications.
+ */
+const reverseSubscribtion = (req, res) => {
+    const answer = req.params.answer; // Subscription status ("true" or "false")
+    const idUser = req.session.user.id;
 
-const reverseSubscribtion=(req, res) => {
-    const answer=req.params.answer
-    const idUser=req.session.user.id
-
-    if(answer.toLowerCase()==="false"){
-        messagesDictionary[idUser].messages=[]
+    // Clear messages if the user unsubscribes
+    if (answer.toLowerCase() === "false") {
+        messagesDictionary[idUser].messages = [];
     }
 
-    // יצירת אובייקט שמכיל את הנתונים החדשים
+    // Prepare updated subscription data
     const updatedUserData = {
         id: parseInt(idUser),
-        registeration:answer.toLowerCase() === "true"
+        registeration: answer.toLowerCase() === "true"
     };
 
-    // עדכון הנתונים במסד הנתונים באמצעות המודל
+    // Update the user's subscription status in the database
     userModel.subscribeToMessages(updatedUserData)
         .then(() => {
-           req.session.user.isRegistered=updatedUserData.registeration
-           res.redirect('/messages');
+            req.session.user.isRegistered = updatedUserData.registeration; // Update session data
+            res.redirect('/messages');
         })
         .catch((err) => {
             console.error('Error updating user:', err.message);
@@ -141,45 +149,5 @@ const reverseSubscribtion=(req, res) => {
         });
 };
 
-// // פונקציה שמטפלת בהרשמה או עדכון משתמש
-// const registerOrUpdateUser = async (req, res) => {
-//     try {
-//         // קבלת הנתונים מהבקשה
-//         const { id, name, email, password, dob, gender, height, weight } = req.body;
-
-//         console.log('User Data:', userData);
-
-//         // יצירת אובייקט משתמש
-//         const userData = {
-//             id: parseInt(id),
-//             name: name,
-//             email: email,
-//             password: password,
-//             birthday: dob,
-//             gender: gender,
-//             age: calculateAge(dob),
-//             height: parseFloat(height),
-//             weight: parseFloat(weight)
-//         };
-
-//         // בדיקת קיום המשתמש במסד הנתונים
-//         const userExists = await userModel.checkIfUserExists(userData.id);
-
-//         if (userExists) {
-//             // עדכון נתוני משתמש קיים
-//             await userModel.updateUser(userData);
-//             console.log('User updated successfully!');
-//             res.send('User updated successfully!');
-//         } else {
-//             // הוספת משתמש חדש
-//             await userModel.saveUser(userData);
-//             console.log('User registered successfully!');
-//             res.send('User registered successfully!');
-//         }
-//     } catch (err) {
-//         console.error('Error in registration or update:', err);
-//         res.status(500).send('An error occurred while processing the user request.');
-//     }
-// };
-
-module.exports = { registerUser, loginUser, updateUser,reverseSubscribtion };
+// Export all functions to be used in the routing layer
+module.exports = { registerUser, loginUser, updateUser, reverseSubscribtion };
