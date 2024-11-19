@@ -3,7 +3,7 @@ const userModel = require('../models/userModel'); // חיבור ל-Model שמט�
 
 
 // פונקציה שמטפלת בהרשמה ושולחת את הנתונים ל-Model
-const registerUser = (req, res) => {
+const registerUser = async (req, res) => {
     // קבלת הנתונים מהטופס שנשלחו דרך ה-POST
     const { id, name, email, password, dob, gender,height, weight } = req.body;
 
@@ -23,7 +23,15 @@ const registerUser = (req, res) => {
     };
 
     console.log('User Data:', userData);
-
+    const check=await userModel.fetchUserDataById(id)
+    console.log(check.length)
+    if(check.length > 0)
+    {
+        console.log(1)
+        userModel.updateUser(userData);
+        res.send("the data updated!!!!!!!!!!!!!!!")
+    }
+    else{
     // שמירת הנתונים ב-Database באמצעות ה-Model
     userModel.saveUser(userData)
         .then(() => {
@@ -33,6 +41,7 @@ const registerUser = (req, res) => {
             console.error('Error saving user:', err.message);
             res.status(500).send('Error registering user.'); // שגיאה כללית
         });
+    }
 };
 
 function calculateAge(birthDate) {
@@ -147,5 +156,45 @@ const reverseSubscribtion=(req, res) => {
         });
 };
 
+// // פונקציה שמטפלת בהרשמה או עדכון משתמש
+// const registerOrUpdateUser = async (req, res) => {
+//     try {
+//         // קבלת הנתונים מהבקשה
+//         const { id, name, email, password, dob, gender, height, weight } = req.body;
+
+//         console.log('User Data:', userData);
+
+//         // יצירת אובייקט משתמש
+//         const userData = {
+//             id: parseInt(id),
+//             name: name,
+//             email: email,
+//             password: password,
+//             birthday: dob,
+//             gender: gender,
+//             age: calculateAge(dob),
+//             height: parseFloat(height),
+//             weight: parseFloat(weight)
+//         };
+
+//         // בדיקת קיום המשתמש במסד הנתונים
+//         const userExists = await userModel.checkIfUserExists(userData.id);
+
+//         if (userExists) {
+//             // עדכון נתוני משתמש קיים
+//             await userModel.updateUser(userData);
+//             console.log('User updated successfully!');
+//             res.send('User updated successfully!');
+//         } else {
+//             // הוספת משתמש חדש
+//             await userModel.saveUser(userData);
+//             console.log('User registered successfully!');
+//             res.send('User registered successfully!');
+//         }
+//     } catch (err) {
+//         console.error('Error in registration or update:', err);
+//         res.status(500).send('An error occurred while processing the user request.');
+//     }
+// };
 
 module.exports = { registerUser, loginUser, updateUser,reverseSubscribtion };

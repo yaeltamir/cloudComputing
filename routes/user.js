@@ -12,9 +12,6 @@ router.post('/login', userController.loginUser); // ודא שהפונקציה ל
 router.post('/update', userController.updateUser); // כאן הוספנו את הנתיב שיטפל בעדכון
 
 
-
-
-
 module.exports = router;
 
 

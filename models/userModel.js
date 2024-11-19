@@ -192,5 +192,17 @@ async function fetchUserDataById(id) {
 //module.exports = { saveUser, updateUser, authenticateUser, getUserByUsernameAndPassword };
 
 
-module.exports = { saveUser, updateUser, authenticateUser,fetchUserDataById,subscribeToMessages };
+const checkIfUserExists = async (id) => {
+    try {
+        
+        const user = await sql.query(`SELECT * FROM Users WHERE id = ${id}`);
+        return user.recordset.length > 0; // מחזיר true אם נמצא משתמש
+    } catch (err) {
+        console.error('Error checking user existence:', err.message);
+        throw err;
+    }
+};
+
+
+module.exports = { saveUser, updateUser, authenticateUser,fetchUserDataById,subscribeToMessages,checkIfUserExists };
 
