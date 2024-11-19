@@ -1,6 +1,12 @@
-const axios = require('axios');
+const { DecisionTreeClassifier } = require('ml-cart');
 const mealsModel = require('../models/mealsModel'); // Importing the meals model
 const userModel = require('../models/userModel');   // Importing the user model
+
+
+let holiday=null
+let components=null
+let mealSugar=null
+
 
 // Function to add a meal
 // Receives data from meals.ejs, sends it to the model, and returns a success/failure message
@@ -13,13 +19,18 @@ async function addMeal(req, res) {
         return res.status(400).send('Missing required fields');
     }
 
+    if(!holiday||!components||!mealSugar){ return res.status(400).send('something went wrong');}
+
     const meal = {
         idUser,
         kindOfMeal,
         date,
         time,
+        holiday,
+        components,
+        mealSugar,
         imageUrl,
-        sugarLevel,
+        sugarLevel
     };
 
     const result = await mealsModel.addMeal(meal);
@@ -47,6 +58,33 @@ function isHolidayToNumbers(kindOfMeal) {
     if (kindOfMeal === "Chol HaMoed") return 2;
     return 3; // Default case
 }
+
+
+async function calculateIsHoliday(req, res) {
+   
+    const { date } = req.body;
+
+    try {
+        holiday=await mealsModel.checkHebcalDate(new Date(date));
+    } catch (error) {
+        console.error('Error calculating isHoliday:', error);
+        res.status(500).json({ error: 'Error calculating isHoliday' });
+    }
+}
+
+async function calculateComponentsAndMealSugar(req, res) {
+   
+    const { url } = req.body;
+
+    try {
+       components=await mealsModel.tagImage(url)
+       mealSugar=await mealsModel.calculateTotalSugar(components)
+    } catch (error) {
+        console.error('Error calculating components and meal sugar:', error);
+        res.status(500).json({ error: 'Error calculating components and meal sugar' });
+    }
+}
+
 
 // Function to predict sugar level using a decision tree model
 async function predictSugarLevel(req, res) {
@@ -92,17 +130,14 @@ async function predictSugarLevel(req, res) {
         const labels = data.map(row => row.sugarLevel);
 
         // Train decision tree model
-        const { DecisionTreeClassifier } = require('ml-cart');
         const decisionTree = new DecisionTreeClassifier();
         decisionTree.train(features, labels);
 
         // Prepare new data for prediction
-        const isHoliday = await mealsModel.checkHebcalDate(new Date(date));
-        const totalSugar = await mealsModel.calculateTotalSugar(await mealsModel.tagImage(imageUrl));
 
         const newData = [[
-            isHolidayToNumbers(isHoliday),
-            kindOfMealToNumbers(kindOfMeal),
+            isHolidayToNumbers(holiday),
+            kindOfMealToNumbers(mealSugar),
             user.gender === "male" ? 1 : 2,
             user.age,
             user.weight,
@@ -203,7 +238,7 @@ async function getLastMeals(req, res, next) {
     }
 }
 
-module.exports = { addMeal, predictSugarLevel, showHistoryGraph, getLastMeals };
+module.exports = { addMeal,predictSugarLevel, showHistoryGraph, getLastMeals,calculateIsHoliday,calculateComponentsAndMealSugar }; 
 
 
 

@@ -98,7 +98,7 @@ async function checkHebcalDate(date)
       if (item.yomtov === true) {
         return "YomTov";
       } 
-      else if (item.title.includes("Shabbat")) {
+      else if (item.title.includes("Shabbat")||item.title.includes("Parashat")) {
         return "Shabbat";
       } 
       else if (item.title.includes("CH’’M")) { // Check for Chol HaMoed
@@ -134,31 +134,23 @@ const config = {
 async function addMeal(meal)
  {
   try {
-    // Determine if the date is a holiday, Shabbat, or Chol HaMoed
-    const holiday = await checkHebcalDate(new Date(meal.date));
-    
+
     // Connect to the database
     let pool = await sql.connect(config);
 
-    // Extract components from the meal's image
-    const components = await tagImage(meal.imageUrl);
-
-    // Calculate the total sugar content of the components
-    const totalSugar = await calculateTotalSugar(components);
-
     // Insert the meal record into the database
     await pool.request()
-        .input('idUser', sql.Int, meal.idUser)
-        .input('kindOfMeal', sql.NVarChar, meal.kindOfMeal)
-        .input('Date', sql.Date, meal.date)
-        .input('Time', sql.NVarChar, meal.time)
-        .input('isHoliday', sql.NVarChar, holiday)
-        .input('Components', sql.NVarChar, JSON.stringify(components))
-        .input('imageUrl', sql.NVarChar, meal.imageUrl)
-        .input('sugarLevel', sql.Int, meal.sugarLevel)
-        .input('mealSugar', sql.Decimal(10, 2), totalSugar)
-        .query(`INSERT INTO meals (idUser, kindOfMeal, Date, Time, isHoliday, Components, imageUrl, sugarLevel, mealSugar) 
-                VALUES (@idUser, @kindOfMeal, @Date, @Time, @isHoliday, @Components, @imageUrl, @sugarLevel, @mealSugar)`);
+    .input('idUser', sql.Int, meal.idUser)
+    .input('kindOfMeal', sql.NVarChar, meal.kindOfMeal)
+    .input('Date', sql.Date, meal.date)
+    .input('Time', sql.NVarChar, meal.time)
+    .input('isHoliday', sql.NVarChar, meal.holiday)
+    .input('Components', sql.NVarChar, JSON.stringify(meal.components))
+    .input('imageUrl', sql.NVarChar, meal.imageUrl)
+    .input('sugarLevel', sql.Int, meal.sugarLevel)
+    .input('mealSugar', sql.Decimal(10, 2), meal.mealSugar)
+    .query(`INSERT INTO meals (idUser, kindOfMeal, Date, Time, isHoliday, Components, imageUrl, sugarLevel, mealSugar) 
+            VALUES (@idUser, @kindOfMeal, @Date, @Time, @isHoliday, @Components, @imageUrl, @sugarLevel, @mealSugar)`);
 
     return { success: true };
   } 

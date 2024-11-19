@@ -1,3 +1,4 @@
+
 // routes/mealsRoutes.js
 const express = require('express');
 const router = express.Router();
@@ -20,5 +21,9 @@ router.post('/add',
     mealsController.addMeal
 );
 router.post('/predict', mealsController.predictSugarLevel);
+
+router.post('/checkHoliday',mealsController.calculateIsHoliday);
+router.post('/checkComponentsAndMealSugar',mealsController.calculateComponentsAndMealSugar);
+
 
 module.exports = router;
