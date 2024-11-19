@@ -130,41 +130,53 @@ async function predictSugarLevel(req, res) {
 
 // Function to display sugar level history graph
 async function showHistoryGraph(req, res) {
-    const userId = req.session.user.id; // Get user ID from session
-    const { startDate, endDate } = req.query; // Fetch date range from request
+    const userId = req.session.user.id;
+    const { startDate, endDate, mealType } = req.query;
 
     const meals = await mealsModel.fetchMealDataById(userId);
 
-    // Filter meals by date range, if provided
     const filteredMeals = meals.filter(meal => {
         const mealDate = new Date(meal.Date);
         const start = startDate ? new Date(startDate) : null;
         const end = endDate ? new Date(endDate) : null;
 
-        if (start && end) {
-            return mealDate >= start && mealDate <= end;
-        } else if (start) {
-            return mealDate >= start;
-        } else if (end) {
-            return mealDate <= end;
-        }
-        return true;
+        // Date range filtering
+        const isDateInRange = 
+            (!start || mealDate >= start) && 
+            (!end || mealDate <= end);
+
+        // Meal type filtering
+        const isMealTypeMatch = 
+            !mealType || 
+            (mealType && meal.kindOfMeal.toLowerCase() === mealType.toLowerCase());
+
+        return isDateInRange && isMealTypeMatch;
     });
 
-    // Sort meals by date
+    // Rest of the function remains the same...
     filteredMeals.sort((a, b) => new Date(a.Date) - new Date(b.Date));
 
-    // Prepare data for graph
     const dates = filteredMeals.map(meal => {
         const date = new Date(meal.Date);
-        const formattedDate = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
-        return `${formattedDate} ${meal.Time}`;
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const time = meal.Time;
+        const hours = String(time.getHours()).padStart(2, '0');
+        const minutes = String(time.getMinutes()).padStart(2, '0');
+        return `${day}/${month}/${year} ${hours}:${minutes}`;
     });
+
     const sugarLevels = filteredMeals.map(meal => meal.sugarLevel);
     const mealImages = filteredMeals.map(meal => meal.imageUrl);
 
-    // Render history graph template
-    res.render('historyGraph', { dates, sugarLevels, mealImages, userId, isRegistered: req.session.user.isRegistered });
+    res.render('historyGraph', { 
+        dates, 
+        sugarLevels, 
+        mealImages, 
+        userId, 
+        isRegistered: req.session.user.isRegistered 
+    });
 }
 
 // Function to fetch the last three meals

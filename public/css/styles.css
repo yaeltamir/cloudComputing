@@ -637,6 +637,11 @@ progress {
   line-height: 1;
 }
 
+/* Target the images inside the meal-item class */
+.meal-item img {
+  cursor: default;
+}
+
 .figure-caption {
   font-size: 0.875em;
   color: #6c757d;

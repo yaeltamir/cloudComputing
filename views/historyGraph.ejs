@@ -111,6 +111,17 @@
                     <label for="endDate" class="form-label fw-bolder text-primary">End Date:</label>
                     <input type="date" id="endDate" name="endDate" class="form-control">
                 </div>
+                 <!-- שדה סוג ארוחה -->
+                 <div class="form-group">
+                    <label for="mealType" class="form-label fw-bolder text-primary">Meal Type:</label>
+                    <select id="mealType" name="mealType" class="form-control">
+                        <option value="" selected>All</option>
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="snack">Snack</option>
+                    </select>
+                </div>
                 <div class="form-group d-flex align-items-end">
                     <button type="submit" class="btn btn-primary">Filter</button>
                 </div>
@@ -120,12 +131,23 @@
                 <canvas id="sugarLevelChart"></canvas>
             </div>
         </div>
-
+<!-- ------------------------------------------------------------------------------- -->
         <script>
             const dates = <%- JSON.stringify(dates) %>;
             const sugarLevels = <%- JSON.stringify(sugarLevels) %>;
             const mealImages = <%- JSON.stringify(mealImages) %>;
 
+
+            
+            document.getElementById("filterForm").addEventListener("submit", function(event) {
+                const startDate = new Date(document.getElementById("startDate").value);
+                const endDate = new Date(document.getElementById("endDate").value);
+        
+                if (startDate > endDate) {
+                    event.preventDefault(); // מונע את שליחת הטופס
+                    alert("Start Date must be earlier than End Date.");
+                }
+            });
 
             const formattedDates = dates.map(date => {
                 // Split date and time parts
