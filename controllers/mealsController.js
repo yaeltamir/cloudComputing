@@ -5,15 +5,15 @@ const mealsModel = require('../models/mealsModel'); // ייבוא של מודל 
 const userModel = require('../models/userModel'); 
 
 //מקבל נתונים מmeals.ejs ומעביר אותם למודל ומחזיר הודעה אם הארוחה נוספה בהצלחה
-async function addMeal(req, res) {
+async function addMeal(req, res) 
+{
 
-
-    // const idUser=req.session.user.id
-    const idUser = 123456789; // נועד בשביל שלא נצטרך להתחבר כל פעם מחדש
+    const idUser = req.session.user.id; 
     const { kindOfMeal, date, time, imageUrl, sugarLevel } = req.body;
 
     //check validity
-    if (!idUser || !kindOfMeal || !date || !time) {
+    if (!idUser || !kindOfMeal || !date || !time) 
+    {
         return res.status(400).send('Missing required fields');
     }
 
@@ -38,7 +38,9 @@ async function addMeal(req, res) {
         }
 
 }
-function kindOfMealToNumbers(kindOfMeal){
+
+function kindOfMealToNumbers(kindOfMeal)
+{
     if(kindOfMeal==="breakfast")
         return 0
     if(kindOfMeal==="lunch")
@@ -48,7 +50,8 @@ function kindOfMealToNumbers(kindOfMeal){
     return 3
 }
 
-function isHolidayToNumbers(kindOfMeal){
+function isHolidayToNumbers(kindOfMeal)
+{
     if(kindOfMeal==="YomTov")
         return 0
     if(kindOfMeal==="Shabbat")
@@ -58,11 +61,9 @@ function isHolidayToNumbers(kindOfMeal){
     return 3
 }
 ``
-async function predictSugarLevel(req,res) {
-    console.log(123)
-    
+async function predictSugarLevel(req,res)
+ {
     const idUser=req.session.user.id
-   // const idUser = 123456789; // נועד בשביל שלא נצטרך להתחבר כל פעם מחדש
     const { kindOfMeal, date, imageUrl } = req.body;
     try {
         // שליפת הנתונים מהטבלאות השונות לפי ה-id
@@ -70,7 +71,8 @@ async function predictSugarLevel(req,res) {
         const usersData = await userModel.fetchUserDataById(idUser);
 
         // בדיקה אם יש נתונים
-        if (mealsData.length <20 || usersData.length === 0) {
+        if (mealsData.length <20 || usersData.length === 0)
+        {
             res.json({
                 prediction: "ERROR",
                 message: "There is not enough data for you so that we can predict the sugar level at the moment,\n we recommend that you enter more data before clicking this button"
@@ -118,76 +120,31 @@ async function predictSugarLevel(req,res) {
         const prediction = decisionTree.predict(newData);
 
         
-        console.log("תחזית לרמת הסוכר:", prediction[0]);
         predictionMessage=""
         if((prediction[0])>=100){
             predictionMessage="You should not eat this meal right now considering your sugar level.\nIf you still want to eat this then don't forget to add this meal to your meal history and measure the sugar afterwards by clicking submit"
         }else{
             predictionMessage="It is recommended that you eat this meal considering your sugar level.\nAfter eating the meal, don't forget to measure the sugar level and add it to your meal history by clicking the submit button"
         }
-        console.log(predictionMessage)
         res.json({
             prediction: prediction[0],
             message: predictionMessage
         });
-       // res.render('meals',{successMessage:"",sugarPrediction:prediction[0],message:predictionMessage})
 
-    } catch (error) {
+    } 
+    catch (error) 
+    {
         console.error("שגיאה:", error.message);
     }
 }
 
 
-
-// // פונקציה להצגת הגרף
-// async function showHistoryGraph(req, res) {
-//     // const userId=req.session.user.id // לדוגמה, ניקח את ה-id מה-URL
-//     const userId=123456789
-
-//     try {
-//         // שליפת הנתונים מהמודל
-//         const meals = await mealsModel.fetchMealDataById(userId);
-//         // console.log(`${meals[0].Date}T${meals[0].Time}:00`)
-//         // console.log(meals[0])
-
-//         //     // x: new Date(`${meal.Date.split("T")[0]}T${meal.Time.split("T")[1]}`),  // נניח שהעמודה 'date' מכילה תאריך ושעה
-//         //     // y: meal.sugarLevel   // נניח שהעמודה 'bloodSugarLevel' מכילה את רמת הסוכר
-//         // }));
-
-//         const chartData = meals.map(meal => {
-//             const datePart = new Date(meal.Date).toISOString().split("T")[0];  // "YYYY-MM-DD"
-//             const timePart = new Date(meal.Time).toISOString().split("T")[1].slice(0, 5);  // "HH:MM"
-        
-//             const dateTimeString = `${datePart}T${timePart}:00`;
-//             const combinedDateTime = new Date(dateTimeString).toISOString(); // הפיכת התאריך לפורמט ISO
-        
-//             return {
-//                 x: combinedDateTime,  // התאריך והשעה בפורמט ISO
-//                 y: meal.sugarLevel     // רמת הסוכר
-//             };
-//         });
-        
-
-//         // שליחה ל-view עם הנתונים
-//         res.render('historyGraph', { chartData });
-
-//     } catch (error) {
-//         console.error('Error fetching meal data:', error);
-//         res.status(500).send('Internal server error');
-//     }
-// }
-
 // פונקציה להצגת היסטוריית רמות סוכר
 async function showHistoryGraph(req, res) {
-    /////////////////////////////////////////////////////////////////////לא ךשכוח לשנות את זה בסוף
-    const userId = 123456789; // לדוגמה, נניח שה-ID נשלח דרך ה-URL
+    const userId = req.session.user.id; // לדוגמה, נניח שה-ID נשלח דרך ה-URL
     const { startDate, endDate } = req.query; // שליפת תאריכים מהבקשה
 
     const meals = await mealsModel.fetchMealDataById(userId);
-
-    // יצירת מערכים לתאריכים ושעות, ורמות סוכר
-    // const datesAndTimes = meals.map(meal => `${meal.Date} ${meal.Time}`);
-    // console.log(datesAndTimes)
 
      // סינון הארוחות לפי טווח התאריכים אם ישנם תאריכים בבקשה
      const filteredMeals = meals.filter(meal => {
@@ -205,11 +162,6 @@ async function showHistoryGraph(req, res) {
         }
         return true; // אם אין תאריכים, מחזיר את כל הארוחות
     });
-
-      // הדפסת התאריכים שנמצאים בטווח הבחירה
-    //   const filteredDates = filteredMeals.map(meal => meal.Date);
-    //   console.log("תאריכים בטווח שנבחר:", filteredDates);
-  
 
     // מיון הארוחות לפי תאריך ושעה
     filteredMeals.sort((a, b) => new Date(a.Date) - new Date(b.Date));
@@ -229,42 +181,36 @@ async function showHistoryGraph(req, res) {
 
             return `${day}/${month}/${year} ${formattedTime}`;
         });
-    console.log(dates)
+
     const sugarLevels = filteredMeals.map(meal => meal.sugarLevel);
        // הוספת התמונה לכל רשומה
     const mealImages = filteredMeals.map(meal => meal.imageUrl);
-    console.log(mealImages);
-
-
-
+    
     // שליחת הנתונים ל-EJS
-    //res.render('historyGraph', { datesAndTimes, sugarLevels });
     res.render('historyGraph', { dates, sugarLevels,mealImages ,userId,isRegistered:req.session.user.isRegistered});
 }
 
 
 // פונקציה לשליפת שלושת הארוחות האחרונות
-async function getLastMeals(req, res, next) {
+async function getLastMeals(req, res, next)
+ {
     // בדיקה האם המשתמש קיים ב-session ויש לו מזהה
-    if (!req.session.user || !req.session.user.id) {
+    if (!req.session.user || !req.session.user.id)
+    {
         console.error('User is not logged in or user ID is missing');
         return res.status(400).send('User is not logged in or user ID is missing');
     }
 
     const userId = req.session.user.id;
-    console.log('User ID:', userId);
 
     try {
         // שליפת הארוחות האחרונות מהמודל
         const meals = await mealsModel.fetchMealDataById(userId);
-        console.log('Fetched meals:', meals);
 
         // סינון ושליפה של 3 הארוחות האחרונות (ממוינות לפי תאריך)
         const lastThreeMeals = meals
             .sort((a, b) => new Date(b.Date) - new Date(a.Date))
             .slice(0, 3);
-
-        console.log('Last 3 meals:', lastThreeMeals);
 
         // שליחה לתבנית עם הנתונים
         req.lastThreeMeals = lastThreeMeals;
