@@ -7,8 +7,6 @@ const registerUser = async (req, res) => {
     // קבלת הנתונים מהטופס שנשלחו דרך ה-POST
     const { id, name, email, password, dob, gender,height, weight } = req.body;
 
-    console.log('ID:', id); // הדפס את ה-ID כדי לבדוק אם הוא מגיע כראוי
-
     // יצירת אובייקט שמכיל את הנתונים שנקבל מהטופס
     const userData = {
         id: parseInt(id),
@@ -44,7 +42,8 @@ const registerUser = async (req, res) => {
     }
 };
 
-function calculateAge(birthDate) {
+function calculateAge(birthDate)
+ {
     const today = new Date();
     const birth = new Date(birthDate);
 
@@ -53,7 +52,8 @@ function calculateAge(birthDate) {
     const dayDiff = today.getDate() - birth.getDate();
 
     // אם יום הולדת עדיין לא עבר השנה, יש להפחית שנה אחת
-    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0))
+    {
         age--;
     }
 
@@ -72,13 +72,12 @@ const loginUser = async (req, res) => {
         const errorMessage = result.success ? null : result.message;
 
     if (result.success) 
-        {
-
+    {
         req.session.user = result.userData;
         // אם האימות הצליח, נציג את דף הבית המותאם למשתמש
         res.redirect('home');
         
-      } 
+    } 
     else 
     {
         // אם האימות נכשל, נציג את דף הכניסה עם הודעת שגיאה
@@ -86,10 +85,7 @@ const loginUser = async (req, res) => {
     }
 };
 
-
-
 const updateUser = (req, res) => {
-    console.log('getUserDetails called2');
     const { id, name, email, password, dob, gender, age, height, weight } = req.body;
 
     // יצירת אובייקט שמכיל את הנתונים החדשים
@@ -104,8 +100,6 @@ const updateUser = (req, res) => {
         height: parseFloat(height),
         weight: parseFloat(weight)
     };
-
-    console.log('Update Data:', updatedUserData);
 
     // עדכון הנתונים במסד הנתונים באמצעות המודל
     userModel.updateUser(updatedUserData)
@@ -123,15 +117,11 @@ const messagesDictionary = require('../controllers/messagesController');
 
 const reverseSubscribtion=(req, res) => {
     const answer=req.params.answer
-
-
     const idUser=req.session.user.id
-    console.log(answer);
 
     if(answer.toLowerCase()==="false"){
         messagesDictionary[idUser].messages=[]
     }
-
 
     // יצירת אובייקט שמכיל את הנתונים החדשים
     const updatedUserData = {
@@ -139,16 +129,11 @@ const reverseSubscribtion=(req, res) => {
         registeration:answer.toLowerCase() === "true"
     };
 
-    //console.log('Update Data:', updatedUserData);
-
     // עדכון הנתונים במסד הנתונים באמצעות המודל
     userModel.subscribeToMessages(updatedUserData)
         .then(() => {
-           console.log('User updated successfully!');
-          // const isRegistered=checkIfUserIsRegistered(idUser)
-  
            req.session.user.isRegistered=updatedUserData.registeration
-            res.redirect('/messages');
+           res.redirect('/messages');
         })
         .catch((err) => {
             console.error('Error updating user:', err.message);

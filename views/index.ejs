@@ -64,9 +64,9 @@
                             <div id="loginForm" style="display: none; margin-top: 20px;">
                                 <form action="/login" method="POST" onsubmit="return validateForm()">
                                     <div class="mb-3">
-                                        <label for="username" class="form-label">Username</label>
+                                        <label for="username" class="form-label">ID</label>
                                         <input type="text" class="form-control" id="username" name="username"
-                                            placeholder="Enter your username">
+                                            placeholder="Enter your id">
                                     </div>
                                     <div class="mb-3">
                                         <label for="password" class="form-label">Password</label>
@@ -86,7 +86,8 @@
 
 
                                 </form>
-
+                            </div>
+                            <div>
                                 <% if (typeof errorMessage !=='undefined' && errorMessage && errorMessage.length> 0) {
                                     %><!------------------->
                                     <div class="error">
