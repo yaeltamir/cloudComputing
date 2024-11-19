@@ -73,8 +73,15 @@
                                         <input type="password" class="form-control" name="password" id="password"
                                             placeholder="Enter your password">
                                     </div>
+
+
                                     <button type="submit"
                                         class="btn btn-primary btn-lg px-5 py-3 me-sm-3 fs-6 fw-bolder">Login</button>
+
+                                        <div class="mt-2">
+                                            <!-- הקישור עצמו הוא הטקסט -->
+                                            <a class="text-decoration-underline text-primary" href="signUp">Forgot Password?</a>
+                                        </div>
                                 </form>
 
                                 <% if (typeof errorMessage !=='undefined' && errorMessage && errorMessage.length> 0) {
@@ -115,10 +122,16 @@
                     <div class="col-xxl-7">
                         <!-- Header profile picture-->
                         <div class="d-flex justify-content-center mt-5 mt-xxl-0">
+                            
                             <div class="profile bg-gradient-primary-to-secondary">
                                 <!-- TIP: For best results, use a photo with a transparent background like the demo example below-->
                                 <!-- Watch a tutorial on how to do this on YouTube (link)-->
                                 <!--<img class="profile-img" src="assets/logo3.png" alt="..." />-->
+                               
+                                <!-- הוספת התמונה על הרקע -->
+    <img class="profile-img" src="/assets/sugarSnap.png" alt="Profile Image" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; width: 400px; height: 400px;" />
+
+                        
                                 <div class="dots-1">
                                     <!-- SVG Dots-->
                                     <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
@@ -436,15 +449,9 @@
         <div class="container px-5">
             <div class="row align-items-center justify-content-between flex-column flex-sm-row">
                 <div class="col-auto">
-                    <div class="small m-0">Copyright &copy; SugarSnap 2023</div>
+                    <div class="small m-0">Copyright &copy; SugarSnap 2024</div>
                 </div>
-                <div class="col-auto">
-                    <a class="small" href="#!">Privacy</a>
-                    <span class="mx-1">&middot;</span>
-                    <a class="small" href="#!">Terms</a>
-                    <span class="mx-1">&middot;</span>
-                    <a class="small" href="#!">signUp</a>
-                </div>
+                
             </div>
         </div>
     </footer>

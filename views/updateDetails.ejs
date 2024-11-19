@@ -47,8 +47,36 @@
                         <div class="text-center mb-5">
                             <h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Update Your Details</span></h1>
                         </div>
+
+                        
                         <div class="row gx-5 justify-content-center">
                             <div class="col-lg-8 col-xl-6">
+
+                                <!-- Gender input with icons -->
+                                <div class="mb-3">
+                                    <div style="display: flex; gap: 20px; justify-content: center; align-items: center; ">
+                                        <!-- Male option (shown only if gender is male) -->
+                                        <% if (userDetails.gender === 'male') { %>
+                                            <div style="text-align: center;">
+                                                <input type="radio" id="male" name="gender" value="male" required checked style="display: none;" disabled />
+                                                <label for="male" style="cursor: pointer;">
+                                                    <img src="https://cdn-icons-png.flaticon.com/512/522/522297.png" alt="Male" id="male-icon" style="width: 80px; height: 80px; border: 2px solid lightblue; border-radius: 50%;">
+                                                </label>
+                                            </div>
+                                        <% } %>
+                                
+                                        <!-- Female option (shown only if gender is female) -->
+                                        <% if (userDetails.gender === 'female') { %>
+                                            <div style="text-align: center;">
+                                                <input type="radio" id="female" name="gender" value="female" required checked style="display: none;" disabled />
+                                                <label for="female" style="cursor: pointer;">
+                                                    <img src="https://cdn-icons-png.flaticon.com/512/2342/2342011.png" alt="Female" id="female-icon" style="width: 80px; height: 80px; border: 2px solid pink; border-radius: 50%;">
+                                                </label>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                   
+
                                 <!-- ID input -->
                                 <div class="form-floating mb-3">
                                     <input class="form-control" id="id" name="id" type="text" value="<%= userDetails.id %>" placeholder="Enter your ID..."  required />
@@ -81,27 +109,7 @@
                                 </div> -->
                                 
                                 
-                                <!-- Gender input with icons -->
-                                <div class="mb-3">
-                                    <label class="form-label">Gender:</label>
-                                    <div style="display: flex; gap: 20px;">
-                                        <!-- Male option -->
-                                        <div>
-                                            <input type="radio" id="male" name="gender" value="male" required <%= userDetails.gender === 'male' ? 'checked' : '' %> style="display: none;" />
-                                            <label for="male" style="cursor: pointer;">
-                                                <img src="https://cdn-icons-png.flaticon.com/512/522/522297.png" alt="Male" id="male-icon" style="width: 50px; height: 50px;">
-                                            </label>
-                                        </div>
-
-                                        <!-- Female option -->
-                                        <div>
-                                            <input type="radio" id="female" name="gender" value="female" required <%= userDetails.gender === 'female' ? 'checked' : '' %> style="display: none;" />
-                                            <label for="female" style="cursor: pointer;">
-                                                <img src="https://cdn-icons-png.flaticon.com/512/2342/2342011.png" alt="Female" id="female-icon" style="width: 50px; height: 50px;">
-                                            </label>
-                                        </div>
-                                    </div>
-
+                                
                                     <div class="invalid-feedback" data-sb-feedback="gender:required">Please select a gender.</div>
                                 </div>
 
@@ -166,7 +174,7 @@
 
                                   <!-- Show/Hide password toggle -->
                                   <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" id="showPassword" onclick="togglePassword()" />
+                                    <input class="form-check-input" type="checkbox" id="showPassword" onclick="togglePassword()"  />
                                     <label class="form-check-label" for="showPassword">Show Password</label>
                                 </div>
                                 <script>
@@ -209,14 +217,7 @@
     <footer class="bg-white py-4 mt-auto">
         <div class="container px-5">
             <div class="row align-items-center justify-content-between flex-column flex-sm-row">
-                <div class="col-auto"><div class="small m-0"> &copy; SugarSnap 2024</div></div>
-                <div class="col-auto">
-                    <a class="small" href="#!">Privacy</a>
-                    <span class="mx-1">&middot;</span>
-                    <a class="small" href="#!">Terms</a>
-                    <span class="mx-1">&middot;</span>
-                    <a class="small" href="#!">signUp</a>
-                </div>
+                <div class="col-auto"><div class="small m-0"> Copyright &copy; SugarSnap 2024</div></div>
             </div>
         </div>
     </footer>
