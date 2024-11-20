@@ -185,30 +185,11 @@ const checkIfUserExists = async (id) => {
     }
 };
 
-// new
-async function checkIsRegistered(userId) {
-    try {
-        const pool = await sql.connect(config);
-        const result = await pool.request()
-            .input('userId', sql.Int, userId)
-            .query('SELECT isRegistered FROM meals WHERE idUser = @userId');
-
-        return result.recordset.length > 0 ? result.recordset[0].isRegistered : false;
-    } catch (err) {
-        console.error('Error fetching isRegistered status:', err);
-        throw err;
-    } finally {
-        sql.close();
-    }
-}//till here
-
-
 module.exports = { 
     saveUser, 
     updateUser, 
     authenticateUser, 
     fetchUserDataById, 
     subscribeToMessages, 
-    checkIfUserExists,
-    checkIsRegistered
+    checkIfUserExists
 };

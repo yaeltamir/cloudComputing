@@ -4,89 +4,56 @@ const app = express();
 const port = 3000;
 
 
-const userRoutes = require('./routes/user'); // הנתיב של ה-router שלך
+const userRoutes = require('./routes/user');
 const mealsRoutes = require('./routes/meals');
 const historyRoutes = require('./routes/history');
 const messagesRoutes = require('./routes/messages');
-
 const homeRoutes = require('./routes/homeRoute');
 
 
-
-//חייב את זה כדי שהקטע עם הסשן יעבוד
+// Enable session management for the application
 app.use(session({
-  secret: 'your-secret-key', // השתמש במפתח סודי ליצירת סשן
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false } // אם אתה עובד על HTTPS, שים את secure ל-true
-})); //עד פה
+  secret: 'your-secret-key', // The secret key used to sign the session cookie. Keep this private and complex.
+  resave: false, // Prevents resaving the session if no changes were made. Saves resources by avoiding unnecessary writes.
+  saveUninitialized: true, // Ensures a session is created even if it hasn't been modified. Set to false to optimize resource usage.
+  cookie: {
+    secure: false // If using HTTPS, set this to true to ensure cookies are only sent over secure connections.
+  }
+}));
 
-
-// Middleware כדי לנתח בקשות POST מ-URL-encoded טפסים
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json()); // לפרש בקשות JSON מהטפסים
-
-app.use('/', userRoutes); // השתמש ב-router שיצרת
-app.use('/meals', mealsRoutes);
-app.use('/historyGraph', historyRoutes);
-app.use('/messages',messagesRoutes);
-
-app.use('/home', homeRoutes);
-
-
-// הגדרת מנוע התבניות EJS
-app.set('view engine', 'ejs');
-
+// Middleware to parse URL-encoded data from POST requests (used by HTML forms)
+app.use(express.urlencoded({ extended: true })); // `extended: true` allows parsing of nested objects (using the `qs` library)
+// Middleware to parse JSON data from POST requests (commonly used in APIs)
+app.use(express.json());
 // Middleware to serve static files from the "public" folder
 app.use(express.static('public'));
 
-// ניתוב לדף הבית - index.ejs
-
-const render_index= (req, res) => {res.render('index')};
-
-app.get('/index',render_index);
-
-// ניתוב לדף הבית - index.ejs
-app.get('/', render_index)
-
-// ניתוב לדף ה-signUp - signUp.ejs
-app.get('/signUp', (req, res) => {
-  res.render('signUp');
-});
-
- app.get('/home', (req, res) => {
-  // res.render('home',{userId:req.session.user.id,isRegistered:req.session.user.isRegistered});
-
-   const user = req.session.user;
-
-   // אם המשתמש קיים ב-session, שלח את שם המשתמש, אחרת שלח 'Guest'
-   const userName = user ? user.name : 'Guest';
- 
-   // עכשיו תעביר את המשתנה userName יחד עם המשתנים האחרים
-   res.render('home', { 
-     userName: userName, 
-     userId: user ? user.id : null, 
-     isRegistered: user ? user.isRegistered : false 
-   });
- });
-
- 
-
-app.get('/updateDetails', (req, res) => {
-  const user = req.session.user; // מקבל את האובייקט של המשתמש מה-Session
- // const sMessage=req.session.message
-  res.render('updateDetails', { userDetails: user});
-});
+app.use('/', userRoutes);
+app.use('/meals', mealsRoutes);
+app.use('/historyGraph', historyRoutes);
+app.use('/messages', messagesRoutes);
+app.use('/home', homeRoutes);
 
 
+// Set EJS as the template engine for rendering dynamic HTML views
+app.set('view engine', 'ejs');
+
+
+// Route to render the home page using the 'index.ejs' template
+const render_index = (req, res) => { res.render('index'); };
+// Route to access the home page via '/index' URL
+app.get('/index', render_index);
+// Route to access the home page via the root URL '/'
+app.get('/', render_index);
+
+
+//-----------kafka------------
 const http = require('http');
 const WebSocket = require('ws');
 const { Kafka } = require('kafkajs');
 
-
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
-
 
 // Global dictionary for storing messages by user ID and message status
 const messagesDictionary = require('./controllers/messagesController');
@@ -107,7 +74,7 @@ wss.on('connection', (ws, req) => {
     }
 
     // Send existing messages and "new message" status for this user
-    ws.send(JSON.stringify({ 
+    ws.send(JSON.stringify({
       messages: messagesDictionary[userId].messages,
       hasNewMessage: messagesDictionary[userId].hasNewMessage
     }));
@@ -155,9 +122,9 @@ const run = async () => {
         // Notify connected WebSocket client
         const ws = wsConnections[userId];
         if (ws) {
-          ws.send(JSON.stringify({ 
-            messages: [value], 
-            hasNewMessage: true 
+          ws.send(JSON.stringify({
+            messages: [value],
+            hasNewMessage: true
           }));
         }
       }

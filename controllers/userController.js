@@ -1,5 +1,8 @@
 const sql = require('mssql');
 const userModel = require('../models/userModel'); // Import the user model for database interactions
+const { authenticateUser } = require('../models/userModel'); // Import authentication function from the user model
+const messagesDictionary = require('../controllers/messagesController'); // Import messages dictionary for managing user messages
+
 /**
  * Handles user registration and sends data to the model.
  * If the user already exists, updates their data instead of creating a new record.
@@ -59,8 +62,6 @@ function calculateAge(birthDate) {
     return age;
 }
 
-const { authenticateUser } = require('../models/userModel'); // Import authentication function from the user model
-
 /**
  * Handles user login requests.
  * If authentication succeeds, redirects to the user's homepage.
@@ -75,11 +76,11 @@ const loginUser = async (req, res) => {
     const errorMessage = result.success ? null : result.message; // Provide error message if login fails
 
     if (result.success) {
-        // Store user data in the session and redirect to the homepage
-        req.session.user = result.userData;
+       // Store user data in the session and redirect to the homepage
+       req.session.user = result.userData;
        req.session.message=null,
 
-        res.redirect('home');
+       res.redirect('home');
     } 
     else {
         // Render the login page with an error message
@@ -111,11 +112,7 @@ const updateUser = (req, res) => {
     userModel.updateUser(updatedUserData)
         .then(() => {
             req.session.user=updatedUserData
-
-
             res.render('updateDetails', { userDetails: updatedUserData,successMessage:"User updated successfully!"});
-
-           // res.send('User updated successfully!');
         })
         .catch((err) => {
             console.error('Error updating user:', err.message);
@@ -123,7 +120,6 @@ const updateUser = (req, res) => {
         });
 };
 
-const messagesDictionary = require('../controllers/messagesController'); // Import messages dictionary for managing user messages
 
 /**
  * Toggles the user's subscription to message notifications.
@@ -155,24 +151,7 @@ const reverseSubscribtion = (req, res) => {
         });
 };
 
-//new
-const getHomePage = async (req, res) => {
-    try {
-        const userId = req.session.user.id;
-
-        // בדיקה אם המשתמש רשום לשירותי הודעות
-        const isRegistered = await userModel.checkIsRegistered(userId);
-
-        res.render('home', {
-            userName: req.session.user.name,
-            isRegistered: isRegistered,
-        });
-    } catch (err) {
-        console.error('Error loading home page:', err);
-        res.status(500).send('Error loading page.');
-    }
-}; // till here
 
 // Export all functions to be used in the routing layer
-module.exports = { registerUser, loginUser, updateUser, reverseSubscribtion, getHomePage };
+module.exports = { registerUser, loginUser, updateUser, reverseSubscribtion };
 
