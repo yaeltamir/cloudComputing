@@ -49,20 +49,15 @@ async function getSugarContent(ingredient)
 
     if (sugarContent && !isNaN(sugarContent.value)) {
       sugarValue = parseFloat(sugarContent.value);
-      console.log(`Sugar content: ${sugarValue} ${sugarContent.unitName}`);
     } else {
-     
-      console.log("No sugar content found or the value is invalid.");
       return -1
     }
-
     // Ensure sugarValue is a valid number before sending to an API
     if (typeof sugarValue === 'number' && !isNaN(sugarValue)) {
       console.log(`Sugar value to send: ${sugarValue}`);
     } else {
       console.error("Invalid sugar value, cannot send.");
     }
-
     return sugarValue;
   } 
   catch (error) {
@@ -82,7 +77,7 @@ async function calculateTotalSugar(components)
         return -1
       totalSugar += sugar;
   }
- 
+
   return totalSugar;
 }
 
@@ -112,7 +107,6 @@ async function checkHebcalDate(date)
         return "Holiday";
       }
     }
-
     // If no special event, return "Regular Day"
     return "Regular Day";
   } 

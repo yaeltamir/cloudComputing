@@ -2,22 +2,15 @@ const { DecisionTreeClassifier } = require('ml-cart');
 const mealsModel = require('../models/mealsModel'); // Importing the meals model
 const userModel = require('../models/userModel');   // Importing the user model
 
-
 let holiday=null
 let components=null
 let mealSugar=null
-
 
 // Function to add a meal
 // Receives data from meals.ejs, sends it to the model, and returns a success/failure message
 async function addMeal(req, res) {
     const idUser = req.session.user.id; // Get the user ID from the session
     const { kindOfMeal, date, time, imageUrl, sugarLevel } = req.body;
-
-    // Validate required fields
-    if (!idUser || !kindOfMeal || !date || !time) {
-        return res.status(400).send('Missing required fields');
-    }
 
     if(!holiday||!components||!mealSugar){ return res.status(400).send('something went wrong');}
 
@@ -36,12 +29,8 @@ async function addMeal(req, res) {
     const result = await mealsModel.addMeal(meal);
 
     if (result.success) {
-        //things i added
          req.session.message= "The meal was added successfully!",
         res.redirect('/meals' );
-
-        //end
-
     } else {
         res.status(500).send(`Error: ${result.error}`);
     }
@@ -63,11 +52,8 @@ function isHolidayToNumbers(kindOfMeal) {
     return 3; // Default case
 }
 
-
 async function calculateIsHoliday(req, res) {
-   
     const { date } = req.body;
-
     try {
         holiday=await mealsModel.checkHebcalDate(new Date(date));
     } catch (error) {
@@ -77,15 +63,13 @@ async function calculateIsHoliday(req, res) {
 }
 
 async function calculateComponentsAndMealSugar(req, res) {
-   
     const { url } = req.body;
-
     try {
        components=await mealsModel.tagImage(url)
        mealSugar=await mealsModel.calculateTotalSugar(components)
-       
-     return mealSugar
-    } catch (error) {
+       return mealSugar
+    } 
+    catch (error) {
         console.error('Error calculating components and meal sugar:', error);
         res.status(500).json({ error: 'Error calculating components and meal sugar' });
     }
@@ -95,7 +79,7 @@ async function calculateComponentsAndMealSugar(req, res) {
 // Function to predict sugar level using a decision tree model
 async function predictSugarLevel(req, res) {
     const idUser = req.session.user.id;
-    const { kindOfMeal, date, imageUrl } = req.body;
+    const { kindOfMeal} = req.body;
 
     try {
         // Fetch meal and user data for the current user

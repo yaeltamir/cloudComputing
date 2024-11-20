@@ -2,26 +2,27 @@ const express = require('express');
 const router = express.Router();
 const mealsController = require('../controllers/mealsController');
 
-// ניתוב לדף ה-meals - meals.ejs
+// Route for the meals page - renders meals.ejs
 router.get('/', (req, res) => {
-    res.render('meals',{ 
-        successMessage: req.session.message,
-        sugarPrediction:null,
-        message:null,
-        userId:req.session.user.id,isRegistered:req.session.user.isRegistered
-    })
-  
+    res.render('meals', {
+        successMessage: req.session.message, // Success message from the session
+        sugarPrediction: null,              // Placeholder for sugar prediction
+        message: null,                       // Placeholder for additional messages
+        userId: req.session.user.id,         // User ID from the session
+        isRegistered: req.session.user.isRegistered // User registration status
     });
-    
+});
 
-// טיפול בהוספת ארוחה
-router.post('/add', 
-    mealsController.addMeal
-);
+// Handle adding a meal
+router.post('/add', mealsController.addMeal);
+
+// Handle predicting sugar levels
 router.post('/predict', mealsController.predictSugarLevel);
 
-router.post('/checkHoliday',mealsController.calculateIsHoliday);
-router.post('/checkComponentsAndMealSugar',mealsController.calculateComponentsAndMealSugar);
+// Handle checking if a date is a holiday
+router.post('/checkHoliday', mealsController.calculateIsHoliday);
 
+// Handle calculating components and sugar level for a meal
+router.post('/checkComponentsAndMealSugar', mealsController.calculateComponentsAndMealSugar);
 
 module.exports = router;

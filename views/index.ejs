@@ -50,17 +50,14 @@
                                 <div class="text-uppercase">Photography &middot; balance &middot; health</div>
                             </div>
                             <div class="fs-3 fw-light text-muted">Your journey to better health</div>
-                            <h1 class="display-3 fw-bolder mb-5"><span class="text-gradient d-inline">start with a
-                                    snapshot</span></h1>
+                            <h1 class="display-3 fw-bolder mb-5"><span class="text-gradient d-inline">start with a snapshot</span></h1>
                             <div
                                 class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xxl-start mb-3">
                                 <a class="btn btn-primary btn-lg px-5 py-3 me-sm-3 fs-6 fw-bolder" href="#"
                                     id="signInBtn">Sign In</a>
-                                <a class="btn btn-outline-dark btn-lg px-5 py-3 fs-6 fw-bolder" href="signUp">Sign
-                                    Up</a>
+                                <a class="btn btn-outline-dark btn-lg px-5 py-3 fs-6 fw-bolder" href="signUp">Sign Up</a>
                             </div>
-                            <!--קוד שהוספתי:-->
-                            <!-- טופס ההתחברות (מוסתר בהתחלה) -->
+                            <!-- The login form (initially hidden) -->
                             <div id="loginForm" style="display: none; margin-top: 20px;">
                                 <form action="/login" method="POST" onsubmit="return validateForm()">
                                     <div class="mb-3">
@@ -79,12 +76,10 @@
                                         class="btn btn-primary btn-lg px-5 py-3 me-sm-3 fs-6 fw-bolder">Login</button>
 
                                         <div class="mt-2">
-                                            <!-- הקישור עצמו הוא הטקסט -->
+                                            <!-- The link itself is the text -->
                                             <a class="text-decoration-underline text-primary" href="signUp">Forgot Password?</a>
                                             <span class="ms-2">Sign up again and we'll take care of the rest!</span>
                                         </div>
-
-
                                 </form>
                             </div>
                             <div>
@@ -95,32 +90,34 @@
                                     </div>
                                     <% } %>
                             </div>
-
-                            <!-- סקריפט להצגת והסתרת הטופס -->
                             <script>
+                                // Add an event listener to the "Sign In" button
                                 document.getElementById("signInBtn").addEventListener("click", function (event) {
-                                    event.preventDefault(); // מונע רענון דף
-                                    var form = document.getElementById("loginForm");
+                                    event.preventDefault(); // Prevents the page from refreshing when the button is clicked
+                                    
+                                    var form = document.getElementById("loginForm"); // Select the login form element
+                                    
+                                    // Toggle the visibility of the login form
                                     if (form.style.display === "none") {
-                                        form.style.display = "block"; // הופך את הטופס לנראה
-                                    }
-                                    else {
-                                        form.style.display = "none"; // מסתיר את הטופס
+                                        form.style.display = "block"; // Makes the form visible
+                                    } else {
+                                        form.style.display = "none"; // Hides the form
                                     }
                                 });
-                               function validateForm() {
-                                    const username = document.getElementById('username').value;
-                                    const password = document.getElementById('password').value;
-
-                                    // אם שם המשתמש ריק או סיסמה ריקה, ניתן להוסיף בדיקות נוספות אם רוצים
+                            
+                                // Function to validate the login form input
+                                function validateForm() {
+                                    const username = document.getElementById('username').value; // Get the value of the username input field
+                                    const password = document.getElementById('password').value; // Get the value of the password input field
+                            
+                                    // Check if username or password fields are empty
+                                    // Additional validation checks can be added here if needed
                                     if (!username || !password) {
-                                        return false;
+                                        return false; // Return false if validation fails
                                     }
-                                    return true;
+                                    return true; // Return true if validation succeeds
                                 }
                             </script>
-
-                            <!--עד כאן קוד שהוספתי-->
                         </div>
                     </div>
                     <div class="col-xxl-7">
@@ -128,14 +125,8 @@
                         <div class="d-flex justify-content-center mt-5 mt-xxl-0">
                             
                             <div class="profile bg-gradient-primary-to-secondary">
-                                <!-- TIP: For best results, use a photo with a transparent background like the demo example below-->
-                                <!-- Watch a tutorial on how to do this on YouTube (link)-->
-                                <!--<img class="profile-img" src="assets/logo3.png" alt="..." />-->
-                               
-                                <!-- הוספת התמונה על הרקע -->
-    <img class="profile-img" src="/assets/sugarSnap.png" alt="Profile Image" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; width: 400px; height: 400px; cursor: default;" />
-
-                        
+                            <!-- Adding the image on the background -->
+                            <img class="profile-img" src="/assets/sugarSnap.png" alt="Profile Image" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; width: 400px; height: 400px; cursor: default;" />
                                 <div class="dots-1">
                                     <!-- SVG Dots-->
                                     <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
