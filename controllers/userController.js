@@ -23,17 +23,16 @@ const registerUser = async (req, res) => {
 
     // Check if the user already exists in the database
     const check = await userModel.fetchUserDataById(id);
-
     if (check.length > 0) {
         // If the user exists, update their data
         userModel.updateUser(userData);
-        res.send("The data was updated successfully!");
+        res.render('signUp',{ successMessage:"Your data is already with us and has been successfully updated.\n Please return to the home page to log in", errorMessage: null });
     } 
     else {
         // Save new user data to the database
         userModel.saveUser(userData)
             .then(() => {
-                res.send('User registered successfully!');
+                res.render('signUp',{ successMessage:"You have successfully registered", errorMessage: null });
             })
             .catch((err) => {
                 console.error('Error saving user:', err.message);
@@ -79,6 +78,8 @@ const loginUser = async (req, res) => {
     if (result.success) {
         // Store user data in the session and redirect to the homepage
         req.session.user = result.userData;
+       req.session.message=null,
+
         res.redirect('home');
     } 
     else {
@@ -91,7 +92,7 @@ const loginUser = async (req, res) => {
  * Handles user data updates.
  */
 const updateUser = (req, res) => {
-    const { id, name, email, password, dob, gender, age, height, weight } = req.body;
+    const { id, name, email, password, dob, age, height, weight } = req.body;
 
     // Prepare updated user data object
     const updatedUserData = {
@@ -100,7 +101,8 @@ const updateUser = (req, res) => {
         email: email,
         password: password,
         birthday: dob,
-        gender: gender,
+        gender:req.session.user.gender,
+        isRegistered:req.session.user.isRegistered,
         age: parseInt(age),
         height: parseFloat(height),
         weight: parseFloat(weight)
@@ -109,7 +111,12 @@ const updateUser = (req, res) => {
     // Update user data in the database
     userModel.updateUser(updatedUserData)
         .then(() => {
-            res.send('User updated successfully!');
+            req.session.user=updatedUserData
+            req.session.message="User updated successfully!"
+
+            res.redirect('updateDetails')
+
+           // res.send('User updated successfully!');
         })
         .catch((err) => {
             console.error('Error updating user:', err.message);

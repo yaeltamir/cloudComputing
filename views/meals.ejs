@@ -50,6 +50,9 @@
     </div>
     <div class="row gx-5 justify-content-center">
         <div class="col-lg-8 col-xl-6">
+                                <!--things i added------------------------------------------------------------>
+                                <%- include('partials/successNotification') %>
+                                <!--end------------------------------------------------------------>
 
             <!-- Form for inserting a new meal -->
             <form action="/meals/add" method="POST">
@@ -130,12 +133,7 @@
                 </div>  
             </form>
 
-            <!-- Display success message if available -->
-            <% if (successMessage) { %>
-                <div class="alert alert-success">
-                    <p><%= successMessage %></p>
-                </div>
-            <% } %> 
+
         </div>
     </div>
 </div>

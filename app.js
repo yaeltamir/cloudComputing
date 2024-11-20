@@ -74,7 +74,7 @@ app.get('/signUp', (req, res) => {
 
 app.get('/updateDetails', (req, res) => {
   const user = req.session.user; // מקבל את האובייקט של המשתמש מה-Session
-  res.render('updateDetails', { userDetails: user });
+  res.render('updateDetails', { userDetails: user ,        successMessage: req.session.message});
 });
 
 

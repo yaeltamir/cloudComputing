@@ -7,7 +7,7 @@ const mealsController = require('../controllers/mealsController');
 // ניתוב לדף ה-meals - meals.ejs
 router.get('/', (req, res) => {
     res.render('meals',{ 
-        successMessage: null,
+        successMessage: req.session.message,
         sugarPrediction:null,
         message:null,
         userId:req.session.user.id,isRegistered:req.session.user.isRegistered

@@ -36,8 +36,12 @@ async function addMeal(req, res) {
     const result = await mealsModel.addMeal(meal);
 
     if (result.success) {
-        // TODO: Replace this with a pop-up notification instead of sending a plain response
-        res.send('The meal was added successfully!');
+        //things i added
+         req.session.message= "The meal was added successfully!",
+        res.redirect('/meals' );
+
+        //end
+
     } else {
         res.status(500).send(`Error: ${result.error}`);
     }

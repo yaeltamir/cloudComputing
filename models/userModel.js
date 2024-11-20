@@ -126,7 +126,7 @@ async function updateUser(userData)
         const query = `
             UPDATE users 
             SET name = @name, email = @email, password = @password, birthday = @birthday, 
-                gender = @gender, age = @age, height = @height, weight = @weight 
+              age = @age, height = @height, weight = @weight 
             WHERE id = @id`;
 
         const request = pool.request();
