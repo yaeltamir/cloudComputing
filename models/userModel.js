@@ -14,7 +14,7 @@ const config = {
 };
 
 // Function to calculate age from a given birthdate
-function age(birthDate) 
+function calculateAge(birthDate) 
 {
     const today = new Date();
     const birth = new Date(birthDate);
@@ -50,13 +50,12 @@ async function saveUser(userData)
         request.input('password', sql.VarChar, userData.password);
         request.input('birthday', sql.Date, userData.birthday);
         request.input('gender', sql.VarChar, userData.gender);
-        request.input('age', sql.Int, age(userData.birthday));
+        request.input('age', sql.Int, calculateAge(userData.birthday));
         request.input('height', sql.Decimal(5, 2), userData.height);
         request.input('weight', sql.Decimal(5, 2), userData.weight);
         request.input('isRegistered', sql.Bit, false);
 
-        const result = await request.query(query);
-        //console.log('Inserted user:', result.rowsAffected);
+        await request.query(query);
     } catch (err) {
         console.error('Database connection failed:', err);
     } finally {
@@ -136,12 +135,11 @@ async function updateUser(userData)
         request.input('password', sql.VarChar, userData.password);
         request.input('birthday', sql.Date, userData.birthday);
         request.input('gender', sql.VarChar, userData.gender);
-        request.input('age', sql.Int, age(userData.birthday));
+        request.input('age', sql.Int, calculateAge(userData.birthday));
         request.input('height', sql.Decimal(5, 2), userData.height);
         request.input('weight', sql.Decimal(5, 2), userData.weight);
 
-        const result = await request.query(query);
-        //console.log('Updated user:', result.rowsAffected);
+        await request.query(query);
     } 
     catch (err) {
         console.error('Database update failed:', err);
@@ -173,23 +171,10 @@ async function fetchUserDataById(id)
     }
 }
 
-// Function to check if a user exists in the database
-const checkIfUserExists = async (id) => {
-    try {
-        const user = await sql.query(`SELECT * FROM Users WHERE id = ${id}`);
-        return user.recordset.length > 0;
-    } 
-    catch (err) {
-        console.error('Error checking user existence:', err.message);
-        throw err;
-    }
-};
-
 module.exports = { 
     saveUser, 
     updateUser, 
     authenticateUser, 
     fetchUserDataById, 
-    subscribeToMessages, 
-    checkIfUserExists
+    subscribeToMessages
 };

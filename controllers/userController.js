@@ -18,7 +18,6 @@ const registerUser = async (req, res) => {
         password: password,
         birthday: dob,
         gender: gender,
-        age: calculateAge(dob), // Calculate user's age from their date of birth
         height: parseFloat(height),
         weight: parseFloat(weight)
     };
@@ -42,25 +41,6 @@ const registerUser = async (req, res) => {
             });
     }
 };
-
-/**
- * Utility function to calculate age from a given birth date.
- */
-function calculateAge(birthDate) {
-    const today = new Date();
-    const birth = new Date(birthDate);
-
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    const dayDiff = today.getDate() - birth.getDate();
-
-    // Adjust age if the birthday hasn't occurred yet this year
-    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-        age--;
-    }
-
-    return age;
-}
 
 /**
  * Handles user login requests.
@@ -92,7 +72,7 @@ const loginUser = async (req, res) => {
  * Handles user data updates.
  */
 const updateUser = (req, res) => {
-    const { id, name, email, password, dob, age, height, weight } = req.body;
+    const { id, name, email, password, dob, height, weight } = req.body;
 
     // Prepare updated user data object
     const updatedUserData = {
@@ -103,7 +83,6 @@ const updateUser = (req, res) => {
         birthday: dob,
         gender:req.session.user.gender,
         isRegistered:req.session.user.isRegistered,
-        age: parseInt(age),
         height: parseFloat(height),
         weight: parseFloat(weight)
     };
