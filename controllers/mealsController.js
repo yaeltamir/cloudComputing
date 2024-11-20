@@ -135,14 +135,17 @@ async function predictSugarLevel(req, res) {
 
         // Prepare new data for prediction
 
+        const isHoliday=holiday
+        const totalSugar=mealSugar
+
         const newData = [[
-            isHolidayToNumbers(holiday),
-            kindOfMealToNumbers(mealSugar),
+            isHolidayToNumbers(isHoliday),
+            kindOfMealToNumbers(kindOfMeal),
             user.gender === "male" ? 1 : 2,
             user.age,
             user.weight,
             totalSugar,
-        ]];
+        ]];
 
         const prediction = decisionTree.predict(newData);
 

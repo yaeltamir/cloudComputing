@@ -102,15 +102,14 @@
 
 <!-- Glucose Level Selection -->
 <div class="mb-4">
-    <label class="form-label">Glucose Level: Choose one option below</label>
-    <div class="d-flex gap-2">
+  <label class="form-label">Glucose Level: Choose one option below</label>
+  <div class="d-flex gap-2">
+    <!-- Button to Predict Glucose Level -->
+    <button type="button" class="btn btn-primary" onclick="predictGlucose()">Predict Glucose Level</button>
+    <!-- Button to Manually Enter Glucose Level -->
+    <button type="button" class="btn btn-success" onclick="toggleManualInput()">Enter Manually</button>
 
-<!-- כפתור לחיזוי רמת הסוכר -->
-<button type="button" class="btn btn-primary" onclick="predictGlucose()">Predict Glucose Level</button>
-
-        <!-- Button to Manually Enter Glucose Level -->
-        <button type="button" class="btn btn-success" onclick="showManualInput()">Enter Manually</button>
-    </div>
+  </div>
 </div>
 
 <!-- Glucose Level Manual Input (Hidden initially) -->
@@ -219,52 +218,78 @@ async function fetchMealSugarAndComponents() {
         }
     }
 
+// Function to toggle visibility of prediction section and hide manual input
 function predictGlucose() {
+
+    const date = document.getElementById('dateInput').value;
+    const time = document.getElementById('timeInput').value;
+    const mealType = document.getElementById('mealType').value;
+    const imageUrl = document.getElementById('imageUrlInput').value;
+
+    if (!date || !time || !mealType || !imageUrl) {
+        alert("Please fill in all the fields above the predict button before predicting.");
+        return; // מפסיק את הפעולה אם שדה ריק
+    }
+
     const mealData = {
-        time: document.getElementById('timeInput').value,
-        kindOfMeal: document.getElementById('mealType').value,
+        time: time,
+        kindOfMeal: mealType,
     };
+
+    const predictionSection = document.getElementById('predictionSection');
+    const manualInput = document.getElementById('manualGlucoseInput');
+
+    // Toggle prediction section visibility
+    if (predictionSection.style.display === 'block') {
+        predictionSection.style.display = 'none'; // Hide if already open
+    } else {
+        predictionSection.style.display = 'block'; // Show section
+        manualInput.style.display = 'none'; // Ensure manual input is hidden
+    }
+
 
     fetch('/meals/predict', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(mealData)
+        body: JSON.stringify(mealData),
     })
-    .then(response => response.json())
-    .then(data => {
-        // עדכון התצוגה עם התוצאה מהשרת
-       const sugarPrediction= document.getElementById('sugarPrediction');
-        const predictionMessage= document.getElementById('predictionMessage');
-        sugarPrediction.innerText = `Predicted Sugar Level: ${data.prediction}`;
-        predictionMessage.innerText = data.message;
+        .then((response) => response.json())
+        .then((data) => {
+            const sugarPrediction = document.getElementById('sugarPrediction');
+            const predictionMessage = document.getElementById('predictionMessage');
 
+            // Update prediction content
+            sugarPrediction.innerText = `Predicted Sugar Level: ${data.prediction}`;
+            predictionMessage.innerText = data.message;
 
-        // בדיקת ערך התחזית ושינוי הצבע השולט בהתאם
-        const predictionSection = document.getElementById('predictionSection');
-        if (data.prediction==="ERROR" || data.prediction > 100 ) {
-  predictionSection.style.backgroundColor = '#f8d7da'; // רקע אדום בהיר
-  predictionSection.style.color = '#721c24'; // טקסט אדום כהה
-
-} else {
-  predictionSection.style.backgroundColor = '#d4edda'; // רקע ירוק בהיר
-  predictionSection.style.color = '#155724'; // טקסט ירוק כהה
+            // Adjust colors based on prediction value
+            if (data.prediction === 'ERROR' || data.prediction > 100) {
+                predictionSection.style.backgroundColor = '#f8d7da'; // Light red
+                predictionSection.style.color = '#721c24'; // Dark red
+            } else {
+                predictionSection.style.backgroundColor = '#d4edda'; // Light green
+                predictionSection.style.color = '#155724'; // Dark green
+            }
+        })
+        .catch((error) => console.error('Error:', error));
 }
 
-// הצגת האזור החבוי
-predictionSection.style.display = 'block';
+// Function to toggle manual input field visibility and hide prediction section
+function toggleManualInput() {
+    const manualInput = document.getElementById('manualGlucoseInput');
+    const predictionSection = document.getElementById('predictionSection');
 
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-
-    // Function to show manual input field for glucose level
-    function showManualInput() {
-        const manualInput = document.getElementById('manualGlucoseInput');
-        manualInput.style.display = 'block';
+    // Toggle manual input visibility
+    if (manualInput.style.display === 'block') {
+        manualInput.style.display = 'none'; // Hide if already open
+    } else {
+        manualInput.style.display = 'block'; // Show input field
+        predictionSection.style.display = 'none'; // Ensure prediction section is hidden
     }
+}
+
 
 </script>
 
