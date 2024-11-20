@@ -6,25 +6,28 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>Personal - SugarSnap</title>
-        <!-- Favicon-->
+        <!-- Icon for the browser tab -->
         <link rel="icon" type="image/x-icon" href="assets/logo3.png" />
-        <!-- Custom Google font-->
+        <!-- Google font for better typography -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
-        <!-- Bootstrap icons-->
+        <!-- Bootstrap icons for UI elements -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet" />
-        <!-- Core theme CSS (includes Bootstrap)-->
+        <!-- Core theme CSS file, includes Bootstrap -->
         <link href="css/styles.css" rel="stylesheet" />
     </head>
     <body class="d-flex flex-column h-100 bg-light">
         <main class="flex-shrink-0">
-            <!-- Navigation-->
+            <!-- Navigation bar -->
             <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
                 <div class="container px-5">
+                    <!-- Link to the home page -->
                     <a class="navbar-brand" href="home"><span class="fw-bolder text-primary">Home</span></a>
+                    <!-- Responsive toggle button for mobile navigation -->
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <!-- Navigation links -->
                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
                             <li class="nav-item"><a class="nav-link" href="home">Home</a></li>
                             <li class="nav-item"><a class="nav-link" href="meals">Meals</a></li>
@@ -34,105 +37,100 @@
                         </ul>
                     </div>
                 </div>
-           
             </nav>
 
+            <!-- Partial for notifications -->
             <%- include('partials/messageNotification', { userId }) %>
 
-
-
-
-          <!-- Page Content-->
+          <!-- Main Page Content -->
 <div class="container px-5 my-5">
+    <!-- Header of the page -->
     <div class="text-center mb-5">
         <h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Insert New Meal</span></h1>
     </div>
     <div class="row gx-5 justify-content-center">
         <div class="col-lg-8 col-xl-6">
 
-
-            <!-- Insert New Meal Form -->
+            <!-- Form for inserting a new meal -->
             <form action="/meals/add" method="POST">
 
-                <!-- Date Input -->
+                <!-- Date selection field -->
                 <div class="mb-4">
                     <label for="dateInput" class="form-label">Enter Date</label>
                     <input type="date" class="form-control" id="dateInput" name="date" required onchange="fetchIsHoliday()">
                 </div>
 
-                <% if (sugarPrediction) { %> <!-- אם יש הודעה -->
+                <!-- Display prediction message if available -->
+                <% if (sugarPrediction) { %>
                     <p><%= sugarPrediction %></p>
                     <p> <%= message %></p>
                 <% } %> 
 
-                <!-- Time Input -->
+                <!-- Time selection field -->
                 <div class="mb-4">
                     <label for="timeInput" class="form-label">Enter Time</label>
                     <input type="time" class="form-control" id="timeInput" name="time" required>
                 </div>
 
-                <!-- Meal Type Input -->
+                <!-- Meal type dropdown -->
                 <div class="mb-4">
                     <label for="mealType" class="form-label">Select Meal Type</label>
                     <select class="form-select" id="mealType" name="kindOfMeal" required>
                         <option value="" selected disabled>Select Meal</option>
-                        <option  value="breakfast">Breakfast</option>
+                        <option value="breakfast">Breakfast</option>
                         <option value="lunch">Lunch</option>
                         <option value="dinner">Dinner</option>
                         <option value="snack">Other (Snack)</option>
                     </select>
                 </div>
 
- <!-- Image URL Input -->
+                <!-- Image URL field -->
+                <div class="mb-4">
+                    <label for="imageUrlInput" class="form-label">Enter Image URL</label>
+                    <input type="url" class="form-control" id="imageUrlInput" name="imageUrl" placeholder="Enter image URL" required onchange="fetchMealSugarAndComponents()">
+                </div>
 
- <div class="mb-4">
-    <label for="imageUrlInput" class="form-label">Enter Image URL</label>
-    <input type="url" class="form-control" id="imageUrlInput" name="imageUrl" placeholder="Enter image URL" required onchange="fetchMealSugarAndComponents()">
-</div>
+                <!-- Image preview section -->
+                <div class="mb-4">
+                    <img id="imagePreview" src="" alt="Image Preview" style="display:none; max-width: 100%; height: auto;">
+                </div>
 
-<!-- Display Image from URL -->
-<div class="mb-4">
-    <img id="imagePreview" src="" alt="Image Preview" style="display:none; max-width: 100%; height: auto;">
-</div>
+                <!-- Button for loading the image -->
+                <div class="mb-4">
+                    <button type="button" class="btn btn-primary" onclick="loadImage()">Submit URL</button>
+                </div>
 
-<!-- Action Button -->
-<div class="mb-4">
-    <button type="button" class="btn btn-primary" onclick="loadImage()">Submit URL</button>
-</div>
+                <!-- Glucose level buttons -->
+                <div class="mb-4">
+                    <label class="form-label">Glucose Level: Choose one option below</label>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-primary" onclick="predictGlucose()">Predict Glucose Level</button>
+                        <button type="button" class="btn btn-success" onclick="toggleManualInput()">Enter Manually</button>
+                    </div>
+                </div>
 
-<!-- Glucose Level Selection -->
-<div class="mb-4">
-  <label class="form-label">Glucose Level: Choose one option below</label>
-  <div class="d-flex gap-2">
-    <!-- Button to Predict Glucose Level -->
-    <button type="button" class="btn btn-primary" onclick="predictGlucose()">Predict Glucose Level</button>
-    <!-- Button to Manually Enter Glucose Level -->
-    <button type="button" class="btn btn-success" onclick="toggleManualInput()">Enter Manually</button>
+                <!-- Manual glucose level input -->
+                <div class="mb-4" id="manualGlucoseInput" style="display: none;">
+                    <label for="glucoseLevel" class="form-label">Enter Current Glucose Level (after 2 hours)</label>
+                    <input type="number" class="form-control" id="glucoseLevel" name="sugarLevel" placeholder="Enter your glucose level" required>
+                </div>
 
-  </div>
-</div>
+                <!-- Prediction section -->
+                <div id="predictionSection" class="mb-4" style="display: none;">
+                    <div class="p-4 rounded-3 bg-light border">
+                        <h5 class="fw-bold text-center text-gradient mb-3">Prediction Result</h5>
+                        <p id="sugarPrediction" class="text-dark text-center fs-5"></p>
+                        <p id="predictionMessage" class="text-muted text-center"></p>
+                    </div>
+                </div>
 
-<!-- Glucose Level Manual Input (Hidden initially) -->
-<div class="mb-4" id="manualGlucoseInput" style="display: none;">
-    <label for="glucoseLevel" class="form-label">Enter Current Glucose Level (after 2 hours)</label>
-    <input type="number" class="form-control" id="glucoseLevel" name="sugarLevel" placeholder="Enter your glucose level" required>
-</div>
-
-<div id="predictionSection" class="mb-4" style="display: none;">
-    <div class="p-4 rounded-3 bg-light border">
-        <h5 class="fw-bold text-center text-gradient mb-3">Prediction Result</h5>
-        <p id="sugarPrediction" class="text-dark text-center fs-5"></p>
-        <p id="predictionMessage" class="text-muted text-center"></p>
-    </div>
-</div>
-
-<!-- Action Button -->
-<div class="mb-4">
-    <button type="submit" class="btn btn-primary" >Submit Data</button>
-</div>  
+                <!-- Submit button -->
+                <div class="mb-4">
+                    <button type="submit" class="btn btn-primary">Submit Data</button>
+                </div>  
             </form>
 
-            
+            <!-- Display success message if available -->
             <% if (successMessage) { %>
                 <div class="alert alert-success">
                     <p><%= successMessage %></p>
@@ -141,7 +139,6 @@
         </div>
     </div>
 </div>
-
 
 <script>
     // Set the current date and time when the page loads
@@ -159,7 +156,8 @@
     };
 
     
-async function fetchIsHoliday() {
+async function fetchIsHoliday() 
+{
     const date = document.getElementById('dateInput').value;
 
     if (!date) return; // בדוק שהשדה לא ריק
@@ -179,7 +177,8 @@ async function fetchIsHoliday() {
 }
 
 
-async function fetchMealSugarAndComponents() {
+async function fetchMealSugarAndComponents() 
+{
     const url = document.getElementById('imageUrlInput').value;
 
     if (!url) return; // בדוק שהשדה לא ריק
@@ -202,7 +201,8 @@ async function fetchMealSugarAndComponents() {
 
 
 
-    function loadImage() {
+    function loadImage() 
+    {
         const imageUrl = document.getElementById('imageUrlInput').value; // Get the URL input value
         const imagePreview = document.getElementById('imagePreview');
 
@@ -219,7 +219,8 @@ async function fetchMealSugarAndComponents() {
     }
 
 // Function to toggle visibility of prediction section and hide manual input
-function predictGlucose() {
+function predictGlucose() 
+{
 
     const date = document.getElementById('dateInput').value;
     const time = document.getElementById('timeInput').value;
@@ -277,7 +278,8 @@ function predictGlucose() {
 }
 
 // Function to toggle manual input field visibility and hide prediction section
-function toggleManualInput() {
+function toggleManualInput() 
+{
     const manualInput = document.getElementById('manualGlucoseInput');
     const predictionSection = document.getElementById('predictionSection');
 
@@ -289,14 +291,10 @@ function toggleManualInput() {
         predictionSection.style.display = 'none'; // Ensure prediction section is hidden
     }
 }
-
-
 </script>
 
-
-
-
         </main>
+
         <!-- Footer-->
         <footer class="bg-white py-4 mt-auto">
             <div class="container px-5">
