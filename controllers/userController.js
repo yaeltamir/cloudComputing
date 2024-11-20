@@ -112,9 +112,9 @@ const updateUser = (req, res) => {
     userModel.updateUser(updatedUserData)
         .then(() => {
             req.session.user=updatedUserData
-            req.session.message="User updated successfully!"
 
-            res.redirect('updateDetails')
+
+            res.render('updateDetails', { userDetails: updatedUserData,successMessage:"User updated successfully!"});
 
            // res.send('User updated successfully!');
         })
