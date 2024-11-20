@@ -17,101 +17,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <link href="css/styles.css" rel="stylesheet" />
 
-    <style>
-        /* Image container styles */
-        .meal-container {
-            display: flex;
-            justify-content: space-around;
-            gap: 15px;
-            padding: 20px;
-            margin-top: 30px;
-            flex-wrap: wrap; /* Allows images to wrap on smaller screens */
-        }
-
-        /* Meal item styles */
-        .meal-item {
-            position: relative;
-            width: 28%; /* Adjusted to make images smaller */
-            aspect-ratio: 1 / 1; /* Keeps the image square */
-            overflow: hidden;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .meal-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .meal-item:hover {
-            transform: scale(1.05);
-        }
-
-        /* Hidden description inside each meal item */
-        .meal-description {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 16px;
-            text-align: center;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            width: 100%;
-            display: none;
-        }
-
-        .meal-item:hover .meal-description {
-            display: block; /* Show description on hover */
-        }
-
-        /* Welcome section styles */
-        .welcome-section {
-            text-align: center;
-            margin-top: 40px;
-        }
-
-        .welcome-section h2 {
-            font-size: 30px;
-            color: #333;
-        }
-
-        .welcome-section p {
-            font-size: 18px;
-            color: #555;
-            margin-bottom: 40px;
-        }
-
-        /* Notification container styling */
-        .notification-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 200px; /* Sets a minimum height for the notification area */
-            margin: 30px auto;
-            padding: 20px;
-        }
-
-        /* Notification message box styling */
-        .notification-message {
-            text-align: center;
-            background-color: #e3f7f7; /* Light turquoise background */
-            border: 2px solid #a6d9d9; /* Slightly darker turquoise border */
-            border-radius: 10px; /* Rounded corners */
-            padding: 20px 30px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
-            font-size: 18px;
-            color: #004d4d; /* Dark turquoise text */
-            max-width: 600px; /* Limits the width of the box */
-            width: 100%; /* Ensures it doesn’t exceed the screen width */
-            font-weight: 500; /* Slightly bold font */
-        }
-
-    </style>
 </head>
 
 <body class="d-flex flex-column h-100">
@@ -137,7 +42,7 @@
 
         <!-- Welcome section -->
         <div class="text-center mb-5">
-            <h1 class="display-3 fw-bolder mb-5 mt-4"><span class="text-gradient d-inline">Welcome Home, <%= userName %>!</span></h1>
+            <h1 class="display-3 fw-bolder mb-5 mt-4"><span class="text-gradient d-inline">Welcome Back, <%= userName %>!</span></h1>
              <!-- Notification for non-registered users -->
              <% if (!isRegistered) { %>
                 <div class="notification-container">
@@ -150,10 +55,6 @@
                 <span class="text-gradient d-inline">Your last meals:</span>
             </h1>
         </div>
-
-
-
-       
 
         <!-- Last meals section -->
         <div class="last-meals-container">

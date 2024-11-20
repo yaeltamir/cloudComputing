@@ -48,15 +48,8 @@
                         </div>
                         <div class="row gx-5 justify-content-center">
                             <div class="col-lg-8 col-xl-6">
-                                <!-- * * * * * * * * * * * * * * *-->
                                 <!-- * * SB Forms signUp Form * *-->
-                                <!-- * * * * * * * * * * * * * * *-->
-                                <!-- This form is pre-integrated with SB Forms.-->
-                                <!-- To make this form functional, sign up at-->
-                                <!-- https://startbootstrap.com/solution/signUp-forms-->
-                                <!-- to get an API token!-->
-                                <!--<form id="signUpForm" data-sb-form-api-token="API_TOKEN">-->
-                                      <!-- ID input-->
+                                    <!-- ID input-->
                                     <div class="form-floating mb-3">
                                         <input class="form-control" id="id" name="id" type="text" placeholder="Enter your ID..." data-sb-validations="required" />
                                         <label for="id">ID</label>
@@ -85,10 +78,7 @@
                                             required />
                                         <label for="password">Password</label>
                                         <div class="invalid-feedback" data-sb-feedback="password:required">A password is required.</div>
-                                        <!-- כוכבית אדומה והערה עם גודל פונט קטן -->
-                                        <span id="password-error" style="color: red; display: none; font-size: 12px;">
-                                            * Password must be 6-8 characters.
-                                        </span>
+                                        <span id="password-error" style="color: red; display: none; font-size: 12px;">* Password must be 6-8 characters.</span>
                                     </div>
 
                                     <script>
@@ -96,11 +86,11 @@
                                         const passwordInput = document.getElementById('password');
                                         const errorSpan = document.getElementById('password-error');
                                         
-                                        // בדיקת תנאים - אורך הסיסמה בין 6 ל-8 תווים
+                                        // check the password length
                                         if (passwordInput.value.length < 6 || passwordInput.value.length > 8) {
-                                            errorSpan.style.display = 'inline';  // הצגת הכוכבית האדומה עם ההערה
+                                            errorSpan.style.display = 'inline';  
                                         } else {
-                                            errorSpan.style.display = 'none';    // הסתרת הכוכבית וההערה אם התנאים תקינים
+                                            errorSpan.style.display = 'none';   
                                         }
                                     }
                                     </script>
@@ -163,8 +153,6 @@
                                             });
                                         });
                                     </script>
-
-
 
                                     <!-- Height input -->
                                     <div class="form-floating mb-3">
