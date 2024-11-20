@@ -83,6 +83,8 @@ async function calculateComponentsAndMealSugar(req, res) {
     try {
        components=await mealsModel.tagImage(url)
        mealSugar=await mealsModel.calculateTotalSugar(components)
+       
+     return mealSugar
     } catch (error) {
         console.error('Error calculating components and meal sugar:', error);
         res.status(500).json({ error: 'Error calculating components and meal sugar' });

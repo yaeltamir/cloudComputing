@@ -9,8 +9,8 @@ async function tagImage(url)
   try {
       // Authentication credentials for Imagga API
       const auth = {
-          username: 'acc_c06b1482838e00b',
-          password: 'af30770f981a0eda4a2a299fe081142a'
+          username: 'acc_9ebe20e5f006a3a',
+          password: '6b2ea34c4db987ab07768f1cea5667b6'
       };
       
       // Sending a GET request to the Imagga API
@@ -51,7 +51,9 @@ async function getSugarContent(ingredient)
       sugarValue = parseFloat(sugarContent.value);
       console.log(`Sugar content: ${sugarValue} ${sugarContent.unitName}`);
     } else {
+     
       console.log("No sugar content found or the value is invalid.");
+      return -1
     }
 
     // Ensure sugarValue is a valid number before sending to an API
@@ -76,6 +78,8 @@ async function calculateTotalSugar(components)
   for (const component of components)
   {
       const sugar = await getSugarContent(component);
+      if(sugar===-1)
+        return -1
       totalSugar += sugar;
   }
  
