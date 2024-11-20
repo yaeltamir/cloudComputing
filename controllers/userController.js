@@ -1,6 +1,5 @@
 const sql = require('mssql');
 const userModel = require('../models/userModel'); // Import the user model for database interactions
-
 /**
  * Handles user registration and sends data to the model.
  * If the user already exists, updates their data instead of creating a new record.
@@ -156,5 +155,24 @@ const reverseSubscribtion = (req, res) => {
         });
 };
 
+//new
+const getHomePage = async (req, res) => {
+    try {
+        const userId = req.session.user.id;
+
+        // בדיקה אם המשתמש רשום לשירותי הודעות
+        const isRegistered = await userModel.checkIsRegistered(userId);
+
+        res.render('home', {
+            userName: req.session.user.name,
+            isRegistered: isRegistered,
+        });
+    } catch (err) {
+        console.error('Error loading home page:', err);
+        res.status(500).send('Error loading page.');
+    }
+}; // till here
+
 // Export all functions to be used in the routing layer
-module.exports = { registerUser, loginUser, updateUser, reverseSubscribtion };
+module.exports = { registerUser, loginUser, updateUser, reverseSubscribtion, getHomePage };
+

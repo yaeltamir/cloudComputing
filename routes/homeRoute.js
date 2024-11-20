@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const mealsController = require('../controllers/mealsController'); // הנתיב שלך לבקר
+const userController = require('../controllers/userController');
+
+// מסלול לדף הבית new
+router.get('/home', userController.getHomePage);
+//till here
 
 // מסלול ל- /home שמפעיל את פונקציית הבקר
 router.get('/', mealsController.getLastMeals, (req, res) => {
@@ -17,5 +22,9 @@ router.get('/', mealsController.getLastMeals, (req, res) => {
 });
 
 module.exports = router;
+
+
+
+
 
 
