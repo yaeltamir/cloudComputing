@@ -46,6 +46,14 @@ app.get('/index', render_index);
 // Route to access the home page via the root URL '/'
 app.get('/', render_index);
 
+app.post('/resetNotification/:userId', (req, res) => {
+  const { userId } = req.params;
+  if (messagesDictionary[userId]) {
+    messagesDictionary[userId].hasNewMessage = false;
+  }
+  res.sendStatus(200);
+});
+
 
 //-----------kafka------------
 const http = require('http');
@@ -79,15 +87,6 @@ wss.on('connection', (ws, req) => {
       hasNewMessage: messagesDictionary[userId].hasNewMessage
     }));
   });
-});
-
-
-app.post('/resetNotification/:userId', (req, res) => {
-  const { userId } = req.params;
-  if (messagesDictionary[userId]) {
-    messagesDictionary[userId].hasNewMessage = false;
-  }
-  res.sendStatus(200);
 });
 
 
