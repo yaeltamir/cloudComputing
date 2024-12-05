@@ -237,6 +237,9 @@
                     if (componentsAndSugarPromise) {
                         componentsAndSugarPromise
                             .then(() => {
+                                if (isHolidayPromise) {
+                        isHolidayPromise
+                            .then(() => {
                                 const date = document.getElementById('dateInput').value;
                                 const time = document.getElementById('timeInput').value;
                                 const mealType = document.getElementById('mealType').value;
@@ -307,7 +310,10 @@
                                     })
                                     .catch((error) => console.error('Error:', error));
                             });
+                        }
+                    })
                     }
+                    
                 }
 
 

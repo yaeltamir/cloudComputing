@@ -12,14 +12,14 @@ const { homedir } = require('os');
 async function addMeal(req, res) {
     console.log(111)
     const idUser = req.session.user.id; // Get the user ID from the session
-    const { kindOfMeal, date, time, imageUrl, sugarLevel,components, mealSugar, holiday } = req.body;
+    const { kindOfMeal, date, time, imageUrl, sugarLevel, components, mealSugar, holiday } = req.body;
 
     console.log(holiday)
     console.log(mealSugar)
     console.log(components)
 
     // const com=JSON.parse(components)
-     console.log(2)
+    console.log(2)
     //if(!holiday||!components||!mealSugar){ return res.status(400).send('something went wrong');}
 
     const meal = {
@@ -37,8 +37,8 @@ async function addMeal(req, res) {
     const result = await mealsModel.addMeal(meal);
 
     if (result.success) {
-         req.session.message= "The meal was added successfully!",
-        res.redirect('/meals' );
+        req.session.message = "The meal was added successfully!",
+            res.redirect('/meals');
     } else {
         res.status(500).send(`Error: ${result.error}`);
     }
@@ -63,9 +63,9 @@ function isHolidayToNumbers(kindOfMeal) {
 async function calculateIsHoliday(req, res) {
     const { date } = req.body;
     try {
-        holiday=await mealsModel.checkHebcalDate(new Date(date));
+        holiday = await mealsModel.checkHebcalDate(new Date(date));
         console.log(holiday)
-        res.status(200).json({ holiday});
+        res.status(200).json({ holiday });
     } catch (error) {
         console.error('Error calculating isHoliday:', error);
         res.status(500).json({ error: 'Error calculating isHoliday' });
@@ -75,13 +75,13 @@ async function calculateIsHoliday(req, res) {
 async function calculateComponentsAndMealSugar(req, res) {
     const { url } = req.body;
     try {
-       const components=await mealsModel.tagImage(url)
-       const mealSugar=await mealsModel.calculateTotalSugar(components)
-       //<!------------------------------------------------------------------------------------>
-       res.status(200).json({ components: JSON.stringify(components), mealSugar });
-       //<!------------------------------------------------------------------------------------>
-       return mealSugar
-    } 
+        const components = await mealsModel.tagImage(url)
+        const mealSugar = await mealsModel.calculateTotalSugar(components)
+        //<!------------------------------------------------------------------------------------>
+        res.status(200).json({ components: JSON.stringify(components), mealSugar });
+        //<!------------------------------------------------------------------------------------>
+        return mealSugar
+    }
     catch (error) {
         console.error('Error calculating components and meal sugar:', error);
         res.status(500).json({ error: 'Error calculating components and meal sugar' });
@@ -92,7 +92,7 @@ async function calculateComponentsAndMealSugar(req, res) {
 // Function to predict sugar level using a decision tree model
 async function predictSugarLevel(req, res) {
     const idUser = req.session.user.id;
-    const { kindOfMeal,components, mealSugar, holiday} = req.body;
+    const { kindOfMeal, components, mealSugar, holiday } = req.body;
     console.log(1)
     console.log(mealSugar)
     console.log(components)
@@ -144,8 +144,8 @@ async function predictSugarLevel(req, res) {
         console.log(7)
         // Prepare new data for prediction
 
-        const isHoliday=holiday
-        const totalSugar=mealSugar
+        const isHoliday = holiday
+        const totalSugar = mealSugar
         console.log(8)
         const newData = [[
             isHolidayToNumbers(isHoliday),
@@ -154,8 +154,8 @@ async function predictSugarLevel(req, res) {
             user.age,
             user.weight,
             totalSugar,
-        ]];
-console.log(9)
+        ]];
+        console.log(9)
 
         const prediction = decisionTree.predict(newData);
 
@@ -189,13 +189,13 @@ async function showHistoryGraph(req, res) {
         const end = endDate ? new Date(endDate) : null;
 
         // Date range filtering
-        const isDateInRange = 
-            (!start || mealDate >= start) && 
+        const isDateInRange =
+            (!start || mealDate >= start) &&
             (!end || mealDate <= end);
 
         // Meal type filtering
-        const isMealTypeMatch = 
-            !mealType || 
+        const isMealTypeMatch =
+            !mealType ||
             (mealType && meal.kindOfMeal.toLowerCase() === mealType.toLowerCase());
 
         return isDateInRange && isMealTypeMatch;
@@ -218,12 +218,12 @@ async function showHistoryGraph(req, res) {
     const sugarLevels = filteredMeals.map(meal => meal.sugarLevel);
     const mealImages = filteredMeals.map(meal => meal.imageUrl);
 
-    res.render('historyGraph', { 
-        dates, 
-        sugarLevels, 
-        mealImages, 
-        userId, 
-        isRegistered: req.session.user.isRegistered 
+    res.render('historyGraph', {
+        dates,
+        sugarLevels,
+        mealImages,
+        userId,
+        isRegistered: req.session.user.isRegistered
     });
 }
 
@@ -251,7 +251,7 @@ async function getLastMeals(req, res, next) {
     }
 }
 
-module.exports = { addMeal,predictSugarLevel, showHistoryGraph, getLastMeals,calculateIsHoliday,calculateComponentsAndMealSugar }; 
+module.exports = { addMeal, predictSugarLevel, showHistoryGraph, getLastMeals, calculateIsHoliday, calculateComponentsAndMealSugar };
 
 
 
