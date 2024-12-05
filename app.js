@@ -92,9 +92,9 @@ wss.on('connection', (ws, req) => {
 
 // Kafka consumer setup
 const kafka = new Kafka({
-  brokers: ["csovvkq0p8t14kkkbsag.any.eu-central-1.mpx.prd.cloud.redpanda.com:9092"],
+  brokers: ["ct6r6ph1fcl81ca011fg.any.eu-central-1.mpx.prd.cloud.redpanda.com:9092"],
   ssl: {},
-  sasl: { mechanism: "scram-sha-256", username: "moshe", password: "HyCUNWFmeV0jyA5PUygv9cXt6CbLbG" }
+  sasl: { mechanism: "scram-sha-256", username: "final", password: "Xc6JXrZAW5sImWAgiNn4XqYXnli9nh" }
 });
 
 const consumer = kafka.consumer({ groupId: 'global-consumer-group' });

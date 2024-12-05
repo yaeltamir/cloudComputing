@@ -2,9 +2,9 @@ const { DecisionTreeClassifier } = require('ml-cart');
 const mealsModel = require('../models/mealsModel'); // Importing the meals model
 const userModel = require('../models/userModel');   // Importing the user model
 
-let holiday=null
-let components=null
-let mealSugar=null
+let holiday="Regular Day"
+let components={}
+let mealSugar=0
 
 // Function to add a meal
 // Receives data from meals.ejs, sends it to the model, and returns a success/failure message
@@ -12,7 +12,7 @@ async function addMeal(req, res) {
     const idUser = req.session.user.id; // Get the user ID from the session
     const { kindOfMeal, date, time, imageUrl, sugarLevel } = req.body;
 
-    if(!holiday||!components||!mealSugar){ return res.status(400).send('something went wrong');}
+    //if(!holiday||!components||!mealSugar){ return res.status(400).send('something went wrong');}
 
     const meal = {
         idUser,
