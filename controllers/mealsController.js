@@ -3,15 +3,22 @@ const mealsModel = require('../models/mealsModel'); // Importing the meals model
 const userModel = require('../models/userModel');   // Importing the user model
 
 let holiday="Regular Day"
-let components={}
-let mealSugar=0
+// let components={}
+// let mealSugar=0
 
 // Function to add a meal
 // Receives data from meals.ejs, sends it to the model, and returns a success/failure message
 async function addMeal(req, res) {
+    console.log(111)
     const idUser = req.session.user.id; // Get the user ID from the session
-    const { kindOfMeal, date, time, imageUrl, sugarLevel } = req.body;
+    const { kindOfMeal, date, time, imageUrl, sugarLevel,components, mealSugar } = req.body;
 
+    console.log(1)
+    console.log(mealSugar)
+    console.log(components)
+
+    // const com=JSON.parse(components)
+     console.log(2)
     //if(!holiday||!components||!mealSugar){ return res.status(400).send('something went wrong');}
 
     const meal = {
@@ -65,8 +72,11 @@ async function calculateIsHoliday(req, res) {
 async function calculateComponentsAndMealSugar(req, res) {
     const { url } = req.body;
     try {
-       components=await mealsModel.tagImage(url)
-       mealSugar=await mealsModel.calculateTotalSugar(components)
+       const components=await mealsModel.tagImage(url)
+       const mealSugar=await mealsModel.calculateTotalSugar(components)
+       //<!------------------------------------------------------------------------------------>
+       res.status(200).json({ components: JSON.stringify(components), mealSugar });
+       //<!------------------------------------------------------------------------------------>
        return mealSugar
     } 
     catch (error) {
@@ -79,13 +89,17 @@ async function calculateComponentsAndMealSugar(req, res) {
 // Function to predict sugar level using a decision tree model
 async function predictSugarLevel(req, res) {
     const idUser = req.session.user.id;
-    const { kindOfMeal} = req.body;
+    const { kindOfMeal,components, mealSugar} = req.body;
+    console.log(1)
+    console.log(mealSugar)
+    console.log(components)
+    console.log(2)
 
     try {
         // Fetch meal and user data for the current user
         const mealsData = await mealsModel.fetchMealDataById(idUser);
         const usersData = await userModel.fetchUserDataById(idUser);
-
+        console.log(3)
         // Ensure sufficient data for prediction
         if (mealsData.length < 20 || usersData.length === 0) {
             res.json({
@@ -94,7 +108,7 @@ async function predictSugarLevel(req, res) {
             });
             return;
         }
-
+        console.log(4)
         const user = usersData[0]; // Extract user details
 
         // Combine meal and user data
@@ -107,6 +121,7 @@ async function predictSugarLevel(req, res) {
             mealSugar: meal.mealSugar,
             sugarLevel: meal.sugarLevel,
         }));
+        console.log(5)
 
         // Prepare features and labels for training
         const features = data.map(row => [
@@ -117,17 +132,18 @@ async function predictSugarLevel(req, res) {
             row.weight,
             row.mealSugar,
         ]);
+        console.log(6)
         const labels = data.map(row => row.sugarLevel);
 
         // Train decision tree model
         const decisionTree = new DecisionTreeClassifier();
         decisionTree.train(features, labels);
-
+        console.log(7)
         // Prepare new data for prediction
 
         const isHoliday=holiday
         const totalSugar=mealSugar
-
+        console.log(8)
         const newData = [[
             isHolidayToNumbers(isHoliday),
             kindOfMealToNumbers(kindOfMeal),
@@ -136,6 +152,7 @@ async function predictSugarLevel(req, res) {
             user.weight,
             totalSugar,
         ]];
+console.log(9)
 
         const prediction = decisionTree.predict(newData);
 
@@ -146,7 +163,7 @@ async function predictSugarLevel(req, res) {
         } else {
             predictionMessage = "This meal is recommended based on your sugar level. Remember to measure your sugar level after eating.";
         }
-
+        console.log(10)
         res.json({
             prediction: prediction[0],
             message: predictionMessage,
