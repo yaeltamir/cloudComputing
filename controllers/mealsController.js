@@ -1,8 +1,9 @@
 const { DecisionTreeClassifier } = require('ml-cart');
 const mealsModel = require('../models/mealsModel'); // Importing the meals model
 const userModel = require('../models/userModel');   // Importing the user model
+const { homedir } = require('os');
 
-let holiday="Regular Day"
+//let holiday="Regular Day"
 // let components={}
 // let mealSugar=0
 
@@ -11,9 +12,9 @@ let holiday="Regular Day"
 async function addMeal(req, res) {
     console.log(111)
     const idUser = req.session.user.id; // Get the user ID from the session
-    const { kindOfMeal, date, time, imageUrl, sugarLevel,components, mealSugar } = req.body;
+    const { kindOfMeal, date, time, imageUrl, sugarLevel,components, mealSugar, holiday } = req.body;
 
-    console.log(1)
+    console.log(holiday)
     console.log(mealSugar)
     console.log(components)
 
@@ -63,6 +64,8 @@ async function calculateIsHoliday(req, res) {
     const { date } = req.body;
     try {
         holiday=await mealsModel.checkHebcalDate(new Date(date));
+        console.log(holiday)
+        res.status(200).json({ holiday});
     } catch (error) {
         console.error('Error calculating isHoliday:', error);
         res.status(500).json({ error: 'Error calculating isHoliday' });
@@ -89,7 +92,7 @@ async function calculateComponentsAndMealSugar(req, res) {
 // Function to predict sugar level using a decision tree model
 async function predictSugarLevel(req, res) {
     const idUser = req.session.user.id;
-    const { kindOfMeal,components, mealSugar} = req.body;
+    const { kindOfMeal,components, mealSugar, holiday} = req.body;
     console.log(1)
     console.log(mealSugar)
     console.log(components)
