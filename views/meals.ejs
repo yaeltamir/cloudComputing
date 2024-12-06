@@ -58,9 +58,8 @@
                 </div>
                 <div class="row gx-5 justify-content-center">
                     <div class="col-lg-8 col-xl-6">
-                        <!--things i added------------------------------------------------------------>
+
                         <%- include('partials/successNotification') %>
-                            <!--end------------------------------------------------------------>
 
                             <!-- Form for inserting a new meal -->
                             <form action="/meals/add" method="POST">
@@ -169,16 +168,16 @@
             </div>
 
             <script>
-
-                // הגדרת משתנה Promise
+                // Defining Promise variables
                 let componentsAndSugarPromise = null;
                 let isHolidayPromise = null;
-
+            
+                // Function to check if the selected date is a holiday
                 async function fetchIsHoliday() {
                     const date = document.getElementById('dateInput').value;
-
+            
                     if (!date) return;
-
+            
                     try {
                         const response = await fetch('/meals/checkHoliday', {
                             method: 'POST',
@@ -187,26 +186,26 @@
                             },
                             body: JSON.stringify({ date }),
                         });
-
+            
                         const data = await response.json();
-
-                        // שמירה בשדות המוסתרים
+            
+                        // Saving the holiday value in the hidden field
                         document.getElementById('holidayInput').value = data.holiday;
-
-                        // עדכון ה-Promise כשסיימנו
+            
+                        // Updating the Promise once finished
                         isHolidayPromise = Promise.resolve();
-
+            
                     } catch (error) {
                         console.error('Error fetching isHoliday:', error);
                     }
                 }
-
-                // הפונקציה שמבצעת את החישוב של רכיבי הארוחה ורמת הסוכר
+            
+                // Function to fetch meal components and sugar level
                 async function fetchMealSugarAndComponents() {
                     const url = document.getElementById('imageUrlInput').value;
-
+            
                     if (!url) return;
-
+            
                     try {
                         const response = await fetch('/meals/checkComponentsAndMealSugar', {
                             method: 'POST',
@@ -215,119 +214,116 @@
                             },
                             body: JSON.stringify({ url }),
                         });
-
+            
                         const data = await response.json();
                         const components = JSON.parse(data.components);
-
-                        // שמירה בשדות המוסתרים
+            
+                        // Saving the components and meal sugar in hidden fields
                         document.getElementById('componentsInput').value = JSON.stringify(components);
                         document.getElementById('mealSugarInput').value = data.mealSugar;
-
-                        if(parseFloat(data.mealSugar)===-1){
+            
+                        // If mealSugar indicates an error, display an alert and stop further execution
+                        if (parseFloat(data.mealSugar) === -1) {
                             alert('ERROR: The image you submitted is not food or isn\'t clear enough');
-                            return
+                            return;
                         }
-
-                        // עדכון ה-Promise כשסיימנו
+            
+                        // Updating the Promise once finished
                         componentsAndSugarPromise = Promise.resolve();
                     } catch (error) {
                         console.error('Error fetching components and sugar:', error);
                         componentsAndSugarPromise = Promise.reject();
                     }
                 }
-
-                // הפונקציה שמבצעת חיזוי של רמת הסוכר
-               async function predictGlucose() {
-                    // המתנה לסיום החישוב אם טרם הושלם
+            
+                // Function to predict glucose level
+                async function predictGlucose() {
+                    // Wait for components and sugar calculations to finish if not already done
                     if (componentsAndSugarPromise) {
-                        componentsAndSugarPromise
-                            .then(() => {
-                                if (isHolidayPromise) {
-                        isHolidayPromise
-                            .then(() => {
-                                const date = document.getElementById('dateInput').value;
-                                const time = document.getElementById('timeInput').value;
-                                const mealType = document.getElementById('mealType').value;
-                                const imageUrl = document.getElementById('imageUrlInput').value;
-                                                        if (!date || !time || !mealType || !imageUrl) {
-                            alert("Please fill in all the fields above the predict button before predicting.");
-                            return;
-                        }
-
-                                const componentsInput = document.getElementById('componentsInput').value;
-                                const mealSugarInput = document.getElementById('mealSugarInput').value;
-
-                                if (!componentsInput || !mealSugarInput) {
-                                    alert("Please calculate the components and meal sugar first.");
-                                    return;
-                                }
-
-                                const components = JSON.parse(componentsInput);
-                                const mealSugar = parseFloat(mealSugarInput);
-                                const holiday=document.getElementById('holidayInput').value;
-
-                                // const mealData = {
-                                //     time: document.getElementById('timeInput').value,
-                                //     kindOfMeal: document.getElementById('mealType').value,
-                                const mealData = {
-                                    time: time,
-                                    kindOfMeal: mealType,
-                                    components, // שליחה עם הרכיבים המחושבים
-                                    mealSugar,  // שליחה עם רמת הסוכר המחושבת
-                                    holiday
-                                };
-
-                                const predictionSection = document.getElementById('predictionSection');
-                                const manualInput = document.getElementById('manualGlucoseInput');
-
-                                // הצגת חלק התחזיות
-                                if (predictionSection.style.display === 'block') {
-                                    predictionSection.style.display = 'none';
-                                } else {
-                                    predictionSection.style.display = 'block';
-                                    manualInput.style.display = 'none';
-                                }
-
-                                fetch('/meals/predict', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify(mealData),
-                                })
-                                    .then((response) => response.json())
-                                    .then((data) => {
-                                        const sugarPrediction = document.getElementById('sugarPrediction');
-                                        const predictionMessage = document.getElementById('predictionMessage');
-
-                                        // עדכון תוכן התחזית
-                                        sugarPrediction.innerText = `Predicted Sugar Level: ${data.prediction}`;
-                                        predictionMessage.innerText = data.message;
-
-                                        // שינוי צבעים בהתאם לתוצאה
-                                        if (data.prediction === 'ERROR' || data.prediction > 100) {
-                                            predictionSection.style.backgroundColor = '#f8d7da'; // אדום בהיר
-                                            predictionSection.style.color = '#721c24'; // אדום כהה
-                                        } else {
-                                            predictionSection.style.backgroundColor = '#d4edda'; // ירוק בהיר
-                                            predictionSection.style.color = '#155724'; // ירוק כהה
-                                        }
+                        componentsAndSugarPromise.then(() => {
+                            if (isHolidayPromise) {
+                                isHolidayPromise.then(() => {
+                                    const date = document.getElementById('dateInput').value;
+                                    const time = document.getElementById('timeInput').value;
+                                    const mealType = document.getElementById('mealType').value;
+                                    const imageUrl = document.getElementById('imageUrlInput').value;
+            
+                                    if (!date || !time || !mealType || !imageUrl) {
+                                        alert("Please fill in all the fields above the predict button before predicting.");
+                                        return;
+                                    }
+            
+                                    const componentsInput = document.getElementById('componentsInput').value;
+                                    const mealSugarInput = document.getElementById('mealSugarInput').value;
+            
+                                    if (!componentsInput || !mealSugarInput) {
+                                        alert("Please calculate the components and meal sugar first.");
+                                        return;
+                                    }
+            
+                                    const components = JSON.parse(componentsInput);
+                                    const mealSugar = parseFloat(mealSugarInput);
+                                    const holiday = document.getElementById('holidayInput').value;
+            
+                                    const mealData = {
+                                        time: time,
+                                        kindOfMeal: mealType,
+                                        components, // Send calculated components
+                                        mealSugar,  // Send calculated sugar level
+                                        holiday
+                                    };
+            
+                                    const predictionSection = document.getElementById('predictionSection');
+                                    const manualInput = document.getElementById('manualGlucoseInput');
+            
+                                    // Toggle prediction section visibility
+                                    if (predictionSection.style.display === 'block') {
+                                        predictionSection.style.display = 'none';
+                                    } else {
+                                        predictionSection.style.display = 'block';
+                                        manualInput.style.display = 'none';
+                                    }
+            
+                                    fetch('/meals/predict', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify(mealData),
                                     })
-                                    .catch((error) => console.error('Error:', error));
-                            });
-                        }
-                    })
+                                        .then((response) => response.json())
+                                        .then((data) => {
+                                            const sugarPrediction = document.getElementById('sugarPrediction');
+                                            const predictionMessage = document.getElementById('predictionMessage');
+            
+                                            // Update the prediction content
+                                            sugarPrediction.innerText = `Predicted Sugar Level: ${data.prediction}`;
+                                            predictionMessage.innerText = data.message;
+            
+                                            // Change background and text colors based on the result
+                                            if (data.prediction === 'ERROR' || data.prediction > 100) {
+                                                predictionSection.style.backgroundColor = '#f8d7da'; // Light red for high values
+                                                predictionSection.style.color = '#721c24'; // Dark red text
+                                            } else {
+                                                predictionSection.style.backgroundColor = '#d4edda'; // Light green for normal values
+                                                predictionSection.style.color = '#155724'; // Dark green text
+                                            }
+                                        })
+                                        .catch((error) => console.error('Error predicting glucose level:', error));
+                                });
+                            }
+                        }).catch((error) => {
+                            console.error('Error in component and sugar promise:', error);
+                        });
                     }
-                    
                 }
-
-
+            
                 // Set the current date and time when the page loads
                 window.onload = function () {
                     // Set current date
                     const today = new Date().toISOString().split('T')[0]; // Format as YYYY-MM-DD
                     document.getElementById('dateInput').value = today;
-
+            
                     // Set current time
                     const now = new Date();
                     const hours = String(now.getHours()).padStart(2, '0');
@@ -335,56 +331,12 @@
                     document.getElementById('timeInput').value = `${hours}:${minutes}`;
                     fetchIsHoliday();
                 };
-
-
-                // async function fetchIsHoliday() {
-                //     const date = document.getElementById('dateInput').value;
-
-                //     if (!date) return;
-
-                //     try {
-                //         const response = await fetch('/meals/checkHoliday', {
-                //             method: 'POST',
-                //             headers: {
-                //                 'Content-Type': 'application/json',
-                //             },
-                //             body: JSON.stringify({ date }),
-                //         });
-
-                //     } catch (error) {
-                //         console.error('Error fetching isHoliday:', error);
-                //     }
-                // }
-
-
-                // async function fetchMealSugarAndComponents() {
-                //     const url = document.getElementById('imageUrlInput').value;
-
-                //     if (!url) return;
-
-                //     try {
-                //         const response = await fetch('/meals/checkComponentsAndMealSugar', {
-                //             method: 'POST',
-                //             headers: {
-                //                 'Content-Type': 'application/json',
-                //             },
-                //             body: JSON.stringify({ url }),
-                //         });
-
-                //         const data = await response.json();
-                //         if (data.mealSugar === -1)
-                //             console.log(5)
-
-
-                //     } catch (error) {
-                //         console.error('Error fetching components and sugar:', error);
-                //     }
-                // }
-
+            
+                // Load image for preview
                 function loadImage() {
                     const imageUrl = document.getElementById('imageUrlInput').value; // Get the URL input value
                     const imagePreview = document.getElementById('imagePreview');
-
+            
                     // Check if URL is valid
                     if (imageUrl) {
                         // Set the src of the img element to the entered URL
@@ -396,69 +348,12 @@
                         alert('Please enter a valid image URL');
                     }
                 }
-
-                // // Function to toggle visibility of prediction section and hide manual input
-                // function predictGlucose() {
-
-                //     const date = document.getElementById('dateInput').value;
-                //     const time = document.getElementById('timeInput').value;
-                //     const mealType = document.getElementById('mealType').value;
-                //     const imageUrl = document.getElementById('imageUrlInput').value;
-
-                //     if (!date || !time || !mealType || !imageUrl) {
-                //         alert("Please fill in all the fields above the predict button before predicting.");
-                //         return;
-                //     }
-
-                //     const mealData = {
-                //         time: time,
-                //         kindOfMeal: mealType,
-                //     };
-
-                //     const predictionSection = document.getElementById('predictionSection');
-                //     const manualInput = document.getElementById('manualGlucoseInput');
-
-                //     // Toggle prediction section visibility
-                //     if (predictionSection.style.display === 'block') {
-                //         predictionSection.style.display = 'none'; // Hide if already open
-                //     } else {
-                //         predictionSection.style.display = 'block'; // Show section
-                //         manualInput.style.display = 'none'; // Ensure manual input is hidden
-                //     }
-
-                //     fetch('/meals/predict', {
-                //         method: 'POST',
-                //         headers: {
-                //             'Content-Type': 'application/json',
-                //         },
-                //         body: JSON.stringify(mealData),
-                //     })
-                //         .then((response) => response.json())
-                //         .then((data) => {
-                //             const sugarPrediction = document.getElementById('sugarPrediction');
-                //             const predictionMessage = document.getElementById('predictionMessage');
-
-                //             // Update prediction content
-                //             sugarPrediction.innerText = `Predicted Sugar Level: ${data.prediction}`;
-                //             predictionMessage.innerText = data.message;
-
-                //             // Adjust colors based on prediction value
-                //             if (data.prediction === 'ERROR' || data.prediction > 100) {
-                //                 predictionSection.style.backgroundColor = '#f8d7da'; // Light red
-                //                 predictionSection.style.color = '#721c24'; // Dark red
-                //             } else {
-                //                 predictionSection.style.backgroundColor = '#d4edda'; // Light green
-                //                 predictionSection.style.color = '#155724'; // Dark green
-                //             }
-                //         })
-                //         .catch((error) => console.error('Error:', error));
-                // }
-
+            
                 // Function to toggle manual input field visibility and hide prediction section
                 function toggleManualInput() {
                     const manualInput = document.getElementById('manualGlucoseInput');
                     const predictionSection = document.getElementById('predictionSection');
-
+            
                     // Toggle manual input visibility
                     if (manualInput.style.display === 'block') {
                         manualInput.style.display = 'none'; // Hide if already open
@@ -468,6 +363,7 @@
                     }
                 }
             </script>
+            
 
     </main>
 

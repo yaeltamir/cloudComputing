@@ -71,20 +71,15 @@ async function calculateTotalSugar(components)
  {
   let totalSugar = -1;
   let isFood=false
-  console.log(components)
   for (const component of components)
   {
-    console.log(component)
       const sugar = await getSugarContent(component);
-      console.log(sugar)
       if(sugar===-1)
         break
       if(!isFood)
         totalSugar=0
       totalSugar += sugar;
       isFood=true
-
-      console.log("cur total",totalSugar)
   }
 
   return totalSugar;
