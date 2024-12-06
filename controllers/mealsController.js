@@ -51,6 +51,7 @@ async function calculateIsHoliday(req, res) {
     const { date } = req.body;
     try {
         holiday = await mealsModel.checkHebcalDate(new Date(date));
+        console.log(holiday)
         res.status(200).json({ holiday });
     } catch (error) {
         console.error('Error calculating isHoliday:', error);

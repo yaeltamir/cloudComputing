@@ -9,8 +9,8 @@ async function tagImage(url)
   try {
       // Authentication credentials for Imagga API
       const auth = {
-          username: 'acc_9ebe20e5f006a3a',
-          password: '6b2ea34c4db987ab07768f1cea5667b6'
+          username: 'acc_2acdfac1e655463',
+          password: '6dacf47f83acc688da4e4cda75c4e74d'
       };
       
       // Sending a GET request to the Imagga API

@@ -135,7 +135,7 @@
                                             <label for="glucoseLevel" class="form-label">Enter Current Glucose Level
                                                 (after 2 hours)</label>
                                             <input type="number" class="form-control" id="glucoseLevel"
-                                                name="sugarLevel" placeholder="Enter your glucose level" required>
+                                                name="sugarLevel" placeholder="Enter your glucose level" required min="0">
                                         </div>
 
                                         <!-- Prediction section -->
@@ -176,6 +176,7 @@
                 // Function to check if the selected date is a holiday
                 async function fetchIsHoliday() {
 
+                    const date = document.getElementById('dateInput').value;
 
                     if (!date) return;
 
