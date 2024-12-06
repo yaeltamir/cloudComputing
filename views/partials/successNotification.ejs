@@ -1,6 +1,17 @@
-<div>
- <% if (typeof successMessage !== "undefined" && successMessage )  { %>
-  <center><div class="alert alert-success"><%= successMessage %></div></center>
-<% } %>
-
+<div id="success-message">
+  <% if (typeof successMessage !== "undefined" && successMessage) { %>
+    <center><div class="alert alert-primary"><%= successMessage %></div></center>
+  <% } %>
 </div>
+
+<script>
+  // Wait for 5 seconds before hiding the success message
+  setTimeout(() => {
+    // Find the success message div by its ID
+    const messageDiv = document.getElementById('success-message');
+    if (messageDiv) {
+      // Hide the div by setting its CSS display property to 'none'
+      messageDiv.style.display = 'none';
+    }
+  }, 5000); // 5000 milliseconds = 5 seconds
+</script>
