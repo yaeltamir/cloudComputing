@@ -223,6 +223,11 @@
                         document.getElementById('componentsInput').value = JSON.stringify(components);
                         document.getElementById('mealSugarInput').value = data.mealSugar;
 
+                        if(parseFloat(data.mealSugar)===-1){
+                            alert('ERROR: The image you submitted is not food or isn\'t clear enough');
+                            return
+                        }
+
                         // עדכון ה-Promise כשסיימנו
                         componentsAndSugarPromise = Promise.resolve();
                     } catch (error) {

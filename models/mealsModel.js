@@ -20,7 +20,7 @@ async function tagImage(url)
       });
 
       // Filter results to include only tags with confidence >= 70%
-      const tags = response.data.result.tags.filter(tag => tag.confidence >= 70);
+      const tags = response.data.result.tags.filter(tag => tag.confidence >= 65);
       
       // Map the filtered tags to an array of objects with tag name and confidence
       return tags.map(tag => ({ tag: tag.tag.en, confidence: tag.confidence }));
@@ -69,13 +69,22 @@ async function getSugarContent(ingredient)
 // Calculates the total sugar content for a list of components.
 async function calculateTotalSugar(components)
  {
-  let totalSugar = 0;
+  let totalSugar = -1;
+  let isFood=false
+  console.log(components)
   for (const component of components)
   {
+    console.log(component)
       const sugar = await getSugarContent(component);
+      console.log(sugar)
       if(sugar===-1)
-        return -1
+        break
+      if(!isFood)
+        totalSugar=0
       totalSugar += sugar;
+      isFood=true
+
+      console.log("cur total",totalSugar)
   }
 
   return totalSugar;

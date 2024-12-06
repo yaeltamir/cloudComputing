@@ -1,7 +1,6 @@
 const { DecisionTreeClassifier } = require('ml-cart');
 const mealsModel = require('../models/mealsModel'); // Importing the meals model
 const userModel = require('../models/userModel');   // Importing the user model
-const { homedir } = require('os');
 
 //let holiday="Regular Day"
 // let components={}
@@ -10,6 +9,7 @@ const { homedir } = require('os');
 // Function to add a meal
 // Receives data from meals.ejs, sends it to the model, and returns a success/failure message
 async function addMeal(req, res) {
+    
     console.log(111)
     const idUser = req.session.user.id; // Get the user ID from the session
     const { kindOfMeal, date, time, imageUrl, sugarLevel, components, mealSugar, holiday } = req.body;
@@ -17,7 +17,8 @@ async function addMeal(req, res) {
     console.log(holiday)
     console.log(mealSugar)
     console.log(components)
-
+    //checkIfFoodAndActAccordingly(mealSugar,req,res)
+    
     // const com=JSON.parse(components)
     console.log(2)
     //if(!holiday||!components||!mealSugar){ return res.status(400).send('something went wrong');}
@@ -77,6 +78,7 @@ async function calculateComponentsAndMealSugar(req, res) {
     try {
         const components = await mealsModel.tagImage(url)
         const mealSugar = await mealsModel.calculateTotalSugar(components)
+        console.log(mealSugar)
         //<!------------------------------------------------------------------------------------>
         res.status(200).json({ components: JSON.stringify(components), mealSugar });
         //<!------------------------------------------------------------------------------------>
@@ -88,15 +90,31 @@ async function calculateComponentsAndMealSugar(req, res) {
     }
 }
 
+async function checkIfFoodAndActAccordingly(mealSugar,req,res) {
+    console.log(mealSugar)
+    if(parseFloat(mealSugar)===-1)
+    {
+        console.log("check true = not food/ error")
+        req.session.message = "ERROR: The image you submitted is not food or isn't clear enough",
+        res.redirect('/meals');
+
+            return;
+    }
+
+    console.log("check false = is food")
+}
+
 
 // Function to predict sugar level using a decision tree model
 async function predictSugarLevel(req, res) {
+    
     const idUser = req.session.user.id;
     const { kindOfMeal, components, mealSugar, holiday } = req.body;
     console.log(1)
     console.log(mealSugar)
     console.log(components)
     console.log(2)
+    //checkIfFoodAndActAccordingly(mealSugar,req,res)
 
     try {
         // Fetch meal and user data for the current user
@@ -167,6 +185,7 @@ async function predictSugarLevel(req, res) {
             predictionMessage = "This meal is recommended based on your sugar level. Remember to measure your sugar level after eating.";
         }
         console.log(10)
+        
         res.json({
             prediction: prediction[0],
             message: predictionMessage,
